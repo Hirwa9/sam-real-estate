@@ -16,14 +16,6 @@ A real estate web application for renting and buying properties in Kigali and ot
 - **Backend**: Node.js, Express.js, MySQL, Firebase
 - **Authentication**: JWT
 
-## API Endpoints
-
-- **GET /api/properties**: Get a list of properties.
-- **GET /api/properties/{id}**: Get detailed information about a property.
-- **POST /api/register**: Register a new user.
-- **POST /api/login**: Log in and receive a JWT token.
-- **GET /api/user/favorites**: Get a list of the user's favorite properties.
-
 ## License
 
 This project is proprietary and all rights are reserved.
