@@ -1,0 +1,48 @@
+@media screen and (max-width: 576px) {
+    .signin::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2rem;
+        translate: 0 4rem;
+        background-color: var(--bodi);
+        border-radius: 0 0 1rem 1rem;
+    }
+
+}
+
+#signInNavTabs::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 50%;
+    border-radius: 1rem;
+    /* background-color: var(--bs-dark); */
+    border: 2px solid var(--black3);
+    border: 2px dashed var(--black2);
+    transition: var(--trans);
+    z-index: -1;
+}
+
+#signInNavTabs:has(#signUp-tab.active):after {
+    left: 50%;
+}
+
+#signInNavTabs .nav-item .nav-link {
+    font-size: .7rem;
+    background-color: transparent;
+    color: var(--bs-dark);
+    border: 0;
+    transition: 0s, color var(--trans);
+}
+
+#signInNavTabs .nav-item .nav-link.active {
+    /* color: var(--bs-light); */
+    border-style: dashed;
+    border-color: var(--bs-primary);
+    border-bottom: none;
+}

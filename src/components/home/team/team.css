@@ -1,0 +1,49 @@
+.team .listings {
+    font-size: smaller;
+}
+
+.team .box {
+    transition: var(--trans);
+}
+
+.team .box:hover {
+    box-shadow: 0 0 1rem rgb(112 121 138 / 18%) !important;
+}
+
+.team .img img {
+    object-position: center 20%;
+    height: 35vh;
+    height: 35dvh;
+    min-height: 15rem;
+    max-height: 20rem;
+}
+
+.team .img svg {
+    position: absolute;
+    bottom: 2.5rem;
+    right: .25rem;
+    color: var(--bs-primary);
+}
+
+.team .details .design {
+    --_measure: 2rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--_measure);
+    translate: 0 calc(var(--_measure) * -1);
+    border-top-right-radius: calc(var(--_measure) / (3/5));
+}
+
+.team .details .design::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--_measure);
+    height: var(--_measure);
+    translate: 0 calc(var(--_measure) * -1);
+    border-bottom-left-radius: calc(var(--_measure) / (3/5));
+    box-shadow: -1rem 1rem 0 1rem var(--bs-light);
+    z-index: -1;
+}

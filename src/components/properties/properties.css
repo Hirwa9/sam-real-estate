@@ -1,0 +1,73 @@
+.filter-bar {
+    --_mainColor: var(--bodi);
+    position: relative;
+    background-color: var(--_mainColor);
+    z-index: 4;
+}
+
+.filter-bar.floated {
+    --_mainColor: var(--appColor);
+    position: sticky;
+    top: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0 0 1.5rem 1.5rem;
+    z-index: 1031;
+    animation: zoomInBack .5s 1;
+}
+
+.filter-bar.floated > div,
+.filter-bar.floated > div > * {
+    flex-wrap: wrap;
+}
+
+.filter-bar .search-box {
+    outline: transparent;
+}
+
+@media screen and (min-width: 576px) {
+    .properties .filter-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 1.3rem;
+        translate: 0 -1rem;
+        border-radius: 1.5rem 1.5rem 0 0;
+        background-color: inherit;
+        z-index: -1;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .filter-bar {
+        position: sticky;
+        width: 100%;
+        top: 3.5rem;
+    }
+}
+
+.filter-options .price-filter-options {
+    max-height: 10rem;
+    overflow: auto;
+}
+
+.filter-options .filter-option-value:hover {
+    background-color: var(--black4);
+}
+
+.filter-options .filter-option-value:active {
+    color: var(--black2);
+}
+
+.filter-options .filter-options-all {
+    max-height: 70vh;
+    max-height: 70dvh;
+    overflow-y: auto;
+}
+
+.filter-info > .list-flexible li {
+    border-radius: .5rem;
+    color: var(--bs-gray-700);
+}

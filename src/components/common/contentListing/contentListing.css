@@ -1,0 +1,16 @@
+.content-listing {
+    border-radius: 1rem;
+}
+
+/* .content-listing > :first-child > .fa {
+    transform: rotate(45deg);
+    transform-origin: 0 0;
+} */
+
+.content-listing.small-content p {
+    font-size: .875em;
+}
+
+.clip-text-gradient .content-listing span {
+    opacity: 1 !important;
+}

@@ -1,0 +1,67 @@
+@media screen and (min-width: 768px) {
+    .contact > .contact-info {
+        border-radius: 3.125rem;
+        background: #f3f1f1;
+        /* box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.05),
+            inset -5px 5px 10px rgba(0, 0, 0, 0.05); */
+        transition: var(--trans), scale 1.5s;
+    }
+
+    .contact > .contact-info:focus-within {
+        scale: 1.015;
+    }
+
+    .contact > .contact-info .more-contact-field {
+        border-left: 1px solid var(--black4);
+    }
+}
+
+.contact .form-field form {
+    background-color: transparent;
+}
+
+.contact input,
+.contact textarea {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--black4);
+    background-color: transparent;
+}
+
+.contact textarea {
+    background-color: var(--white3);
+}
+
+.contact .form-field button {
+    border: 1px solid var(--black4);
+    transition: var(--trans), border 0s;
+}
+
+.contact .form-field button[type="submit"]:hover > svg {
+    /* scale: 1.15; */
+    animation: swipedRight .7s 1, bounceScale .7s 1;
+}
+
+.contact .form-field button[type="reset"]:hover,
+.contact .form-field button[type="reset"]:active {
+    color: var(--bs-danger) !important;
+}
+
+.contact .more-contact-field .icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 2px dotted var(--black3);
+    flex-shrink: 0;
+    border-radius: 50;
+}
+
+@media screen and (min-width: 992px) {
+    .contact .more-contact-field .icon {
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+.contact .more-contact-field a {
+    text-underline-offset: .25rem;
+}

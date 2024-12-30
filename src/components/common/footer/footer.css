@@ -1,0 +1,86 @@
+.footerContact,
+footer {
+    --_sectionColor: #1c2636;
+    color: var(--_sectionColor);
+}
+
+.footerContact {
+    /* background-image: linear-gradient(30deg, var(--primaryColor), var(--primaryColorDark)); */
+    /* background-image: linear-gradient(var(--primaryColorDark), rgb(154, 117, 21)); */
+    background-color: var(--black4);
+    /* background-color: var(--primaryColorDark); */
+}
+
+.footerContact .send button,
+.footerContact .send button > a {
+    color: var(--_sectionColor);
+}
+
+/* Set a scroll watch based animation */
+
+/* .footerContact .container img {
+    border-radius: 50px;
+} */
+
+@media screen and (min-width: 576px) {
+    .footerContact .container img {
+        border-radius: 5px;
+    }
+
+    .footerContact .send button {
+        animation: shakeX 10s infinite;
+    }
+}
+
+footer,
+.legal {
+    background-color: #1c2636;
+    color: var(--bs-light);
+}
+
+footer .logo > img {
+    width: 4rem;
+    height: 4rem;
+    object-fit: cover;
+}
+
+footer .subscriber {
+    height: 3.5rem;
+    caret-color: var(--bs-light);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 3px solid var(--primaryColor);
+    width: fit-content;
+    transition: var(--trans);
+}
+
+footer .subscriber:hover {
+    scale: 1.05;
+}
+
+footer .subscriber:has(input:focus) {
+    box-shadow: 0 0 .25rem .5rem var(--black4);
+}
+
+footer .subscriber > input,
+footer .subscriber > input:-webkit-autofill {
+    border: none;
+    outline: transparent;
+    background-color: var(--black4);
+    color: azure;
+    -webkit-text-fill-color: var(--bs-gray-300);
+}
+
+footer .subscriber > input:-webkit-autofill {
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+footer .subscriber > input::placeholder {
+    padding-left: .25rem;
+}
+
+footer .subscriber > button {
+    border: none;
+    box-shadow: none;
+    outline: transparent;
+}

@@ -1,0 +1,3 @@
+.faqs #questionsAnswers {
+    background-image: linear-gradient(to right, var(--black3), transparent, var(--black3));
+}

@@ -1,0 +1,42 @@
+.flip-card {
+    position: relative;
+    perspective: 1000px;
+    /* backface-visibility: hidden; */
+    min-height: 70vh;
+    min-height: 70dvh;
+    /* background-color: var(--bs-light); */
+}
+
+.flip-card > * {
+    backface-visibility: hidden;
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    background-color: var(--bs-light);
+    transition: .5s;
+}
+
+.flip-card .flip-card_back {
+    transform: rotateY(180deg);
+}
+
+.flip-card.flipped .flip-card_front {
+    transform: rotateY(-180deg);
+}
+
+.flip-card.flipped .flip-card_back {
+    transform: rotateY(0deg);
+}
+
+/* OTP inputs */
+
+.otp-box {
+    width: 2.5rem;
+    height: 2.5rem;
+    overflow: hidden;
+}
+
+.otp-box::-webkit-scrollbar {
+    overflow: hidden;
+    display: none !important;
+}

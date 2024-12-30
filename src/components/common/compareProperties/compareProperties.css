@@ -1,0 +1,22 @@
+.property-compare > div {
+    animation: zoomInBack .2s 1;
+}
+
+.property-compare .property-compare_content {
+    height: calc(100% - 7rem);
+}
+
+.property-compare .property-compare_content li {
+    display: flex;
+    align-items: center;
+}
+
+.property-compare .property-column {
+    max-width: 13rem;
+}
+
+@media screen and (min-width: 576px) {
+    .property-compare .property-column {
+        max-width: 50%;
+    }
+}

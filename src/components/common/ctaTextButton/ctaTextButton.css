@@ -1,0 +1,4 @@
+.cta-text-button .action-button {
+    padding-left: 2.5rem;
+    clip-path: polygon(1.5rem -1px, 101% -1px, 101% 101%, 0 101%);
+}

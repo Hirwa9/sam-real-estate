@@ -1,0 +1,83 @@
+.whatsapp-contactor {
+    width: 100%;
+    max-width: 25rem;
+    max-height: calc(100vh - 3rem);
+    max-height: calc(100dvh - 3rem);
+    border-radius: 1.5rem 1.5rem 0 0;
+    animation: flyInBottomHalf .5s 1;
+}
+
+.whatsapp-contactor .profile-illustration {
+    height: 20vh;
+    height: 20dvh;
+    min-height: 8rem;
+}
+
+.whatsapp-contactor .profile-illustration > .profile-photo {
+    --_offset: 30%;
+    width: 4.5rem;
+    aspect-ratio: 1;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    background-color: var(--bs-light);
+    padding: .2rem;
+    translate: 0 var(--_offset);
+}
+
+.whatsapp-contactor .profile-illustration > .profile-photo::before,
+.whatsapp-contactor .profile-illustration > .profile-photo::after {
+    content: '';
+    position: absolute;
+    width: 30%;
+    height: 30%;
+    bottom: var(--_offset);
+    z-index: -1;
+}
+
+.whatsapp-contactor .profile-illustration > .profile-photo::before {
+    left: 0;
+    translate: -100% 0;
+    border-radius: 0 0 50% 0;
+    box-shadow: .5rem .5rem 0 var(--bs-light);
+}
+
+.whatsapp-contactor .profile-illustration > .profile-photo::after {
+    right: 0;
+    translate: 100% 0;
+    border-radius: 0 0 0 50%;
+    box-shadow: -.5rem .5rem 0 var(--bs-light);
+}
+
+.whatsapp-contactor .profile-illustration > .cover-photo {
+    background-image: linear-gradient(rgba(0, 118, 87, .9), rgba(6, 77, 58, .9)), url("../../../../public/images/whatsApp_chat_icon_bg.jpg");
+    /* opacity: .8; */
+    border-radius: 0 0 .5rem .5rem;
+}
+
+.whatsapp-contactor .chat-av-text {
+    position: relative;
+}
+
+.whatsapp-contactor .chat-av-text::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    translate: -200% 0;
+    margin-block: auto;
+    background-color: rgb(0, 204, 0);
+    width: .45rem;
+    height: .45rem;
+    border-radius: 50%;
+}
+
+@media screen and (min-width: 768px) {
+    .whatsapp-contactor {
+        border-radius: 1.5rem;
+        box-shadow: var(--bs-box-shadow);
+    }
+}

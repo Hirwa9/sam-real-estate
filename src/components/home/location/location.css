@@ -1,0 +1,16 @@
+.location .overlay {
+    position: absolute;
+    inset: 0;
+    /* height: 15.625rem; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    background-color: var(--black2);
+    color: var(--white);
+}
+
+.location .overlay span {
+    color: var(--white);
+}

@@ -1,0 +1,101 @@
+.category .catgType {
+    padding: 4px 15px;
+    border-radius: 2px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-block;
+}
+
+.category svg {
+    color: #bec7d8;
+    transition: var(--trans);
+}
+
+.category svg:hover,
+.category svg:active {
+    color: #ed201f;
+}
+
+#propertyCard .img img,
+#propertyCard .loading-skeleton .img-skeleton {
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.loading-skeleton .img-skeleton {
+    background-color: rgba(17, 40, 72, 0.35);
+}
+
+@media screen and (max-width: 1200px) {
+    #propertyCard .img {
+        aspect-ratio: 16 / 10;
+    }
+}
+
+#propertyCard .box {
+    border-radius: 0.375rem;
+    border: 1px solid var(--black4);
+    transition: scale .5s;
+}
+
+@media screen and (min-width: 1200px) {
+
+    #propertyCard .img img,
+    #propertyCard .loading-skeleton .img-skeleton {
+        border-radius: 0.375rem 0 0 0.375rem;
+    }
+
+    #propertyCard .loading-skeleton .img-skeleton {
+        height: 35vh !important;
+        height: 35dvh !important;
+    }
+
+    #propertyCard .box:hover {
+        scale: .9905;
+    }
+}
+
+#propertyCard .img .property-actions {
+    display: none;
+    pointer-events: none;
+    right: 0;
+    flex-direction: column;
+    transition: var(--trans);
+    align-items: flex-end;
+    animation: slideInRight .2s 1;
+}
+
+#propertyCard .img:hover .property-actions {
+    display: flex;
+    pointer-events: all;
+}
+
+#propertyCard .img .property-actions > * {
+    font-size: 80%;
+}
+
+#propertyCard .img .property-iconic-details {
+    display: none;
+    pointer-events: none;
+    left: 0;
+    right: 0;
+    transition: var(--trans);
+    animation: flyInBottom .2s 1;
+}
+
+#propertyCard .img .property-iconic-details > div * {
+    filter: drop-shadow(0 0 .25rem var(--black1));
+}
+
+#propertyCard .img:hover .property-iconic-details {
+    display: flex;
+}
+
+#propertyCard p {
+    color: #72809d;
+}
+
+#propertyCard .box:hover {
+    /* box-shadow: 0 0 20px 0 rgb(112, 121, 138 / 18%); */
+    box-shadow: 0 .5rem 1rem var(--black4);
+    transition: var(--trans);
+}

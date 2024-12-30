@@ -1,0 +1,4 @@
+.subscription-form .form-check-input:checked {
+    background-color: var(--bs-dark);
+    border-color: var(--bs-dark);
+}

@@ -1,0 +1,36 @@
+.property-details .side-tools {
+    min-width: 18rem;
+}
+
+@media screen and (min-width: 992px) {
+    .property-details {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        grid-template-rows: subgrid;
+    }
+
+    .property-details .side-tools {
+        position: sticky;
+        top: 3.7rem;
+        /* max-height: min-content; */
+        max-height: calc(200vh - 3.7rem);
+        max-height: calc(200dvh - 3.7rem);
+        overflow-y: auto;
+    }
+
+    .property-details .side-tools::-webkit-scrollbar {
+        width: .5rem;
+    }
+}
+
+.property-actions .like-icon:hover,
+.property-actions .like-icon.liked,
+.property-actions .like-icon:active {
+    color: #ed201f;
+}
+
+@media screen and (min-width: 768px) {
+    .property-subproperties > :not(:first-child) {
+        border-left: 1px solid var(--black4);
+    }
+}

@@ -1,0 +1,25 @@
+.awards {
+    background-color: #122947;
+    background-color: var(--primaryColorDark);
+}
+
+.awards .heading {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.awards .heading p {
+    color: var(--bs-dark);
+}
+
+.awards .icon {
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    margin: auto;
+    margin-top: 50px;
+    border: 2px dashed var(--black2);;
+    border-radius: 4% 50%;
+    text-align: center;
+    font-size: 30px;
+}
