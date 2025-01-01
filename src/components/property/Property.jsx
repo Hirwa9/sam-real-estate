@@ -430,7 +430,7 @@ const Property = () => {
                             <div className="d-flex flex-wrap py-3 property-subproperties">
                                 <div className="mb-3 px-4 fw-bold" style={{ color: mainColor }}>
                                     <h6 className='mb-0 fw-light'><MoneyWavy size={23} weight='fill' className='me-2' />Price</h6>
-                                    <p className={`${closed ? 'text-decoration-line-through' : ''}`}>RwF {price.toLocaleString()} {payment === 'yearly' && "/year"}
+                                    <p className={`${closed ? 'text-decoration-line-through' : ''}`}>RwF {price.toLocaleString()} {payment === 'annually' && "/year"}
                                         {payment === 'monthly' && "/month"}
                                         {payment === 'weekly' && "/week"}
                                         {payment === 'daily' && "/day"}

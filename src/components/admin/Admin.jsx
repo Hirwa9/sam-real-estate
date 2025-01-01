@@ -1189,7 +1189,7 @@ const Admin = () => {
                                         title="View property" onClick={() => goToProperty(id)} >
                                         {/* <CurrencyDollar weight="bold" className="me-1" /> {price.toLocaleString()} */}
                                         RWF {price.toLocaleString()}
-                                        {payment === 'yearly' && <span className="opacity-50 fw-normal ms-1 fs-75">/year</span>}
+                                        {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 fs-75">/year</span>}
                                         {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 fs-75">/month</span>}
                                         {payment === 'weekly' && <span className="opacity-50 fw-normal ms-1 fs-75">/week</span>}
                                         {payment === 'daily' && <span className="opacity-50 fw-normal ms-1 fs-75">/day</span>}
@@ -1495,7 +1495,7 @@ const Admin = () => {
                                                                 </>
                                                             ),
                                                             inputType: 'select',
-                                                            selectOptions: ['once', 'yearly', 'monthly', 'weekly', 'daily', 'hourly', { default: payment }],
+                                                            selectOptions: ['once', 'annually', 'monthly', 'weekly', 'daily', 'hourly', { default: payment }],
                                                             action: changePropertyPayment,
                                                         }
                                                     )
@@ -2598,7 +2598,7 @@ const Admin = () => {
                                                             </span> - <span className='text-nowrap'>
                                                                 RWF {property.price.toLocaleString()}
                                                                 {payment === 'once' && <span className="opacity-50 fw-normal ms-1 smaller">/once</span>}
-                                                                {payment === 'yearly' && <span className="opacity-50 fw-normal ms-1 smaller">/year</span>}
+                                                                {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 smaller">/year</span>}
                                                                 {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 smaller">/month</span>}
                                                                 {payment === 'weekly' && <span className="opacity-50 fw-normal ms-1 smaller">/week</span>}
                                                                 {payment === 'daily' && <span className="opacity-50 fw-normal ms-1 smaller">/day</span>}

@@ -20,7 +20,7 @@ export const nav = [
         text: "Properties",
         path: "/properties/all",
         subLinks: [
-            { text: "Houses", path: "/properties/House", },
+            { text: "House", path: "/properties/House", },
             { text: "Apartment", path: "/properties/Apartment", },
             { text: "Commercial", path: "/properties/Commercial", },
             { text: "Office", path: "/properties/Office", },
@@ -99,7 +99,7 @@ export const featured = [
 export const aboutProperties = {
     allTypes: ["House", "Apartment", "Office", "Commercial", "Land Plot"],
     allCategories: ["For Sale", "For Rent"],
-    paymentMethods: ["once", "yearly", "monthly", "weekly", "daily", "hourly"],
+    paymentMethods: ["once", "annually", "monthly", "weekly", "daily", "hourly"],
     priceRanges: [
         { min: "1", max: "100,000" },
         { min: "100,000", max: "300,000" },

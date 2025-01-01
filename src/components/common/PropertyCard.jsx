@@ -411,7 +411,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                                             onClick={() => goToProperty(id)} >
                                                             {/* <CurrencyDollar weight="bold" className="me-1" /> {price.toLocaleString()} */}
                                                             RWF {price.toLocaleString()}
-                                                            {payment === 'yearly' && <span className="opacity-50 fw-normal ms-1 fs-75">/year</span>}
+                                                            {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 fs-75">/year</span>}
                                                             {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 fs-75">/month</span>}
                                                             {payment === 'weekly' && <span className="opacity-50 fw-normal ms-1 fs-75">/week</span>}
                                                             {payment === 'daily' && <span className="opacity-50 fw-normal ms-1 fs-75">/day</span>}

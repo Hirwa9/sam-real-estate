@@ -1,6 +1,6 @@
 # Sam Real Estate
 
-A real estate web application for renting and buying properties in Kigali and other parts of Rwanda. The platform allows users to browse available properties for rent and sale, filter results, and manage property listings.
+A real estate web application for renting and buying properties in Kigali city and other different regions of Rwanda. The platform allows users to browse available properties for rent and sale, filter results, and manage property listings.
 
 ## Features
 
