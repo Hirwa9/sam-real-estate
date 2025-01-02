@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import Back from '../common/header/Back';
+import PageInfo from '../common/header/PageInfo';
 import img from '../images/about.jpeg';
 // import Heading from '../common/Heading';
 
@@ -25,7 +25,7 @@ const About = () => {
     return (
         <>
             <section className='about'>
-                <Back name="About Us" title="About Us - Who We Are" cover={img} />
+                <PageInfo name="About Us" title="About Us - Who We Are" cover={img} />
                 <div className="d-lg-flex my-4 container">
                     <div className='col-lg-6 mb-4 mb-lg-0'>
                         <Heading
@@ -34,19 +34,20 @@ const About = () => {
                             hType="h2"
                             className="mt-0 mb-0"
                         />
-                        <p className='pe-lg-4'>
-                            Discover the story behind our agency and our commitment to delivering exceptional real estate services in Kigali and more different places in Rwanda.
-                        </p>
-                        <p className='pe-lg-4'>
-                            We believe in transparency, professionalism, and a client-centered approach, guiding you through every step of the property journey. We are dedicated to making property ownership, rentals, and investment simple and accessible.
-                        </p>
-                        <p className='pe-lg-4'>With a deep understanding of the real estate market, we provide expert insights and personalized support, ensuring you find the perfect space to suit your needs. <br />
-
-                            Explore our services and see how we're building trust, one property at a time.
-                        </p>
-                        <a href="/services" className="btn btn-outline-dark border-0 flex-center w-fit mx-auto mb-3 px-5 py-2 rounded-pill small shadow">
-                            Our Services <ArrowRight className='ms-1' />
-                        </a>
+                        <div className="px-2">
+                            <p className='pe-lg-4'>
+                                Discover the story behind our agency and our commitment to delivering exceptional real estate services in Kigali and more different places in Rwanda.
+                            </p>
+                            <p className='pe-lg-4'>
+                                We believe in transparency, professionalism, and a client-centered approach, guiding you through every step of the property journey. We are dedicated to making property ownership, rentals, and investment simple and accessible.
+                            </p>
+                            <p className='pe-lg-4'>With a deep understanding of the real estate market, we provide expert insights and personalized support, ensuring you find the perfect space to suit your needs. <br />
+                                Explore our services and see how we're building trust, one property at a time.
+                            </p>
+                            <a href="/services" className="btn btn-outline-dark border-0 flex-center w-fit mx-auto mb-3 px-5 py-2 rounded-pill small shadow">
+                                Our Services <ArrowRight className='ms-1' />
+                            </a>
+                        </div>
                     </div>
                     <div className='col-lg-6'>
                         <img src="/images/real_estate_illustration.jpg" alt="" className='h-100 object-fit-cover peak-borders-lr' style={{ objectPosition: "20% center" }} />
@@ -113,7 +114,8 @@ const About = () => {
                 toggler={propertySearcherTogglerRef}
                 blurBg
                 onClose={() => setShowPropertySearcher(false)}
-                className="pb-3" />
+                className="pb-3"
+            />
             {/* WhatsApp contactor */}
             <WhatsAppContactor show={showWhatsAppContactor} toggler={whatsappTogglerRef} onClose={() => setShowWhatsAppContactor(false)} />
         </>
