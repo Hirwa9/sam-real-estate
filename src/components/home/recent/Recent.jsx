@@ -15,7 +15,7 @@ const Recent = () => {
                         subtitle="Check out our most recent listing. Stay updated with the latest properties and make well-informed decisions with our comprehensive details and expert support."
                         hType="h2"
                     />
-                    <PropertyCard limited="true" />
+                    <PropertyCard limited />
                     <a href="/properties/all" className="d-block w-fit ms-auto me-4 me-md-auto my-3 my-md-5  text-decoration-none see-more-link">See more <ArrowRight weight="bold" /></a>
                 </div>
             </section>
