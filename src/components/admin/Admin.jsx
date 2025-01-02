@@ -2311,9 +2311,9 @@ const Admin = () => {
 
             {/* Section Content : Statistics */}
             <div className="container my-5 px-0 py-4 section-content">
-                <h3 className="mb-5 grid-center text-gray-600 fw-bold">
+                <h3 className="mb-5 flex-center gap-2 text-primaryColorDark fw-bold">
+                    <ChartBar weight='duotone' />
                     <span>Site activity</span>
-                    <ChartBar />
                 </h3>
                 <div className="mb-3 d-flex flex-wrap" id='siteStats'>
                     <div className="col-6 col-lg-4 col-xl-3 position-relative mb-3 mx-0 px-2">
@@ -3294,11 +3294,11 @@ const Admin = () => {
             businessName: companyName,
             motto: companyMotto,
             email: companyEmail,
-            phone1: companyPhoneNumber1,
-            phone2: companyPhoneNumber2,
+            phone1: companyPhoneNumber1.phone,
+            phone2: companyPhoneNumber2.phone,
             workingHours: {
-                weekdays: { start: '09:00', end: '17:00' },
-                weekends: { start: '09:00', end: '17:00' },
+                weekdays: { open: '09:00', close: '17:00' },
+                weekends: { open: '09:00', close: '17:00' },
             },
             address: companyAddress,
         });
@@ -3343,7 +3343,7 @@ const Admin = () => {
                     <div className="d-lg-flex gap-4">
                         {/* Property Settings */}
                         <div className="col mb-5 settings-wrapper property-settings">
-                            <h2 className="h4 d-flex px-2 text-gray-700 fw-semibold"><Building size={30} className="opacity-50 me-2" /> Property Settings</h2>
+                            <h2 className="h4 d-flex px-2 text-primaryColorDark fw-semibold"><Building size={30} weight="duotone" className="opacity-75 me-2" /> Property Settings</h2>
                             <hr className='mb-4' />
                             <div className="px-2">
                                 <form>
@@ -3383,16 +3383,16 @@ const Admin = () => {
 
                         {/* Business Profile Settings */}
                         <div className="col mb-5 settings-wrapper business-settings">
-                            <h2 className="h4 d-flex px-2 text-gray-700 fw-semibold"><IdentificationBadge size={30} className="opacity-50 me-2" /> Business Profile Settings</h2>
+                            <h2 className="h4 d-flex px-2 text-primaryColorDark fw-semibold"><IdentificationBadge size={30} weight="duotone" className="opacity-75 me-2" /> Business Profile Settings</h2>
                             <hr className='mb-4' />
                             <div className="px-2">
                                 <div className="d-flex mb-4">
-                                    <img src={logo} alt="logo" className="w-7rem h-7rem p-2 rounded-0 img-thumbnail" />
+                                    <img src={logo} alt="logo" className="w-7rem h-7rem object-fit-cover p-2 rounded-0 img-thumbnail" />
                                     <div className="p-2">
                                         <div className="h4 mb-0">{businessProfile.businessName}</div>
                                         <div className="small">{businessProfile.motto}</div>
-                                        <div className="fs-70">{businessProfile.email}</div>
-                                        <div className="fs-70">{businessProfile.phone1.text}</div>
+                                        <div className="fs-70 text-muted"><Envelope weight='duotone' /> {businessProfile.email}</div>
+                                        <div className="fs-70 text-muted"><Phone weight='duotone' /> <WhatsappLogo weight='duotone' fill='var(--bs-success)' /> {companyPhoneNumber1.text}</div>
                                     </div>
                                 </div>
                                 <form>
@@ -3445,11 +3445,11 @@ const Admin = () => {
                                             </div>
                                             <input
                                                 type="text"
-                                                id="phone"
-                                                name="phone"
+                                                id="phone1"
+                                                name="phone1"
                                                 className="form-control rounded-0"
                                                 placeholder='Enter phone number'
-                                                value={businessProfile.phone1.phone}
+                                                value={businessProfile.phone1}
                                                 onChange={handleBusinessProfileChange}
                                             />
                                         </div>
@@ -3459,47 +3459,48 @@ const Admin = () => {
                                             </div>
                                             <input
                                                 type="text"
-                                                id="phone"
-                                                name="phone"
+                                                id="phone2"
+                                                name="phone2"
                                                 className="form-control rounded-0"
                                                 placeholder='Enter phone number'
-                                                value={businessProfile.phone2.phone}
+                                                value={businessProfile.phone2}
                                                 onChange={handleBusinessProfileChange}
                                             />
                                         </div>
                                         <div className="d-flex m-0 fs-75 form-text"><WhatsappLogo weight='duotone' size={20} fill='var(--bs-success)' className='ms-1 me-3' /> Phone number one is also set as WhatsApp number</div>
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="weekdaysStart" className="form-label">Week day working hours (Start - End)</label>
-                                        <div className="d-flex gap-2">
+                                        <label htmlFor="weekdaysStart" className="form-label">Week days working hours (Open - Close)</label>
+                                        <div className="d-flex align-items-center gap-3">
                                             <input
                                                 type="time"
                                                 id="weekdaysStart"
                                                 name="weekdaysStart"
                                                 className="form-control rounded-0"
-                                                value={businessProfile.workingHours.weekdays.start}
+                                                value={businessProfile.workingHours.weekdays.open}
                                                 onChange={(e) =>
                                                     setBusinessProfile((prev) => ({
                                                         ...prev,
                                                         workingHours: {
                                                             ...prev.workingHours,
-                                                            weekdays: { ...prev.workingHours.weekdays, start: e.target.value },
+                                                            weekdays: { ...prev.workingHours.weekdays, open: e.target.value },
                                                         },
                                                     }))
                                                 }
                                             />
+                                            -
                                             <input
                                                 type="time"
                                                 id="weekdaysEnd"
                                                 name="weekdaysEnd"
                                                 className="form-control rounded-0"
-                                                value={businessProfile.workingHours.weekdays.end}
+                                                value={businessProfile.workingHours.weekdays.close}
                                                 onChange={(e) =>
                                                     setBusinessProfile((prev) => ({
                                                         ...prev,
                                                         workingHours: {
                                                             ...prev.workingHours,
-                                                            weekdays: { ...prev.workingHours.weekdays, end: e.target.value },
+                                                            weekdays: { ...prev.workingHours.weekdays, close: e.target.value },
                                                         },
                                                     }))
                                                 }
@@ -3507,36 +3508,37 @@ const Admin = () => {
                                         </div>
                                     </div>
                                     <div className="mb-3">
-                                        <label htmlFor="weekendsStart" className="form-label">Weekend working hours (Start - End)</label>
-                                        <div className="d-flex gap-2">
+                                        <label htmlFor="weekendsStart" className="form-label">Weekend working hours (Open - Close)</label>
+                                        <div className="d-flex align-items-center gap-3">
                                             <input
                                                 type="time"
                                                 id="weekendsStart"
                                                 name="weekendsStart"
                                                 className="form-control rounded-0"
-                                                value={businessProfile.workingHours.weekends.start}
+                                                value={businessProfile.workingHours.weekends.open}
                                                 onChange={(e) =>
                                                     setBusinessProfile((prev) => ({
                                                         ...prev,
                                                         workingHours: {
                                                             ...prev.workingHours,
-                                                            weekends: { ...prev.workingHours.weekends, start: e.target.value },
+                                                            weekends: { ...prev.workingHours.weekends, open: e.target.value },
                                                         },
                                                     }))
                                                 }
                                             />
+                                            -
                                             <input
                                                 type="time"
                                                 id="weekendsEnd"
                                                 name="weekendsEnd"
                                                 className="form-control rounded-0"
-                                                value={businessProfile.workingHours.weekends.end}
+                                                value={businessProfile.workingHours.weekends.close}
                                                 onChange={(e) =>
                                                     setBusinessProfile((prev) => ({
                                                         ...prev,
                                                         workingHours: {
                                                             ...prev.workingHours,
-                                                            weekends: { ...prev.workingHours.weekends, end: e.target.value },
+                                                            weekends: { ...prev.workingHours.weekends, close: e.target.value },
                                                         },
                                                     }))
                                                 }
@@ -3615,7 +3617,7 @@ const Admin = () => {
                         </Link>
                     </div>
                     <small className='fs-70 text-uppercase'>
-                        Sam realtol
+                        Sam realtor
                     </small>
                 </div>
                 {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
@@ -3757,7 +3759,7 @@ const Admin = () => {
 
                         {/* Reply to messages */}
                         {showContactUsMessage &&
-                            <div className='position-fixed fixed-top inset-0 bg-white2 py-md-3 px-lg-5 inx-high message-reply-comp'>
+                            <div className='position-fixed fixed-top inset-0 py-md-3 px-lg-5 inx-high message-reply-comp'>
                                 <div className="d-flex flex-column col-md-9 col-lg-8 col-xl-7 h-100 overflow-auto mx-auto bg-gray-300 message-reply">
                                     {/* Chat header */}
                                     <div className={`position-sticky sticky-top bg-dark d-flex align-items-center p-2 px-md-3 shadow-sm`}>
