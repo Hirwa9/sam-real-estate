@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 // Informative components
 import Hero from "./hero/Hero";
-import Featured from "./featured/Featured";
+import FeaturedTypes from "./featured/FeaturedTypes";
 import Recent from "./recent/Recent";
 import Awards from "./awards/Awards";
 import Location from "./location/Location";
@@ -14,6 +14,7 @@ import BottomFixedCard from "../common/bottomFixedCard/BottomFixedCard";
 import PropertySearcher from "../common/PropertySearcher";
 import { CaretDoubleUp, MagnifyingGlass, WhatsappLogo } from "@phosphor-icons/react";
 import WhatsAppContactor from "../common/whatsAppContactor/WhatsAppContactor";
+import FeaturedProps from "./featured/FeaturedProps";
 
 const Home = () => {
 
@@ -41,7 +42,8 @@ const Home = () => {
     return (
         <>
             <Hero />
-            <Featured />
+            <FeaturedTypes />
+            <FeaturedProps />
             <Recent />
             <Awards />
             <Location />
@@ -82,7 +84,8 @@ const Home = () => {
                 toggler={propertySearcherTogglerRef}
                 blurBg
                 onClose={() => setShowPropertySearcher(false)}
-                className="pb-3" />
+                className="pb-3"
+            />
             {/* WhatsApp contactor */}
             <WhatsAppContactor show={showWhatsAppContactor} toggler={whatsappTogglerRef} onClose={() => setShowWhatsAppContactor(false)} />
         </>
