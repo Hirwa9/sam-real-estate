@@ -1,7 +1,7 @@
 import React, { useState, useId, useTransition } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import PropTypes from 'prop-types';
-import Back from '../common/header/Back';
+import PageInfo from '../common/header/PageInfo';
 import img from '../images/pricing.jpg';
 import './contact.css';
 import '../common/formInput/formInput.css'
@@ -92,7 +92,7 @@ const Contact = () => {
         <>
             <MyToast show={showToast} message={toastMessage} type={toastType} onClose={() => setShowToast(false)} />
             <section className='mb-4 contact'>
-                <Back name="Contact Us" title="Get Help & Friendly Support" cover={img} className="mb-0" />
+                <PageInfo name="Contact Us" title="Get Help & Friendly Support" cover={img} className="mb-0" />
                 {/* Contact form */}
                 <div className="container d-lg-flex col-lg-11 my-5 p-0 p-lg-3 overflow-hidden contact-info">
                     <div className='col-lg-6 p-3 py-4 p-lg-5 form-field'>
