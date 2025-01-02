@@ -38,11 +38,11 @@ const Team = ({ id }) => {
 	}
 
 	const sendMessage = () => {
-		window.open(`https://wa.me/250789305885?text=Hello%2C%20I%27m%20interested%20in%20your%20services`, '_blank');
+		window.open(`https://wa.me/${companyPhoneNumber1.phone}?text=Hello%2C%20I%27m%20interested%20in%20your%20services`, '_blank');
 	}
 
 	const makeCall = () => {
-		window.open(`tel:+${companyPhoneNumber1}`);
+		window.open(`tel:+${companyPhoneNumber1.phone}`);
 	}
 
 	return (

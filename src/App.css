@@ -194,7 +194,8 @@ body {
   grid-gap: 1.875rem;
 }
 
-label {
+label,
+.label {
   color: #2d3954;
   font-size: 0.875rem;
 }

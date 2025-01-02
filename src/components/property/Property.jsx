@@ -17,6 +17,7 @@ import MyToast from '../common/Toast';
 import ConfirmDialog from '../common/confirmDialog/ConfirmDialog';
 import Heading from '../common/Heading';
 import LoadingBubbles from '../common/LoadingBubbles';
+import { companyPhoneNumber1 } from '../data/Data';
 
 const Property = () => {
     // Custom hooks
@@ -47,7 +48,7 @@ const Property = () => {
     }, [isLoggedIn, checkAuthentication]);
 
     const sendMessage = () => {
-        window.open(`https://wa.me/250789305885?text=Hello%2C%20I%27m%20interested%20in%20your%20services.%20Especially%20with%20this%20property_*${name}*_%20${window.location}`, '_blank');
+        window.open(`https://wa.me/${companyPhoneNumber1.phone}?text=Hello%2C%20I%27m%20interested%20in%20your%20services.%20Especially%20with%20this%20property_*${name}*_%20${window.location}`, '_blank');
     }
 
     const { propertyId } = useParams();

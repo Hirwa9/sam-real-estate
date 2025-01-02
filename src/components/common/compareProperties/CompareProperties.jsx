@@ -10,7 +10,7 @@ import LoadingBubbles from '../LoadingBubbles';
 const CompareProperties = ({ show, onClose, ids }) => {
 
     // Get fetched properties
-    const { propertiesContext, loadingProperties, errorLoadingProperties, fetchProperties } = useContext(PropertiesContext);
+    const { propertiesContext, loadingProperties, errorLoadingProperties } = useContext(PropertiesContext);
 
     const listedProperties = useMemo(() => {
         return propertiesContext.filter(property => property.listed);

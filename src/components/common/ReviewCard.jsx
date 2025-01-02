@@ -22,7 +22,7 @@ const ReviewCard = () => {
             }
             const data = await response.json();
             // Filter only visible reviews
-            const visibleReviews = data.filter(review => review.isVisible === 1);
+            const visibleReviews = data.filter(review => review.isVisible);
             setReviews(visibleReviews);
             setErrorLoadingReviews(null);
             setRefreshReviews(false);

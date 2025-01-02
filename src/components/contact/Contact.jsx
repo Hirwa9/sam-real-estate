@@ -7,7 +7,7 @@ import './contact.css';
 import '../common/formInput/formInput.css'
 import { isValidEmail, isValidName } from '../../scripts/myScripts';
 import WorkingHours from '../common/workinghours/WorkingHours';
-import { companyAddress, companyEmail } from '../data/Data';
+import { companyAddress, companyEmail, companyPhoneNumber1, companyPhoneNumber2 } from '../data/Data';
 import MyToast from '../common/Toast';
 import { EnvelopeSimple, Globe, MapPinSimpleArea, Numpad, PaperPlaneRight, Phone, Trash, WhatsappLogo, } from '@phosphor-icons/react';
 /* globals $ */
@@ -171,7 +171,7 @@ const Contact = () => {
                                     <p className='m-0'>
                                         <span className='me-2 fw-bold'>
                                             Phone:
-                                        </span> <a href="tel:+250789305885" className='text-dark text-decoration-none'>(250) 789 305 885</a>
+                                        </span> <a href={`tel:+${companyPhoneNumber1.phone}`} className='text-dark text-decoration-none'>{companyPhoneNumber1.text}</a>
                                     </p>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@ const Contact = () => {
                                     <p className='m-0'>
                                         <span className='me-2 fw-bold'>
                                             Phone:
-                                        </span> <a href="tel:+250788321583" className='text-dark text-decoration-none'>(250) 788 321 583</a>
+                                        </span> <a href={`tel:+${companyPhoneNumber2.phone}`} className='text-dark text-decoration-none'>{companyPhoneNumber2.text}</a>
                                     </p>
                                 </div>
                             </div>
@@ -195,7 +195,7 @@ const Contact = () => {
                                     <p className='m-0'>
                                         <span className='me-2 fw-bold'>
                                             WhatsApp:
-                                        </span> <a href="https://wa.me/250789305885?text=Hello%2C%20I%27m%20interested%20in%20your%20services." target='_blank' rel='noreferrer' className='text-dark text-decoration-none'>(250) 788 321 583</a>
+                                        </span> <a href={`https://wa.me/${companyPhoneNumber1.phone}?text=Hello%2C%20I%27m%20interested%20in%20your%20services.`} target='_blank' rel='noreferrer' className='text-dark text-decoration-none'>{companyPhoneNumber1.text}</a>
                                     </p>
                                 </div>
                             </div>
@@ -207,7 +207,7 @@ const Contact = () => {
                                     <p className='m-0'>
                                         <span className='me-2 fw-bold'>
                                             Email:
-                                        </span> <a href={`mailto:${companyEmail}`} target='_blank' rel='noreferrer' className='text-dark text-decoration-none'> samrealtor60@gmail.com</a>
+                                        </span> <a href={`mailto:${companyEmail}`} target='_blank' rel='noreferrer' className='text-dark text-decoration-none'> {companyEmail}</a>
                                     </p>
                                 </div>
                             </div>

@@ -1,10 +1,11 @@
-import { Building, Check, Heart, Lightbulb, ListStar, Trophy, X } from "@phosphor-icons/react";
+import { Building, Check, Heart, Lightbulb, ListStar, X } from "@phosphor-icons/react";
 
 export const companyName = "Sam Realtor";
+export const companyMotto = "Opening Doors to New Beginnings";
 export const companyEmail = "hirwawilly9@gmail.com";
 // export const companyEmail = "samrealtor60@gmail.com";
-export const companyPhoneNumber1 = "250789305885";
-export const companyPhoneNumber2 = "250788321583";
+export const companyPhoneNumber1 = { phone: "250789305885", text: "(+250) 789 305 885" };
+export const companyPhoneNumber2 = { phone: "250788321583", text: "(+250) 788 321 583" };
 export const facebookLink = "https://www.facebook.com/profile.php?id=61567054102525";
 export const instagramLink = "https://www.instagram.com/sam_real_estate_rwanda";
 export const twitterLink = "";
