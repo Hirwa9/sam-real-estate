@@ -55,7 +55,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
 
 
     // Compare properties
-    const [showPropCompare, setShowPropCompare] = useState(false);
+    const [showPropComparison, setShowPropComparison] = useState(false);
 
     const compareProperty = async (id) => {
         const result = await addToCompareList(id);
@@ -76,7 +76,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                         </p>
                     </>
                 ),
-                action: () => { setShowPropCompare(true); resetConfirmDialog() },
+                action: () => { setShowPropComparison(true); resetConfirmDialog() },
                 actionText: <>Compare <CaretRight /> </>,
                 closeText: 'Later',
             });
@@ -116,6 +116,8 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                         return (val.furnished !== null && !val.furnished);
                     case "furnished":
                         return (val.furnished !== null && val.furnished);
+                    case "featured":
+                        return (val.featured !== null && val.featured && !val.closed);
                     // Combined filters (price range, category and type)
                     case "combined": {
                         const combinedFilter = filterValue;
@@ -316,7 +318,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                         onClose={resetConfirmDialog}
                     />
 
-                    <div className="d-flex flex-wrap px-sm-2 overflow-hidden" id="propertyCard">
+                    <div className="d-flex justify-content-center flex-wrap px-sm-2 overflow-hidden" id="propertyCard">
                         {propertiesToShow
                             .slice(0, limit)
                             .map((val, index) => {
@@ -447,9 +449,8 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                 </button>
             )}
 
-
             {/* Property comparison */}
-            <CompareProperties show={showPropCompare} onClose={() => setShowPropCompare(false)} />
+            <CompareProperties show={showPropComparison} onClose={() => setShowPropComparison(false)} />
         </>
     );
 };
