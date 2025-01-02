@@ -4,14 +4,14 @@ import './admin.css';
 import logo from "../../components/images/logo.jpg";
 import { Link, useNavigate } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, EnvelopeSimple, Eraser, Eye, EyeSlash, Gear, HandCoins, Heart, HouseLine, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, X } from '@phosphor-icons/react';
+import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WhatsappLogo, X } from '@phosphor-icons/react';
 import { formatBigCountNumbers, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
 import DividerText from '../common/DividerText';
 import ActionPrompt from '../common/actionPrompt/ActionPrompt';
 import ConfirmDialog from '../common/confirmDialog/ConfirmDialog';
-import { aboutProperties } from '../data/Data';
+import { aboutProperties, companyAddress, companyEmail, companyMotto, companyName, companyPhoneNumber1, companyPhoneNumber2 } from '../data/Data';
 import LoadingBubbles from '../common/LoadingBubbles';
 
 const Admin = () => {
@@ -812,10 +812,11 @@ const Admin = () => {
     const [videoFile, setVideoFile] = useState(null);
     const [showAddImageForm, setShowAddImageForm] = useState(false);
     const [showAddVideoForm, setShowAddVideoForm] = useState(false);
+    const [imageFileName, setImageFileName] = useState(null);
+    const [videoFileName, setVideoFileName] = useState(null);
 
     const handleImageFileChange = (e) => {
         const file = e.target.files[0];
-        // console.log(file);
         if (file && !file.type.startsWith("image/")) {
             toast({
                 message: "Please upload a valid image file.",
@@ -824,11 +825,11 @@ const Admin = () => {
             return;
         }
         setImageFile(file);
+        setImageFileName(file?.name || ""); // Set the file name
     };
 
     const handleVideoFileChange = (e) => {
         const file = e.target.files[0];
-        // console.log(file);
         if (file && !file.type.startsWith("video/")) {
             toast({
                 message: "Please upload a valid video file.",
@@ -837,6 +838,7 @@ const Admin = () => {
             return;
         }
         setVideoFile(file);
+        setVideoFileName(file?.name || ""); // Set the file name
     };
 
     const addPropertyImage = async () => {
@@ -1063,6 +1065,7 @@ const Admin = () => {
             fetchProperties();
         }
         if (!showSelectedPropertyInfo) {
+            setSelectedImageUrl('');
             setShowAddImageForm(false);
             setShowAddVideoForm(false);
             setEditSelectedProperty(false);
@@ -1173,8 +1176,7 @@ const Admin = () => {
                                     </span>
                                     <span className="flex-align-center">
                                         <span className="fs-70 fw-bold text-black2">
-                                            {/* {likes.length > 0 && Array(likes).length > 0 && formatBigCountNumbers(Array(likes).length)} */}
-                                            {JSON.parse(likes).length > 0 && formatBigCountNumbers(Array(likes).length)}
+                                            {likes !== null && formatBigCountNumbers(Array(likes).length)}
                                         </span>
                                         <Heart className="text ms-1 fs-4 ptr me-1" />
                                     </span>
@@ -1231,8 +1233,8 @@ const Admin = () => {
                                     }
                                 </div>
                                 {selectedImageUrl !== '' && (
-                                    <ul className="list-unstyled d-flex flex-wrap gap-3">
-                                        <li className='col-5 btn btn-sm btn-outline-secondary border-2 border-warning border-opacity-50 rounded-0 clickDown'
+                                    <ul className="list-unstyled flex-center flex-wrap gap-3">
+                                        <li className='col-5 btn btn-sm btn-outline-secondary rounded-pill clickDown'
                                             onClick={
                                                 () => {
                                                     setShowSelectedPropertyInfo(false);
@@ -1253,7 +1255,7 @@ const Admin = () => {
                                                 }
                                             }
                                         ><Image /> Set as cover</li>
-                                        <li className='col-5 btn btn-sm btn-outline-danger border-2 border-warning border-opacity-50 rounded-0 clickDown'
+                                        <li className='col-5 btn btn-sm btn-outline-danger rounded-pill clickDown'
                                             onClick={
                                                 () => {
                                                     setShowSelectedPropertyInfo(false);
@@ -1637,23 +1639,26 @@ const Admin = () => {
                                         <hr className='w-100 my-2 opacity-0' />
                                         {/* Image form */}
                                         {showAddImageForm && (
-                                            <div className="w-100 bg-gray-300 p-3 rounded-3 small">
+                                            <div className="w-100 bg-gray-300 p-3 small add-property-image">
                                                 <h6 className='flex-align-center text-gray-600'><Image size={20} weight="fill" className='me-1' /> Add Property Image</h6>
-                                                <input
-                                                    type="file"
-                                                    accept="image/jpeg, image/jpg, image/png"
-                                                    name="propImage"
-                                                    id="propImage"
-                                                    className="mb-3"
-                                                    onChange={handleImageFileChange}
-                                                />
+                                                <div className="flex-align-center flex-wrap gap-2 mb-3">
+                                                    <input
+                                                        type="file"
+                                                        accept="image/jpeg, image/jpg, image/png"
+                                                        name="propImage"
+                                                        id="propImage"
+                                                        className="form-control rounded-0 file-input"
+                                                        onChange={handleImageFileChange}
+                                                    />
+                                                    <p className={`${imageFileName ? 'text-success' : ''} mb-0 px-2`}>{imageFileName || "No file chosen"}</p>
+                                                </div>
                                                 <div className="modal-footer justify-content-around">
                                                     <button
                                                         type="button"
                                                         className={`col-5 btn btn-sm text-secondary border-0 ${isWaitingAdminEditAction ? 'opacity-25' : 'opacity-75'
                                                             } clickDown`}
                                                         disabled={isWaitingAdminEditAction}
-                                                        onClick={() => setShowAddImageForm(false)}
+                                                        onClick={() => { setImageFileName(null); setShowAddImageForm(false) }}
                                                     >
                                                         Cancel
                                                     </button>
@@ -1662,7 +1667,7 @@ const Admin = () => {
                                                         className="col-5 btn btn-sm btn-secondary flex-center px-3 rounded-pill clickDown"
                                                         id="uploadImage"
                                                         onClick={addPropertyImage}
-                                                        disabled={isWaitingAdminEditAction}
+                                                        disabled={imageFileName === null || isWaitingAdminEditAction}
                                                     >
                                                         {!isWaitingAdminEditAction ? (
                                                             <>
@@ -1679,23 +1684,26 @@ const Admin = () => {
                                         )}
                                         {/* Video form */}
                                         {showAddVideoForm && (
-                                            <div className="w-100 bg-gray-300 p-3 rounded-3 small">
+                                            <div className="w-100 bg-gray-300 p-3 small add-property-video">
                                                 <h6 className='flex-align-center text-gray-600'><Video size={20} weight="fill" className='me-1' /> Add Property Video</h6>
-                                                <input
-                                                    type="file"
-                                                    accept="video/mp4, video/quicktime, video/x-msvideo, video/x-matroska, video/3gpp"
-                                                    name="propVideo"
-                                                    id="propVideo"
-                                                    className="mb-3"
-                                                    onChange={handleVideoFileChange}
-                                                />
+                                                <div className="flex-align-center flex-wrap gap-2 mb-3">
+                                                    <input
+                                                        type="file"
+                                                        accept="video/mp4, video/quicktime, video/x-msvideo, video/x-matroska, video/3gpp"
+                                                        name="propVideo"
+                                                        id="propVideo"
+                                                        className="form-control rounded-0 file-input"
+                                                        onChange={handleVideoFileChange}
+                                                    />
+                                                    <p className={`${videoFileName ? 'text-success' : ''} mb-0 px-2`}>{videoFileName || "No file chosen"}</p>
+                                                </div>
                                                 <div className="modal-footer justify-content-around">
                                                     <button
                                                         type="button"
                                                         className={`col-5 btn btn-sm text-secondary border-0 ${isWaitingAdminEditAction ? 'opacity-25' : 'opacity-75'
                                                             } clickDown`}
                                                         disabled={isWaitingAdminEditAction}
-                                                        onClick={() => setShowAddVideoForm(false)}
+                                                        onClick={() => { setVideoFileName(null); setShowAddVideoForm(false) }}
                                                     >
                                                         Cancel
                                                     </button>
@@ -1704,7 +1712,7 @@ const Admin = () => {
                                                         className="col-5 btn btn-sm btn-secondary flex-center px-3 rounded-pill clickDown"
                                                         id="uploadVideo"
                                                         onClick={addPropertyVideo}
-                                                        disabled={isWaitingAdminEditAction}
+                                                        disabled={videoFileName === null || isWaitingAdminEditAction}
                                                     >
                                                         {!isWaitingAdminEditAction ? (
                                                             <>
@@ -1868,7 +1876,7 @@ const Admin = () => {
 
         return (
             <div className="mt-4">
-                <h3 className="h6 flex-align-center px-2 bg-gray-300 text-gray-600 mb-4 py-2 peak-borders-b"><Calendar className='me-2 opacity-50' /> Closed Properties Monthly Report</h3>
+                <h3 className="h6 flex-align-center mb-4 px-2 py-2 bg-gray-300 text-gray-600 peak-borders-b"><Calendar className='me-2 opacity-50' /> Closed Properties Monthly Report</h3>
                 {Object.entries(groupedProperties).length === 0 ? (
                     <p className="text-muted">No closed properties to display.</p>
                 ) : (
@@ -2264,7 +2272,7 @@ const Admin = () => {
                 <div className="d-xl-flex pt-xl-4">
                     <div className="p-4 small col-xl-8 clip-text-gradient">
                         <p className="mb-3 text-justify">
-                            <span className='fs-3'>Welcome back</span> <br />
+                            <span className='fs-3'>Welcome</span> <br />
                             With admin tools, you can manage and oversee various aspects of your platform efficiently. ___ You can can perform different activities:
                         </p>
                         <ul className="mb-0 list-unstyled">
@@ -2665,7 +2673,7 @@ const Admin = () => {
                                                         <td className={`ps-sm-3 ${isClosed ? 'text-success' : ''} border-0 border-end ${isActive ? 'border-2 border-primary' : isClosed ? 'border-1 border-success' : isUnlisted ? 'border-1 border-warning' : ''}`}>
                                                             {index + 1}
                                                         </td>
-                                                        <td title={property.location + `,\n\n` + property.about}>
+                                                        <td title={`Location: ` + property.location + `,\n\n` + property.about}>
                                                             {property.name}
                                                         </td>
                                                         <td className="text-muted fs-75" >
@@ -3009,6 +3017,10 @@ const Admin = () => {
                                 <span className={`small d-flex align-items-center ${showOnlyUnrepliedMessages ? 'text-light' : 'text-gray-700'}`}><EnvelopeSimple className='me-1' /> Not replied</span>
                                 <span className={`badge w-fit ms-2 p-1 ${showOnlyUnrepliedMessages ? 'text-light border-light' : 'text-dark border-secondary'} border border-opacity-25 fw-normal`}>{notRepliedMessages.length}</span>
                             </div>
+                            <div className={`d-flex align-items-center w-fit text-nowrap bg-gray-300 rounded-3 px-2 py-1 small ptr`} onClick={() => fetchMessages()}
+                            >
+                                <span className={`small d-flex align-items-center ${showOnlyUnrepliedMessages ? 'text-light' : 'text-gray-700'}`}><ArrowClockwise weight="bold" className="me-1" /> Refresh</span>
+                            </div>
                         </div>
                         <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
                             {messagesToShow
@@ -3270,34 +3282,306 @@ const Admin = () => {
         </section>
     );
 
-    const Settings = () => (
-        <section>
-            {/* Section about */}
-            <div className='pt-5 pb-3 d-lg-flex section-about'>
-                <div>
-                    <h1 className='text-center mb-4 fw-bold text-secondary'>Settings</h1>
-                    <div className="d-lg-flex px-4 fs-5 text-gray-600">
-                        Customize property and business settings to align with your brand and operational needs.
+    const Settings = () => {
+        const [propertySettings, setPropertySettings] = useState({
+            maxImages: 25,
+            maxVideos: 1,
+            featuredPropertiesLimit: 15,
+            allowGuestLikes: true,
+        });
+
+        const [businessProfile, setBusinessProfile] = useState({
+            businessName: companyName,
+            motto: companyMotto,
+            email: companyEmail,
+            phone1: companyPhoneNumber1,
+            phone2: companyPhoneNumber2,
+            workingHours: {
+                weekdays: { start: '09:00', end: '17:00' },
+                weekends: { start: '09:00', end: '17:00' },
+            },
+            address: companyAddress,
+        });
+
+        const handlePropertySettingsChange = (e) => {
+            const { name, value, type, checked } = e.target;
+            setPropertySettings((prev) => ({
+                ...prev,
+                [name]: type === 'checkbox' ? checked : value,
+            }));
+        };
+
+        const handleBusinessProfileChange = (e) => {
+            const { name, value, type, files } = e.target;
+            setBusinessProfile((prev) => ({
+                ...prev,
+                [name]: type === 'file' ? files[0] : value,
+            }));
+        };
+
+        const handleSaveChanges = () => {
+            console.log('Property Settings:', propertySettings);
+            console.log('Business Profile:', businessProfile);
+            alert('Changes saved successfully!');
+        };
+
+        return (
+            <section>
+                {/* Section Header */}
+                <div className='pt-5 pb-3 d-lg-flex section-about'>
+                    <div>
+                        <h1 className='text-center mb-4 fw-bold text-secondary'>Settings</h1>
+                        <div className="d-lg-flex px-4 fs-5 text-gray-600">
+                            Customize property and business settings to align with your brand and operational needs.
+                        </div>
+                    </div>
+                    <Gear size={200} className='d-none d-lg-block px-4 col-lg-4 text-gray-400 mask-bottom section-icon' />
+                </div>
+
+                {/* Section Content */}
+                <div className="container my-5 px-0 py-4 section-content">
+                    <div className="d-lg-flex gap-4">
+                        {/* Property Settings */}
+                        <div className="col mb-5 settings-wrapper property-settings">
+                            <h2 className="h4 d-flex px-2 text-gray-700 fw-semibold"><Building size={30} className="opacity-50 me-2" /> Property Settings</h2>
+                            <hr className='mb-4' />
+                            <div className="px-2">
+                                <form>
+                                    <div className="mb-3">
+                                        <div className="label mb-2">Max Images per Property</div>
+                                        <p><Image size={20} weight='duotone' className='me-1' /> {propertySettings.maxImages} images</p>
+                                    </div>
+                                    <div className="mb-3">
+                                        <div className="label mb-2">Max Videos per Property</div>
+                                        <p><Video size={20} weight='duotone' className='me-1' /> {propertySettings.maxVideos} video</p>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="featuredPropertiesLimit" className="form-label">Featured Properties Limit</label>
+                                        <input
+                                            type="number"
+                                            id="featuredPropertiesLimit"
+                                            name="featuredPropertiesLimit"
+                                            className="form-control rounded-0"
+                                            value={propertySettings.featuredPropertiesLimit}
+                                            onChange={handlePropertySettingsChange}
+                                        />
+                                    </div>
+                                    <div className="form-check">
+                                        <input
+                                            type="checkbox"
+                                            id="allowGuestLikes"
+                                            name="allowGuestLikes"
+                                            className="form-check-input"
+                                            checked={propertySettings.allowGuestLikes}
+                                            onChange={handlePropertySettingsChange}
+                                        />
+                                        <label htmlFor="allowGuestLikes" className="form-check-label">Allow Guest Likes</label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        {/* Business Profile Settings */}
+                        <div className="col mb-5 settings-wrapper business-settings">
+                            <h2 className="h4 d-flex px-2 text-gray-700 fw-semibold"><IdentificationBadge size={30} className="opacity-50 me-2" /> Business Profile Settings</h2>
+                            <hr className='mb-4' />
+                            <div className="px-2">
+                                <div className="d-flex mb-4">
+                                    <img src={logo} alt="logo" className="w-7rem h-7rem p-2 rounded-0 img-thumbnail" />
+                                    <div className="p-2">
+                                        <div className="h4 mb-0">{businessProfile.businessName}</div>
+                                        <div className="small">{businessProfile.motto}</div>
+                                        <div className="fs-70">{businessProfile.email}</div>
+                                        <div className="fs-70">{businessProfile.phone1.text}</div>
+                                    </div>
+                                </div>
+                                <form>
+                                    <div className="mb-3">
+                                        <label htmlFor="businessName" className="form-label">Business Name</label>
+                                        <input
+                                            type="text"
+                                            id="businessName"
+                                            name="businessName"
+                                            className="form-control rounded-0"
+                                            placeholder='Enter name'
+                                            value={businessProfile.businessName}
+                                            onChange={handleBusinessProfileChange}
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="motto" className="form-label">Business Motto</label>
+                                        <input
+                                            type="text"
+                                            id="motto"
+                                            name="motto"
+                                            className="form-control rounded-0"
+                                            placeholder='Enter motto'
+                                            value={businessProfile.motto}
+                                            onChange={handleBusinessProfileChange}
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="email" className="form-label">Business Email</label>
+                                        <div className="flex-align-center gap-3 mb-2">
+                                            <div className="position-relative h-100 ms-1 flex-shrink-0 flex-grow-1">
+                                                <Envelope weight='duotone' />
+                                            </div>
+                                            <input
+                                                type="email"
+                                                id="email"
+                                                name="email"
+                                                className="form-control rounded-0"
+                                                placeholder='Enter email'
+                                                value={businessProfile.email}
+                                                onChange={handleBusinessProfileChange}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="phone" className="form-label">Phone(s)</label>
+                                        <div className="flex-align-center gap-3 mb-2">
+                                            <div className="position-relative h-100 ms-1 flex-shrink-0 flex-grow-1">
+                                                <Phone weight='duotone' /> <span className='position-absolute bottom-0 start-100 fs-60 bg-light translate-middle-x ms-1'>1</span>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                id="phone"
+                                                name="phone"
+                                                className="form-control rounded-0"
+                                                placeholder='Enter phone number'
+                                                value={businessProfile.phone1.phone}
+                                                onChange={handleBusinessProfileChange}
+                                            />
+                                        </div>
+                                        <div className="flex-align-center gap-3 mb-2">
+                                            <div className="position-relative h-100 ms-1 flex-shrink-0 flex-grow-1">
+                                                <Phone weight='duotone' /> <span className='position-absolute bottom-0 start-100 fs-60 bg-light translate-middle-x ms-1'>2</span>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                id="phone"
+                                                name="phone"
+                                                className="form-control rounded-0"
+                                                placeholder='Enter phone number'
+                                                value={businessProfile.phone2.phone}
+                                                onChange={handleBusinessProfileChange}
+                                            />
+                                        </div>
+                                        <div className="d-flex m-0 fs-75 form-text"><WhatsappLogo weight='duotone' size={20} fill='var(--bs-success)' className='ms-1 me-3' /> Phone number one is also set as WhatsApp number</div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="weekdaysStart" className="form-label">Week day working hours (Start - End)</label>
+                                        <div className="d-flex gap-2">
+                                            <input
+                                                type="time"
+                                                id="weekdaysStart"
+                                                name="weekdaysStart"
+                                                className="form-control rounded-0"
+                                                value={businessProfile.workingHours.weekdays.start}
+                                                onChange={(e) =>
+                                                    setBusinessProfile((prev) => ({
+                                                        ...prev,
+                                                        workingHours: {
+                                                            ...prev.workingHours,
+                                                            weekdays: { ...prev.workingHours.weekdays, start: e.target.value },
+                                                        },
+                                                    }))
+                                                }
+                                            />
+                                            <input
+                                                type="time"
+                                                id="weekdaysEnd"
+                                                name="weekdaysEnd"
+                                                className="form-control rounded-0"
+                                                value={businessProfile.workingHours.weekdays.end}
+                                                onChange={(e) =>
+                                                    setBusinessProfile((prev) => ({
+                                                        ...prev,
+                                                        workingHours: {
+                                                            ...prev.workingHours,
+                                                            weekdays: { ...prev.workingHours.weekdays, end: e.target.value },
+                                                        },
+                                                    }))
+                                                }
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="weekendsStart" className="form-label">Weekend working hours (Start - End)</label>
+                                        <div className="d-flex gap-2">
+                                            <input
+                                                type="time"
+                                                id="weekendsStart"
+                                                name="weekendsStart"
+                                                className="form-control rounded-0"
+                                                value={businessProfile.workingHours.weekends.start}
+                                                onChange={(e) =>
+                                                    setBusinessProfile((prev) => ({
+                                                        ...prev,
+                                                        workingHours: {
+                                                            ...prev.workingHours,
+                                                            weekends: { ...prev.workingHours.weekends, start: e.target.value },
+                                                        },
+                                                    }))
+                                                }
+                                            />
+                                            <input
+                                                type="time"
+                                                id="weekendsEnd"
+                                                name="weekendsEnd"
+                                                className="form-control rounded-0"
+                                                value={businessProfile.workingHours.weekends.end}
+                                                onChange={(e) =>
+                                                    setBusinessProfile((prev) => ({
+                                                        ...prev,
+                                                        workingHours: {
+                                                            ...prev.workingHours,
+                                                            weekends: { ...prev.workingHours.weekends, end: e.target.value },
+                                                        },
+                                                    }))
+                                                }
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="address" className="form-label">Address</label>
+                                        <div className="flex-align-center gap-3 mb-2">
+                                            <div className="position-relative h-100 ms-1 flex-shrink-0 flex-grow-1">
+                                                <MapPinArea weight='duotone' />
+                                            </div>
+                                            <input
+                                                type="text"
+                                                id="address"
+                                                name="address"
+                                                className="form-control rounded-0"
+                                                placeholder='Enter address'
+                                                value={businessProfile.address}
+                                                onChange={handleBusinessProfileChange}
+                                            />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Save Changes Button */}
+                    <div className="text-end mt-4">
+                        <button type="submit" className="btn btn-sm btn-dark col-12 col-sm-auto flex-center mt-3 mx-auto py-2 px-4 rounded-pill clickDown" id="addPropertyBtn"
+                            onClick={handleSaveChanges}
+                        >
+                            {!isWaitingAdminEditAction ?
+                                <>Save Changes <FloppyDisk size={18} className='ms-2' /></>
+                                : <>Saving changes <span className="spinner-grow spinner-grow-sm ms-2"></span></>
+                            }
+                        </button>
                     </div>
                 </div>
-                <Gear size={200} className='d-none d-lg-block px-4 col-lg-4 text-gray-400 mask-bottom section-icon' />
-            </div>
+            </section>
+        );
+    };
 
-            {/* Section Content : Settings */}
-            <div className="container my-5 px-0 py-4 section-content">
-                <ul>
-                    <li>Properties Settings</li>
-                    <li>Business Profile Settings</li>
-                </ul>
-                <p>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odio aut in, soluta ducimus tempora dicta odit recusandae omnis impedit quas delectus a quaerat ea accusantium necessitatibus molestias, porro sequi maxime!
-                </p>
-                <p>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odio aut in, soluta ducimus tempora dicta odit recusandae omnis impedit quas delectus a quaerat ea accusantium necessitatibus molestias, porro sequi maxime!
-                </p>
-            </div>
-        </section>
-    );
+    // export default Settings;
 
     const renderContent = () => {
         switch (activeSection) {
@@ -3330,7 +3614,7 @@ const Admin = () => {
                             <img src={logo} alt="logo" className="rounded-circle logo"></img>
                         </Link>
                     </div>
-                    <small className='fs-70'>
+                    <small className='fs-70 text-uppercase'>
                         Sam realtol
                     </small>
                 </div>
