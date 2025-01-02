@@ -1,6 +1,6 @@
 import React from 'react';
 import './faqs.css';
-import Back from '../common/header/Back';
+import PageInfo from '../common/header/PageInfo';
 import img from '../images/real_estate_image.webp';
 import { faqs } from '../data/Data';
 import { PushPinSimple } from '@phosphor-icons/react';
@@ -10,7 +10,7 @@ const Faqs = () => {
     return (
         <>
             <section className='mb-4 faqs'>
-                <Back name="FAQs" title="FAQs - Read About the Real Estate " cover={img} className="mb-0" />
+                <PageInfo name="FAQs" title="FAQs - Read About the Real Estate " cover={img} className="mb-0" />
                 <div className="container-fluid">
                     <Heading
                         title="Frequently Asked Questions"
