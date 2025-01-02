@@ -1,8 +1,8 @@
-.featured .box {
+.featured-types .box {
     box-shadow: 0 0 20px 0 rgb(112 112 138 / 18%);
 }
 
-.featured img {
+.featured-types img {
     --_measure: 4.0625rem;
     width: var(--_measure);
     height: var(--_measure);
@@ -10,7 +10,7 @@
 }
 
 @media screen and (min-width: 768px) {
-    .featured img {
+    .featured-types img {
         --_measure: 6rem;
     }
 }

@@ -141,12 +141,9 @@ main section > .section-content {
     /* z-index: -1; */
 }
 
-.message-reply-comp {
-    animation: zoomInBack .3s 1;
-}
-
 .message-reply {
     /* background-image: linear-gradient(rgba(33, 37, 41, .8), rgba(33, 37, 41, .8)), */
+    animation: zoomInBack .3s 1;
     background-image: linear-gradient(rgba(206, 212, 218, .9), rgba(206, 212, 218, .9)),
         url("../../../public/images/whatsApp_chat_icon_bg.jpg");
 }
