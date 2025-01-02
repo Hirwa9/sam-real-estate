@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './terms.css';
-import Back from '../common/header/Back';
+import PageInfo from '../common/header/PageInfo';
 import img from '../images/real_estate_image.webp';
 import Heading from '../common/Heading';
 import { companyName } from '../data/Data';
@@ -32,7 +32,7 @@ const Terms = () => {
     return (
         <>
             <div className='mb-4 terms'>
-                <Back name="Terms" title="Terms of Use" cover={img} className="mb-0" />
+                <PageInfo name="Terms" title="Terms of Use" cover={img} className="mb-0" />
                 <div className="container-fluid">
                     <Heading
                         title="Samrealtor Terms of Use"
