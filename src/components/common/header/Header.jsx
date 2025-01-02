@@ -5,7 +5,7 @@ import {
     useLocation,
 } from "react-router-dom";
 import { AuthenticationContext } from "../../../App";
-import { nav } from "../../data/Data";
+import { developerWebsiteLink, nav } from "../../data/Data";
 import logo from "../../../components/images/logo.jpg";
 import SocialMediaIcons from '../SocialMediaIcons';
 import { ArrowsLeftRight, CaretRight, City, Code, ListStar, User } from "@phosphor-icons/react";
@@ -103,7 +103,7 @@ const Header = () => {
     }, [location.pathname, startTransition]);
 
     // Property comparing
-    const [showPropCompare, setShowPropCompare] = useState(false);
+    const [showPropComparison, setShowPropComparison] = useState(false);
 
     return (
         <>
@@ -141,8 +141,11 @@ const Header = () => {
                             })}
                         </ul>
                         <div className="nav navbar-nav navbar-end ms-auto align-items-center">
-                            <li className={`nav-item px-2 py-1 text-gray-700 ptr clickDown`} title="Comparison" onClick={() => setShowPropCompare(true)}>
+                            <li className={`nav-item px-2 py-1 text-gray-700 ptr clickDown`} title="Comparison" onClick={() => setShowPropComparison(true)}>
                                 <ArrowsLeftRight size={23} />
+                            </li>
+                            <li ref={reviewAdderTogglerRef} className={`nav-item px-2 py-1 text-gray-700 ptr clickDown`} title="Submit a review" onClick={() => { setClientAddReview(true) }}>
+                                <ListStar size={23} />
                             </li>
                             {isLoggedIn ? (
                                 <h6 className="m-0">
@@ -206,8 +209,8 @@ const Header = () => {
                             <div className="mt-auto ">
                                 <SocialMediaIcons />
                                 <div className="p-3 text-gray-600 fw-light small">
-                                    <i className='far fa-copyright'></i> {new Date().getFullYear()} <span className="fw-bold"> samrealtol</span>. All rights reserved. <br />
-                                    <Code weight='light' size={18} className='mb-1' /> Powered by <a href="https://hirwa9.github.io/" className="text-gray-600 fw-bold" target='_blank' rel='noreferrer'>HirwaSofts</a>.
+                                    <i className='far fa-copyright'></i> {new Date().getFullYear()} <span className="fw-bold"> SamRealtor</span>. All rights reserved. <br />
+                                    <Code weight='light' size={18} className='mb-1' /> Powered by <a href={developerWebsiteLink} className="text-gray-600 fw-bold" target='_blank' rel='noreferrer'>HirwaSofts</a>.
                                 </div>
                             </div>
                         </div>
@@ -215,11 +218,11 @@ const Header = () => {
                         {/* Floating nav icons */}
                         <div className="r-middle d-grid gap-2 inx-inherit" style={{ translate: '30% 0' }}>
                             <div className="p-2 bg-gray-900 text-gray-300 border border-2 border-secondary border-opacity-25 rounded-circle ptr bounceClick" title="Compare properties"
-                                onClick={() => { hideSmNavbar(); setShowPropCompare(true) }}
+                                onClick={() => { hideSmNavbar(); setShowPropComparison(true) }}
                             >
                                 <ArrowsLeftRight size={23} />
                             </div>
-                            <div ref={reviewAdderTogglerRef} className="p-2 bg-gray-900 text-gray-300 border border-2 border-secondary border-opacity-25 rounded-circle ptr bounceClick" title="Add a review"
+                            <div ref={reviewAdderTogglerRef} className="p-2 bg-gray-900 text-gray-300 border border-2 border-secondary border-opacity-25 rounded-circle ptr bounceClick" title="Submit a review"
                                 onClick={() => { hideSmNavbar(); setClientAddReview(true) }}
                             >
                                 <ListStar size={23} />
@@ -255,7 +258,7 @@ const Header = () => {
             }
 
             {/* Property comparison */}
-            <CompareProperties show={showPropCompare} onClose={() => setShowPropCompare(false)} />
+            <CompareProperties show={showPropComparison} onClose={() => setShowPropComparison(false)} />
         </>
     );
 }
