@@ -181,7 +181,7 @@ const ReviewCard = () => {
                                 <button ref={reviewAdderTogglerRef} type="button" className='btn btn-sm btn-outline-light border-light border-opacity-25 w-100 rounded-pill clickDown'
                                     onClick={() => setClientAddReview(true)}
                                 >
-                                    Add a review <ListStar size={15} className='ms-1' />
+                                    Submit a review <ListStar size={15} className='ms-1' />
                                 </button>
                             </p>
                         </div>
@@ -200,7 +200,8 @@ const ReviewCard = () => {
                     />
                 ]}
                 toggler={reviewAdderTogglerRef}
-                onClose={() => setClientAddReview(false)} className="pb-3"
+                onClose={() => setClientAddReview(false)} 
+                className="pb-3"
                 avoidCloseReasons={dontCloseCard}
             />
         </>
