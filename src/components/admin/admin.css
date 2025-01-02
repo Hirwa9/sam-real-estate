@@ -249,3 +249,35 @@ main section > .section-content {
 .add-property-form form textarea:focus {
     border-inline-color: transparent;
 }
+
+.add-property-image .file-input,
+.add-property-video .file-input {
+    width: 7.5rem;
+    clip-path: polygon(0 0, 7.5rem 0, 7.5rem 100%, 0 100%);
+    border-block: none;
+    border-inline-width: 2px;
+    background-color: var(--bs-gray-300);
+}
+
+.settings-wrapper input {
+    border-block: none;
+    border-inline-width: 2px;
+}
+
+.settings-wrapper label,
+.settings-wrapper .label {
+    font-weight: 600;
+}
+
+/* .add-property-image .custom-file-label,
+.add-property-video .custom-file-label {
+    display: inline-block;
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+} */
