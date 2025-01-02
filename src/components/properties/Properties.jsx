@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './properties.css';
 import { aboutProperties } from '../data/Data';
-import Back from '../common/header/Back';
+import PageInfo from '../common/header/PageInfo';
 import img from '../images/pricing.jpg';
 import PropertyCard from '../common/PropertyCard';
 import DividerText from '../common/DividerText';
@@ -339,7 +339,7 @@ const Properties = () => {
         <>
             <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={resetToast} />
             <section className='properties'>
-                <Back name="Property listing" title="Listing - Discover a Wide Range of Listed Properties" cover={img} className="mb-0" />
+                <PageInfo name="Property listing" title="Listing - Discover a Wide Range of Listed Properties" cover={img} className="mb-0" />
                 {/* Filter tools */}
                 <div className={`px-1 ${floatFilterTools ? 'mb-3 py-3 floated' : 'py-1'} filter-bar`}>
                     <div className="d-flex align-items-center gap-2 px-2 px-md-3 pb-2 pb-sm-0 overflow-auto Sbar-none">
