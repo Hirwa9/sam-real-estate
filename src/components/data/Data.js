@@ -1,5 +1,6 @@
 import { Building, Check, Heart, Lightbulb, ListStar, X } from "@phosphor-icons/react";
 
+// Company's info
 export const companyName = "Sam Realtor";
 export const companyMotto = "Opening Doors to New Beginnings";
 export const companyEmail = "hirwawilly9@gmail.com";
@@ -12,6 +13,10 @@ export const twitterLink = "";
 export const linkedInLink = "";
 export const companyAddress = "24 KG 414 St, Kigali, Rwanda";
 
+// Developer's info
+export const developerWebsiteLink = "https://hirwa9.github.io/";
+
+// Navbar paths
 export const nav = [
     {
         text: "Home",
@@ -64,39 +69,36 @@ export const nav = [
     },
 ];
 
+// Featured prop types
 export const featured = [
     {
         cover: "/images/Family_house_icon_image.png",
         name: "Houses",
-        total: "122 Property",
         path: "/properties/House",
     },
     {
         cover: "/images/apartment_icon_image.png",
         name: "Apartments",
-        total: "300 Property",
         path: "/properties/Apartment",
     },
     {
         cover: "/images/Office_&_studio_icon_image.png",
         name: "Offices",
-        total: "80 Property",
         path: "/properties/Office",
     },
     {
         cover: "/images/Commercial_icon_image.jpg",
         name: "Commercials",
-        total: "80 Property",
         path: "/properties/Commercial",
     },
     {
         cover: "/images/plot_icon_image.webp",
         name: "Land Plots",
-        total: "10 Property",
         path: "/properties/Land Plot",
     },
 ];
 
+// Primary properties settings
 export const aboutProperties = {
     allTypes: ["House", "Apartment", "Office", "Commercial", "Land Plot"],
     allCategories: ["For Sale", "For Rent"],
@@ -115,6 +117,7 @@ export const aboutProperties = {
     ],
 }
 
+// Awards
 export const awards = [
     {
         name: "Properties",
@@ -143,10 +146,10 @@ export const sectorsNames = [
     "Bumbogo", "Gahanga", "Gasabo", "Gatsata", "Gikondo", "Gikomero", "Gisozi", "Jabana", "Jali", "Kacyiru", "Kagarama", "Kanyinya", "Kanombe", "Kicukiro", "Kigarama", "Kimihurura", "Kimironko", "Kimisagara", "Kinyinya", "Mageragere", "Masaka", "Muhima", "Niboye", "Ndera", "Nduba", "Nyarugunga", "Nyakabanda", "Nyamirambo", "Remera", "Rusororo", "Rutunga", "Rwezamenyo"
 ];
 
+// Team
 export const team = [
     {
         cover: "/images/Samuel.jpg",
-        list: "50",
         address: "Kigali, Rwanda",
         name: "Samuel Muhawenimana",
         socialMedia: [
@@ -245,44 +248,32 @@ export const price = [
     },
 ];
 
+// Site footer
 export const footer = [
     {
-        title: "LAYOUTS",
-        text: [
-            { list: "Home Page" },
-            { list: "About Us" },
-            { list: "Our Services" },
-            { list: "Property Listing" },
-            { list: "Contact" },
-            { list: "Our Blogs" },
+        title: "QUICK PAGES",
+        list: [
+            { text: "Home Page", path: '/' },
+            { text: "Our Services", path: '/about' },
+            { text: "Property Listing", path: '/properties/all' },
+            { text: "Contact", path: '/contact' },
+            { text: "Our Blogs", path: '/blogs' },
         ],
     },
-    // {
-    //     title: "ALL SECTIONS",
-    //     text: [
-    //         { list: "Headers" },
-    //         { list: "Features" },
-    //         { list: "Attractive" },
-    //         { list: "Testimonials" },
-    //         { list: "Videos" },
-    //         { list: "Footers" },
-    //     ],
-    // },
     {
         title: "COMPANY",
-        text: [
-            { list: "About" },
-            { list: "FAQs" },
-            { list: "Login" },
-            { list: "Terms of Use" },
-            { list: "Privacy Portal" },
-            { list: "Affiliates" },
-            // { list: "Changeelog" },
+        list: [
+            { text: "About", path: '/about' },
+            { text: "FAQs", path: '/faqs' },
+            { text: "Testimonials", path: '/about' },
+            { text: "Terms of Use", path: '/terms' },
+            { text: "Privacy Portal", path: '/terms' },
+            // { text: "Affiliates", path: '/about' },
         ],
     },
 ];
 
-
+// Site faqs
 export const faqs = [
     {
         type: "general_real_estate_questions",
