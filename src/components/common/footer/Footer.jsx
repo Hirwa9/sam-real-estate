@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import useCustomDialogs from '../../hooks/useCustomDialogs';
 import { useLocation } from 'react-router-dom';
 import './footer.css';
-import { footer } from '../../data/Data';
+import { developerWebsiteLink, footer } from '../../data/Data';
 import SocialMediaIcons from '../SocialMediaIcons';
 import { Code } from '@phosphor-icons/react';
 import BottomFixedCard from '../bottomFixedCard/BottomFixedCard';
@@ -98,10 +98,10 @@ function Footer() {
                         {footer.map((val, index) => {
                             return (
                                 <div key={index} className="col-12 col-sm-5 col-md-3 px-4 px-sm-0 py-4 box">
-                                    <h4 className='h5'>{val.title}</h4>
+                                    <h4 className='h5 text-nowrap'>{val.title}</h4>
                                     <ul className='list-unstyled small text-white2'>
-                                        {val.text.map((items, index) => (
-                                            <li key={index} className='my-3'>{items.list}</li>
+                                        {val.list.map((items, index) => (
+                                            <li key={index} className="my-3"><a href={items.path} data-discover="true" className='text-decoration-none text-white2'>{items.text}</a></li>
                                         ))}
                                     </ul>
                                 </div>
@@ -114,11 +114,11 @@ function Footer() {
                 <SocialMediaIcons />
                 <div className='flex-center flex-wrap column-gap-2 align-items-center w-fit mx-auto fs-80 text-white2'>
                     <div className='mb-1 mb-sm-0'>
-                        <i className='far fa-copyright'></i> {new Date().getFullYear()} samrealtol
+                        <i className='far fa-copyright'></i> {new Date().getFullYear()} SamRealtor
                     </div>
                     <div>
                         <Code weight='bold' size={20} className='mb-1' /> Powered by <a
-                            href="https://hirwa9.github.io/" target='_blank' rel='noreferrer'
+                            href={developerWebsiteLink} target='_blank' rel='noreferrer'
                             className='text-decoration-none text-white2'> HirwaSofts</a>
                     </div>
                 </div>
