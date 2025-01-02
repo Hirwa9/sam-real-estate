@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import './services.css'
-import Back from '../common/header/Back';
+import PageInfo from '../common/header/PageInfo';
 import img from '../images/services.jpg';
 import Heading from '../common/Heading';
-import FeaturedCard from '../home/featured/FeaturedCard';
+import FeaturedTypesCard from '../home/featured/FeaturedTypesCard';
 import ContentListing from '../common/contentListing/ContentListing';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
 import PropertySearcher from '../common/PropertySearcher';
@@ -20,7 +20,7 @@ const Services = () => {
     return (
         <>
             <section className='mb-4 services'>
-                <Back name="Our Services" title="Services - Find Your Dream Home With Us" cover={img} className="mb-0" />
+                <PageInfo name="Our Services" title="Services - Find Your Dream Home With Us" cover={img} className="mb-0" />
                 {/* Service - Real Estate Listings */}
                 <div className="mb-5 container-fluid featured ">
                     <Heading
@@ -28,7 +28,7 @@ const Services = () => {
                         subtitle="Explore a wide range of properties, from luxurious estates to affordable homes. Our detailed listings provide high-quality photos, property descriptions, and essential information to help you make informed decisions"
                         hType="h2"
                     />
-                    <FeaturedCard />
+                    <FeaturedTypesCard />
                     <h3 className="h5 text-center mb-4 fw-bold">Services provided</h3>
                     <div className="row mx-0 justify-content-lg-evenly">
                         <div className="col-md-6 col-lg-4 mb-4 px-0 px-sm-2">
@@ -159,7 +159,8 @@ const Services = () => {
                 ]}
                 toggler={propertySearcherTogglerRef}
                 onClose={() => setShowPropertySearcher(false)}
-                className="pb-3" />
+                className="pb-3"
+            />
             {/* WhatsApp contactor */}
             <WhatsAppContactor show={showWhatsAppContactor} toggler={whatsappTogglerRef} onClose={() => setShowWhatsAppContactor(false)} />
         </>
