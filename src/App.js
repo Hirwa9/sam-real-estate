@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from 'react';
 import './App.css';
 import Pages from './components/pages/Pages';
 import axios from 'axios';
+import { SettingsProvider } from './components/SettingsProvider';
 
 // Define and export PropertiesContext and AuthenticationContext
 export const PropertiesContext = createContext();
@@ -41,31 +42,31 @@ function App() {
     // Authentication state and functions
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const checkAuthentication = async () => {
-    try {
-        // Retrieve token from cookies if stored
-        const token = document.cookie.split('; ').find(row => row.startsWith('accessToken='))?.split('=')[1];
-        // console.log(token);
-        console.log(document.cookie);
+        try {
+            // Retrieve token from cookies if stored
+            const token = document.cookie.split('; ').find(row => row.startsWith('accessToken='))?.split('=')[1];
+            // console.log(token);
+            console.log(document.cookie);
 
-        // Add Authorization header with the Bearer token
-        const response = await axios.get('http://localhost:5000/verifyToken', {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${token}`
+            // Add Authorization header with the Bearer token
+            const response = await axios.get('http://localhost:5000/verifyToken', {
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            console.log(response.data);
+            setIsLoggedIn(true); // If verifyToken succeeds, user is logged in
+        } catch (error) {
+            if (error.response && error.response.status === 403) {
+                console.log("Token expired, consider refreshing here if needed.");
+                setIsLoggedIn(false);
+            } else {
+                setIsLoggedIn(false);
             }
-        });
-
-        console.log(response.data);
-        setIsLoggedIn(true); // If verifyToken succeeds, user is logged in
-    } catch (error) {
-        if (error.response && error.response.status === 403) {
-            console.log("Token expired, consider refreshing here if needed.");
-            setIsLoggedIn(false);
-        } else {
-            setIsLoggedIn(false);
         }
-    }
-};
+    };
 
 
     useEffect(() => {
@@ -75,7 +76,9 @@ function App() {
     return (
         <PropertiesContext.Provider value={{ propertiesContext, loadingProperties, errorLoadingProperties, fetchProperties }}>
             <AuthenticationContext.Provider value={{ isLoggedIn, checkAuthentication }}>
-                <Pages />
+                <SettingsProvider>
+                    <Pages />
+                </SettingsProvider>
             </AuthenticationContext.Provider>
         </PropertiesContext.Provider>
     );
