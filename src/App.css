@@ -140,6 +140,14 @@ body {
 
 /* Customs */
 
+.app-loading-page {
+  /* background-image: linear-gradient(150deg, rgba(39, 128, 157, 0.3), rgba(195, 133, 0, 0.3)); */
+
+  background-image: linear-gradient(150deg, rgba(39, 128, 157, 0.9), rgba(101, 73, 13, 0.9)), url(../public/images/Kigali2_image.jpeg);
+  background-position: center;
+  background-size: cover;
+}
+
 .heading p {
   /* font-size: 1.25rem; */
   color: #27809d;
