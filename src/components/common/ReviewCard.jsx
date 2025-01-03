@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowClockwise, CaretDown, HandWaving, ListStar, Plus, Star, UserCircle } from '@phosphor-icons/react';
 import BottomFixedCard from './bottomFixedCard/BottomFixedCard';
 import ReviewForm from './reviewForm/ReviewForm';
+import FetchError from './FetchError';
 
 const ReviewCard = () => {
     const [reviews, setReviews] = useState([]);
@@ -77,15 +78,13 @@ const ReviewCard = () => {
                 </div>
             }
             {/* Error */}
-            {!loadingReviews && errorLoadingReviews &&
-                <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 mx-auto mb-5 mt-4 p-3 rounded error-message">
-                    <img src="/images/fetch_error_image.jpg" alt="Error" className="w-4rem h-4rem mx-auto mb-2 opacity-50" />
-                    <p className="text-center text-muted small">Couldn't get reviews. Click the button below to retry</p>
-                    <button className="btn btn-sm btn-outline-secondary d-block mx-auto border border-secondary border-opacity-25" onClick={fetchReviews}>
-                        <ArrowClockwise weight="bold" size={18} className="me-1" /> Retry
-                    </button>
-                </div>
-            }
+            {!loadingReviews && errorLoadingReviews && (
+                <FetchError
+                    errorMessage="Couldn't get reviews. Click the button below to retry"
+                    refreshFunction={() => fetchReviews()}
+                    className="mb-5 mt-4"
+                />
+            )}
             {/* Zero content */}
             {!loadingReviews && !errorLoadingReviews && reviews.length === 0 &&
                 <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 rounded info-message">
@@ -200,7 +199,7 @@ const ReviewCard = () => {
                     />
                 ]}
                 toggler={reviewAdderTogglerRef}
-                onClose={() => setClientAddReview(false)} 
+                onClose={() => setClientAddReview(false)}
                 className="pb-3"
                 avoidCloseReasons={dontCloseCard}
             />
