@@ -33,7 +33,7 @@ const FeaturedTypesCard = () => {
 
     return (
         <>
-            <div className="container position-relative d-flex flex-wrap justify-content-around column-gap-2 my-3">
+            <div className="container position-relative d-flex flex-wrap justify-content-around column-gap-2 my-3 featured-types">
                 {featured.map((item, index) => {
                     const availableProps = typesCount.find(el => el.type === item.name.slice(0, -1));
                     const count = availableProps ? availableProps.count : 0;

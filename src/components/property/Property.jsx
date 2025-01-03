@@ -18,6 +18,7 @@ import ConfirmDialog from '../common/confirmDialog/ConfirmDialog';
 import Heading from '../common/Heading';
 import LoadingBubbles from '../common/LoadingBubbles';
 import { companyPhoneNumber1 } from '../data/Data';
+import FetchError from '../common/FetchError';
 
 const Property = () => {
     // Custom hooks
@@ -272,16 +273,11 @@ const Property = () => {
 
             {/* Error State */}
             {!loading && error && (
-                <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 h-100vh flex-center m-auto p-3 p-sm-4 error-message">
-                    <div>
-                        <img src="/images/fetch_error_image.jpg" alt="Error" className="w-4rem h-4rem mx-auto mb-2 opacity-50" />
-                        <p className="text-center text-muted small">{error}</p>
-                        <button className="btn btn-sm btn-outline-secondary d-block mx-auto border border-secondary border-opacity-25" onClick={handleReload}>
-                            <ArrowClockwise weight="bold" size={18} className="me-1" /> Refresh
-                        </button>
-                    </div>
-                </div>
-
+                <FetchError
+                    errorMessage={error}
+                    refreshFunction={() => handleReload()}
+                    className="h-100vh flex-center m-auto p-sm-4"
+                />
             )}
 
             {/* Content State */}

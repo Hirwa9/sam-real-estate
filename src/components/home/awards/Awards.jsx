@@ -5,6 +5,7 @@ import { awards } from "../../data/Data";
 import Heading from "../../common/Heading";
 import { ArrowClockwise } from "@phosphor-icons/react";
 import LoadingBubbles from "../../common/LoadingBubbles";
+import FetchError from "../../common/FetchError";
 // import Heading from "../../common/Heading";
 
 const Awards = () => {
@@ -114,15 +115,13 @@ const Awards = () => {
                     {/* Loading */}
                     {loadingProperties && <LoadingBubbles />}
                     {/* Error */}
-                    {!loadingProperties && errorLoadingProperties &&
-                        <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 mx-auto mb-5 mt-4 p-3 rounded error-message">
-                            <img src="/images/fetch_error_image.jpg" alt="Error" className="w-4rem h-4rem mx-auto mb-2 opacity-50" />
-                            <p className="text-center text-muted small">Failed to load properties. Click the button to try again</p>
-                            <button className="btn btn-sm btn-outline-secondary d-block mx-auto border border-secondary border-opacity-25" onClick={fetchProperties}>
-                                <ArrowClockwise weight="bold" size={18} className="me-1" /> Retry
-                            </button>
-                        </div>
-                    }
+                    {!loadingProperties && errorLoadingProperties && (
+                        <FetchError
+                            errorMessage="Failed to load properties. Click the button to try again"
+                            refreshFunction={() => fetchProperties()}
+                            className="mb-5 mt-4"
+                        />
+                    )}
                     {/* Available content */}
                     {!loadingProperties && !errorLoadingProperties && totalProperties > 0 &&
                         <>
@@ -165,7 +164,7 @@ const Awards = () => {
                         </>
                     }
                 </div>
-            </section>
+            </section >
         </>
     );
 }
