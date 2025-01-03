@@ -12,6 +12,7 @@ import { addToCompareList, formatBigCountNumbers, shareProperty } from "../../sc
 import MyToast from "./Toast";
 import ConfirmDialog from "./confirmDialog/ConfirmDialog";
 import CompareProperties from "./compareProperties/CompareProperties";
+import FetchError from "./FetchError";
 
 const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount, sortStatus, limited }) => {
     // Custom hooks
@@ -274,13 +275,11 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
 
             {/* Error State */}
             {!loadingProperties && errorLoadingProperties && (
-                <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 mx-auto mb-5 mt-4 p-3 rounded error-message">
-                    <img src="/images/error_illustration.avif" alt="Loading Error" />
-                    <p className="text-center text-muted small">{errorLoadingProperties}</p>
-                    <button className="btn btn-sm btn-outline-secondary d-block mx-auto border border-secondary border-opacity-25" onClick={fetchProperties}>
-                        <ArrowClockwise weight="bold" size={18} className="me-1" /> Refresh
-                    </button>
-                </div>
+                <FetchError
+                    errorMessage={errorLoadingProperties}
+                    refreshFunction={() => fetchProperties()}
+                    className="mb-5 mt-4"
+                />
             )}
 
             {/* No Properties State */}
