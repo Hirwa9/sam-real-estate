@@ -7,7 +7,7 @@ import Heading from "../../common/Heading";
 const FeaturedTypes = () => {
     return (
         <>
-            <section className="featured-types">
+            <section>
                 <div className="container">
                     <Heading
                         title="Listing Property Types"
