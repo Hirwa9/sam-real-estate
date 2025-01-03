@@ -12,6 +12,7 @@ import { ArrowsLeftRight, CaretRight, City, Code, ListStar, User } from "@phosph
 import BottomFixedCard from "../bottomFixedCard/BottomFixedCard";
 import ReviewForm from "../reviewForm/ReviewForm";
 import CompareProperties from "../compareProperties/CompareProperties";
+import { useSettings } from "../../SettingsProvider";
 /* globals $ */
 
 const Header = () => {
@@ -20,6 +21,16 @@ const Header = () => {
     useEffect(() => {
         !isLoggedIn && checkAuthentication();
     }, [isLoggedIn, checkAuthentication]);
+
+    // Site common setting
+    const {
+        businessProfileSettings,
+        errorLoadingBusinessProfileSettings,
+        fetchBusinessProfileSettings,
+        propertySettings,
+        errorLoadingPropertySettings,
+        fetchPropertySettings,
+    } = useSettings();
 
     /**
      * Small device navbar
@@ -115,7 +126,7 @@ const Header = () => {
             <header className={headerVisible === true ? "" : "dom-scrolling-down"}>
                 <nav className="navbar navbar-expand-md px-2">
                     <div className="logo me-5">
-                        <img src={logo} alt="logo" className="rounded-circle logo"></img>
+                        <img src={businessProfileSettings.logoUrl} alt="logo" className="rounded-circle logo"></img>
                     </div>
                     <div className="collapse navbar-collapse">
                         <ul className="nav navbar-nav">
@@ -177,7 +188,7 @@ const Header = () => {
                         <div className="d-flex flex-column h-100 w-100 pb-2 inx-inherit" id='smNavbar'>
                             <div className="inx-inherit d-flex align-items-center mb-4 p-3 pb-4 peak-borders-b bg-primaryColor smNavbar-header">
                                 <div className="logo me-auto">
-                                    <img src={logo} alt="logo" className="rounded-circle logo"></img>
+                                    <img src={businessProfileSettings.logoUrl} alt="logo" className="rounded-circle logo"></img>
                                 </div>
                                 <a href="/login" className="flex-center w-2rem ratio-1-1 border border-dark border-opacity-50 text-dark rounded-circle"> <User size={20} /></a>
                                 <button className="btn d-block ms-auto ratio-1-1 bounceClick w-2_5rem border-0 clickDown closerX closerX-black2" onClick={() => hideSmNavbar()} style={{ scale: "0.8" }}>
