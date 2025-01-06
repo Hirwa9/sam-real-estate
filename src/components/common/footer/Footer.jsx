@@ -114,7 +114,7 @@ function Footer() {
                 <SocialMediaIcons />
                 <div className='flex-center flex-wrap column-gap-2 align-items-center w-fit mx-auto fs-80 text-white2'>
                     <div className='mb-1 mb-sm-0'>
-                        <i className='far fa-copyright'></i> {new Date().getFullYear()} SamRealtor
+                        <i className='far fa-copyright'></i> {new Date().getFullYear()} SamRealEstate
                     </div>
                     <div>
                         <Code weight='bold' size={20} className='mb-1' /> Powered by <a
