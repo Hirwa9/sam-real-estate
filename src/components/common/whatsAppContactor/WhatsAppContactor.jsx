@@ -69,7 +69,7 @@ const WhatsAppContactor = ({ show, className, toggler, onClose }) => {
                                         <span className='fw-bold text-gray-700'>Samuel</span>
                                         <span className='d-flex align-items-center fw-light text-gray-600 fs-75 chat-av-text'>Online</span>
                                     </div>
-                                    <span className='smaller opacity-75'>Sam Realtor</span>
+                                    <span className='smaller opacity-75'>Sam Real Estate</span>
                                 </div>
                             </div>
                             <div className='flex-center my-3'>
