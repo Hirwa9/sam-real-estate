@@ -36,7 +36,7 @@ const Services = () => {
                                 title="Residential, Office & Commercial Properties"
                                 content="Explore a variety of properties tailored to meet your needs, whether you're looking for a family home, office space, or commercial property. We offer a broad range of options to suit all budgets and preferences, ensuring you find the perfect space for living, working, or business expansion. Our team will guide you through every step, providing detailed insights to help you make informed decisions."
                                 icon="tag"
-                                className="h-100 border-start border-end border-1 rad-0 small-content"
+                                className="h-100 border-start border-end border-1 rounded-0 small-content"
                             />
                         </div>
                         <div className="col-md-6 col-lg-4 mb-4 px-0 px-sm-2">
@@ -44,7 +44,7 @@ const Services = () => {
                                 title="Apartment Rentals & Sales"
                                 content="Whether you're looking to rent or buy an apartment, we offer a curated selection of modern, well-located apartments to fit your lifestyle. From luxury penthouses to cozy studio apartments, we make the process of finding your next home seamless and enjoyable, with expert guidance to assist in every step from viewings to finalizing contracts."
                                 icon="tag"
-                                className="h-100 border-start border-end border-1 rad-0 small-content"
+                                className="h-100 border-start border-end border-1 rounded-0 small-content"
                             />
                         </div>
                         <div className="col-md-6 col-lg-4 mb-4 px-0 px-sm-2">
@@ -52,7 +52,7 @@ const Services = () => {
                                 title="Land and Lot Listings"
                                 content="Looking for land to build your dream home or invest in commercial projects? We provide exclusive listings of available plots of land and lots, from residential sites to prime commercial locations. With our extensive knowledge of the market, we help you navigate zoning laws and property regulations, ensuring a smooth transaction."
                                 icon="tag"
-                                className="h-100 border-start border-end border-1 rad-0 small-content"
+                                className="h-100 border-start border-end border-1 rounded-0 small-content"
                             />
                         </div>
                     </div>
@@ -72,7 +72,7 @@ const Services = () => {
                                 title="Comparative Market Analysis (CMA)"
                                 content="Curious about the market value of your property? Our Comparative Market Analysis service offers a detailed evaluation of your property's worth based on recent sales, local market trends, and property conditions. This essential service helps you make smart decisions, whether you're buying, selling, or investing in real estate."
                                 icon="tag"
-                                className="h-100 border-start border-end border-1 rad-0 small-content"
+                                className="h-100 border-start border-end border-1 rounded-0 small-content"
                             />
                         </div>
                         <div className="col-md-6 col-lg-4 mb-4 px-0 px-sm-2">
@@ -80,7 +80,7 @@ const Services = () => {
                                 title="In-Depth Property Reports"
                                 content="Our In-Depth Property Reports provide comprehensive insights into the properties you are interested in. We gather detailed information on property history, market trends, neighborhood development, and potential investment returns. Whether you're a buyer or investor, these reports give you a competitive edge in making informed decisions."
                                 icon="tag"
-                                className="h-100 border-start border-end border-1 rad-0 small-content"
+                                className="h-100 border-start border-end border-1 rounded-0 small-content"
                             />
                         </div>
                         <div className="col-md-6 col-lg-4 mb-4 px-0 px-sm-2">
@@ -88,7 +88,7 @@ const Services = () => {
                                 title="Price Trend Insights"
                                 content="Stay ahead of the curve with our Price Trend Insights. We analyze the latest market trends to help you understand the price fluctuations in your area of interest. By keeping you informed about real estate market movements, we empower you to make timely and strategic decisions on buying or selling property."
                                 icon="tag"
-                                className="h-100 border-start border-end border-1 rad-0 small-content"
+                                className="h-100 border-start border-end border-1 rounded-0 small-content"
                             />
                         </div>
                     </div>
@@ -108,7 +108,7 @@ const Services = () => {
                                 title="Gallery Walkthroughs"
                                 content="Experience properties like never before with our immersive Gallery Walkthroughs. We provide high-resolution photo galleries of each property, showcasing every detail from room layouts to finishes. This virtual experience allows you to explore multiple properties from the comfort of your home, giving you a comprehensive understanding of what each space has to offer."
                                 icon="tag"
-                                className="h-100 border-start border-end border-1 rad-0 small-content"
+                                className="h-100 border-start border-end border-1 rounded-0 small-content"
                             />
                         </div>
                         <div className="col-md-6 col-lg-4 mb-4 px-0 px-sm-2">
@@ -116,7 +116,7 @@ const Services = () => {
                                 title="Video Footage for Larger Properties"
                                 content="For larger properties, our service includes professional video footage that highlights the scale and beauty of the space. These video tours offer a dynamic and in-depth view of the property's layout, key features, and surroundings, making it easier for you to visualize the full potential of the estate."
                                 icon="tag"
-                                className="h-100 border-start border-end border-1 rad-0 small-content"
+                                className="h-100 border-start border-end border-1 rounded-0 small-content"
                             />
                         </div>
                         <div className="col-md-6 col-lg-4 mb-4 px-0 px-sm-2">
@@ -124,7 +124,7 @@ const Services = () => {
                                 title="Location Map View"
                                 content="Discover properties with pinpoint accuracy through our Location Map View feature. Each listing includes an interactive map showcasing the exact GPS location of the property. Navigate the surrounding areas, explore nearby amenities, and get a clear understanding of the property's neighborhood—all from an embedded, user-friendly map interface."
                                 icon="tag"
-                                className="h-100 border-start border-end border-1 rad-0 small-content"
+                                className="h-100 border-start border-end border-1 rounded-0 small-content"
                             />
                         </div>
                     </div>
