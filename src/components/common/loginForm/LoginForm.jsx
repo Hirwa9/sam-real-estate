@@ -111,7 +111,7 @@ const LoginForm = ({ setShowLogin }) => {
 
     // PW validation
     const isValidPassword = (pw, pwConf) => {
-        // Length Validation (At least 8 characters)
+        // Length Validation (At least 8 characters long)
         const hasValue = (pw.trim().length >= 0);
         const validLength = (pw.length >= 8);
         // Mix of letters and numbers
@@ -511,7 +511,7 @@ const LoginForm = ({ setShowLogin }) => {
                                                     }
                                                 </div>
                                                 <ul className='list-style-square small'>
-                                                    <li>At least 8 characters</li>
+                                                    <li>At least 8 characters long</li>
                                                     <li>Mix of letters and numbers</li>
                                                     <li>At least 1 special character</li>
                                                     <li>At least 1 lowercase and 1 uppercase letters</li>
