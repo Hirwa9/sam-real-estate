@@ -7,6 +7,8 @@ import { CaretRight, CheckCircle, SignIn, UserCirclePlus, UserPlus, XCircle } fr
 import MyToast from '../common/Toast';
 import CtaTextButton from '../common/ctaTextButton/CtaTextButton';
 import { isValidEmail, isValidName } from '../../scripts/myScripts';
+import ContentListing from '../common/contentListing/ContentListing';
+import { companyEmail } from '../data/Data';
 /* globals $ */
 
 const Login = () => {
@@ -53,8 +55,11 @@ const Login = () => {
 		}
 		try {
 			await axios.post('http://localhost:5000/login', { email, password });
-			// navigate("../Dashboard.js");
-			navigate("../admin");
+			if (email === companyEmail) {
+				navigate("/admin");
+			} else {
+				navigate("/user/0");
+			}
 		} catch (error) {
 			if (error.response) {
 				console.error(error.response.data.message);
@@ -84,7 +89,7 @@ const Login = () => {
 		const val = e.target.value;
 		// Check length (At least 1 characters)
 		val.length >= 1 ? setPasswordProvided(true) : setPasswordProvided(false);
-		// Length Validation (At least 8 characters)
+		// Length Validation (At least 8 characters long)
 		val.length >= 8 ? setLengthValidation(true) : setLengthValidation(false);
 		// Mix of letters and numbers
 		const hasLettersAndNumbers = /^(?=.*[a-zA-Z])(?=.*[0-9])/.test(val);
@@ -172,220 +177,242 @@ const Login = () => {
 	return (
 		<>
 			<MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
-			<div className="container position-relative col-md-10 mb-5 pb-3 signin">
-				<h1 className="mb-0 mt-lg-4 text-center text-balance font-variant-small-caps">Welcome Back</h1>
-				<p className="mb-3 mb-lg-5 text-center small">Sign into your account</p>
+			<div className="position-relative pb-3 pb-lg-0 signin">
+				<div className="row g-0 pt-3 pt-lg-0">
+					<div className="col-lg-5 p-4 p-xl-5 d-none d-lg-block bg-no-repeat-cover text-muted clip-text-gradient">
+						<ContentListing
+							title="Find your dream property with us"
+							content="We are dedicated to helping you find the perfect property that fits your lifestyle and needs. Whether you're looking to buy, rent, or invest, our team of experts is here to guide you every step of the way."
+							icon="flag"
+							className="border-start border-end border-1 rounded-0 small-content mb-3"
+						/>
+						<ContentListing
+							title="Why Choose Us?"
+							content={
+								<>
+									<ul className='list-unstyled'>
+										<li className='mb-2'>
+											<b>Personalized Service:</b> Our experienced agents offer personalized services tailored to your unique preferences and requirements.
+										</li>
+										<li className='mb-2'>
+											<b>Extensive Listings:</b> Explore a wide range of properties, from cozy apartments to luxurious estates, in prime locations.
+										</li>
+										<li className='mb-2'>
+											<b>Custom Alerts:</b> Receive notifications for new listings that match your preferences.
+										</li>
+									</ul>
+								</>
+							}
+							icon="handshake"
+							className="border-start border-end border-1 rounded-0 small-content mb-3"
+						/>
+					</div>
+					<div className="col-sm-8 col-md-6 container-lg col-xl-5 mx-auto-lg my-lg-3 pt-3 bg-white3 blur-bg-5px rounded-4">
+						<h1 className="mb-0 mt-lg-3 text-center text-balance font-variant-small-caps">
+							{signingIn ? (<>Sign Into Your Account</>)
+								: (<>Create a New Account</>)
+							}
+						</h1>
+						<p className="mb-5 mb-md-3 text-center small text-gray-600">
+							{signingIn ? (<>Back to your favorite listing</>)
+								: (<>A step towards your perfect property</>)
+							}
+						</p>
+						<div className="card-body p-2 p-lg-4 px-lg-5">
+							<ul className="nav nav-tabs position-relative mb-2 border-0" id="signInNavTabs" role="tablist">
+								<li className="nav-item col-6" role="presentation">
+									<button className={`nav-link ${signingIn ? 'active' : ''} w-100 text-nowrap border-opacity-25`} id="signIn-tab" type="button" role="tab" aria-controls="signIn" aria-selected="true"
+										onClick={() => setSigningIn(true)}
+									>SIGN IN</button>
+								</li>
+								<li className="nav-item col-6" role="presentation">
+									<button className={`nav-link ${!signingIn ? 'active' : ''} w-100 text-nowrap border-opacity-25`} id="signUp-tab" type="button" role="tab" aria-controls="signUp" aria-selected="false"
+										onClick={() => setSigningIn(false)}
+									>NEW ACCOUNT</button>
+								</li>
+							</ul>
+							{/* Tabs */}
+							<div className="tab-content py-3" id="signInTabs">
+								{/* Log in */}
+								<div className={`tab-pane ${signingIn ? 'active show fade' : 'fade'}`} id="signIn" role="tabpanel" aria-labelledby="signIn-tab">
+									<form onSubmit={handleSignIn}>
+										<div className={`form-input-element`}>
+											<input
+												type="email"
+												id={signInId + "Email"}
+												className="form-control form-control-lg"
+												value={email}
+												required
+												onChange={e => { handleChange(e); setEmail(e.target.value) }}
+											/>
+											<label htmlFor={signInId + "Email"} className="form-label">Email</label>
+										</div>
+										<div className={`form-input-element`}>
+											<input
+												type="password"
+												id={signInId + "Password"}
+												className="form-control form-control-lg no-css-validation"
+												value={password}
+												required
+												onChange={e => { handleChange(e); setPassword(e.target.value) }}
+											/>
+											<label htmlFor={signInId + "Password"} className="form-label">Password</label>
+										</div>
+										<div className="pt-1 my-4">
+											<button type="submit" className="btn btn-sm btn-dark flex-center px-3 rounded-pill w-100 clickDown" style={{ fontSize: "75%", paddingBlock: ".8rem" }}>SIGN IN <SignIn size={15} className='ms-2' /></button>
+										</div>
+										<div className='d-grid gap-3 place-items-center'>
+											<a className="d-grid w-fit mx-auto small text-primary text-decoration-none" href="#!">Forgot password?</a>
+											<CtaTextButton
+												text="Don't have an account?"
+												actionText="Create one"
+												action={() => toggleSigninSignup()}
+												icon={<UserPlus className='ms-1' />}
+												type='gray-200'
+												textFallbackColor='gray-700'
+											/>
+											<Link to="/terms" className="small text-muted">Terms of use</Link>
+										</div>
+									</form>
+								</div>
 
-				<div className="pt-3">
-					<div className="row g-0">
-						<div className="col-md-6 col-lg-4 bg-black3 d-none d-md-block bg-no-repeat-cover" style={{ backgroundImage: "url(https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp)" }}>
-							{/* <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp" alt="login form" className="img-fluid" style={{ borderRadius: "1rem 0 0 1rem" }} /> */}
-						</div>
-						<div className="col-md-6">
-							<div className="card-body p-2 p-md-4 px-lg-5">
-								{/* <h5 className="mb-3 fw-normal" style={{ letterSpacing: "1px", fontSize: "80%" }}>Sign into your account</h5> */}
-								{/* Navs */}
-								<ul className="nav nav-tabs position-relative mb-2 border-0" id="signInNavTabs" role="tablist">
-									<li className="nav-item col-6" role="presentation">
-										<button className={`nav-link ${signingIn ? 'active' : ''} w-100 text-nowrap border-opacity-25`} id="signIn-tab" type="button" role="tab" aria-controls="signIn" aria-selected="true"
-											onClick={() => setSigningIn(true)}
-										>SIGN IN</button>
-									</li>
-									<li className="nav-item col-6" role="presentation">
-										<button className={`nav-link ${!signingIn ? 'active' : ''} w-100 text-nowrap border-opacity-25`} id="signUp-tab" type="button" role="tab" aria-controls="signUp" aria-selected="false"
-											onClick={() => setSigningIn(false)}
-										>NEW ACCOUNT</button>
-									</li>
-								</ul>
-								{/* Tabs */}
-								<div className="tab-content py-3" id="signInTabs">
-									{/* Log in */}
-									<div className={`tab-pane ${signingIn ? 'active show fade' : 'fade'}`} id="signIn" role="tabpanel" aria-labelledby="signIn-tab">
-										<form onSubmit={handleSignIn}>
-											<div className={`form-input-element`}>
-												<input
-													type="email"
-													id={signInId + "Email"}
-													className="form-control form-control-lg"
-													value={email}
-													required
-													onChange={e => { handleChange(e); setEmail(e.target.value) }}
-												/>
-												<label htmlFor={signInId + "Email"} className="form-label">Email</label>
-											</div>
-											<div className={`form-input-element`}>
-												<input
-													type="password"
-													id={signInId + "Password"}
-													className="form-control form-control-lg no-css-validation"
-													value={password}
-													required
-													onChange={e => { handleChange(e); setPassword(e.target.value) }}
-												/>
-												<label htmlFor={signInId + "Password"} className="form-label">Password</label>
-											</div>
-
-											<div className="pt-1 my-4">
-												<button type="submit" className="btn btn-sm btn-dark flex-center px-3 rounded-pill w-100 clickDown" style={{ fontSize: "75%", paddingBlock: ".8rem" }}>SIGN IN <CaretRight size={15} className='ms-2' /></button>
-											</div>
-
-											{/* <p className="mb-5 pb-lg-2">
-                        Don't have an account?
-                        <span href="#!" className='text-primary ms-2' data-bs-toggle="tab" data-bs-target="#signUp">Register here</span>
-                      </p> */}
-											<div className='d-grid gap-3 place-items-center'>
-												<a className="d-grid w-fit mx-auto small text-primary text-decoration-none" href="#!">Forgot password?</a>
-												<CtaTextButton
-													text="Don't have an account?"
-													actionText="Create one"
-													action={() => toggleSigninSignup()}
-													icon={<UserPlus className='ms-1' />}
-													type='gray-200'
-													textFallbackColor='gray-700'
-												/>
-												<Link to="/terms" className="small text-muted">Terms of use</Link>
-											</div>
-										</form>
-									</div>
-
-									{/* Register */}
-									<div className={`tab-pane ${!signingIn ? 'active show fade' : 'fade'}`} id="signUp" role="tabpanel" aria-labelledby="signUp-tab">
-										<form onSubmit={handleSignUp}>
-											<div className={`form-input-element`}>
-												<input
-													type="text"
-													id={signUpId + "Name"}
-													placeholder="Enter name"
-													className="form-control form-control-lg no-css-validation"
-													value={newUserName}
-													required
-													onChange={e => { handleChange(e); setNewUserName(e.target.value); }}
-												/>
-												<label htmlFor={signUpId + "Name"} className="form-label">Name</label>
-											</div>
-											<div className={`form-input-element`}>
-												<input
-													type="email"
-													id={signUpId + "Email"}
-													placeholder="Enter email"
-													className="form-control form-control-lg"
-													value={newUserEmail}
-													required
-													onChange={e => { handleChange(e); setNewUserEmail(e.target.value); }}
-												/>
-												<label htmlFor={signUpId + "Email"} className="form-label">Email</label>
-											</div>
-											<div className={`form-input-element`}>
-												<input
-													type="password"
-													id={signUpId + "Password"}
-													placeholder="Create Password"
-													className="form-control form-control-lg no-css-validation"
-													value={newUserPassword}
-													required
-													onChange={e => { handleChange(e); setNewUserPassword(e.target.value); validatePassword(e) }}
-												/>
-												<label htmlFor={signUpId + "Password"} className="form-label">Password</label>
-											</div>
-											<div className={`form-input-element`}>
-												<input
-													type="password"
-													id={signUpId + "ConfirmPassword"}
-													placeholder="Confirm Password"
-													className="form-control form-control-lg no-css-validation"
-													value={confirmNewUserPassword}
-													required
-													onChange={e => { handleChange(e); setConfirmNewUserPassword(e.target.value); }}
-												/>
-												<label htmlFor={signUpId + "ConfirmPassword"} className="form-label">Password</label>
-											</div>
-											<div className={`px-3 form-text trans-p3s ${!passwordProvided ? 'opacity-75' : ''}`} style={{ fontSize: "80%" }}>
-												<p className="mb-0">
-													{passwordProvided &&
-														<span className="validation-icons me-1 opacity-75">
-															{lengthValidation
-																?
-																<CheckCircle size={15} weight='fill' className='text-success' />
-																:
-																<XCircle size={15} weight='fill' className='text-danger' />
-															}
-														</span>
-													}
-													<span className="jxqc78-5 eMFycA"></span> At least 8 characters
-												</p>
-												<p className="mb-0">
-													{passwordProvided &&
-														<span className="validation-icons me-1 opacity-75">
-															{mixValidation
-																?
-																<CheckCircle size={15} weight='fill' className='text-success' />
-																:
-																<XCircle size={15} weight='fill' className='text-danger' />
-															}
-														</span>
-													}
-													<span className="jxqc78-5 eMFycA"></span> Mix of letters and numbers
-												</p>
-												<p className="mb-0">
-													{passwordProvided &&
-														<span className="validation-icons me-1 opacity-75">
-															{specialCharValidation
-																?
-																<CheckCircle size={15} weight='fill' className='text-success' />
-																:
-																<XCircle size={15} weight='fill' className='text-danger' />
-															}
-														</span>
-													}
-													<span className="jxqc78-5 eMFycA"></span> At least 1 special character
-												</p>
-												<p className="mb-0">
-													{passwordProvided &&
-														<span className="validation-icons me-1 opacity-75">
-															{caseValidation
-																?
-																<CheckCircle size={15} weight='fill' className='text-success' />
-																:
-																<XCircle size={15} weight='fill' className='text-danger' />
-															}
-														</span>
-													}
-													<span className="jxqc78-5 eMFycA"></span> At least 1 lowercase and 1 uppercase letters
-												</p>
-												<p className="mb-0">
-													{passwordProvided &&
-														<span className="validation-icons me-1 opacity-75">
-															{newUserPassword === confirmNewUserPassword
-																?
-																<CheckCircle size={15} weight='fill' className='text-success' />
-																:
-																<XCircle size={15} weight='fill' className='text-danger' />
-															}
-														</span>
-													}
-													<span className="jxqc78-5 eMFycA"></span> Password matches
-												</p>
-											</div>
-											<p className='my-3 text-center text-muted small'>
-												By submitting, you agree to our <Link to="/terms" className="text-muted">Terms of use</Link>.
+								{/* Register */}
+								<div className={`tab-pane ${!signingIn ? 'active show fade' : 'fade'}`} id="signUp" role="tabpanel" aria-labelledby="signUp-tab">
+									<form onSubmit={handleSignUp}>
+										<div className={`form-input-element`}>
+											<input
+												type="text"
+												id={signUpId + "Name"}
+												placeholder="Enter name"
+												className="form-control form-control-lg no-css-validation"
+												value={newUserName}
+												required
+												onChange={e => { handleChange(e); setNewUserName(e.target.value); }}
+											/>
+											<label htmlFor={signUpId + "Name"} className="form-label">Name</label>
+										</div>
+										<div className={`form-input-element`}>
+											<input
+												type="email"
+												id={signUpId + "Email"}
+												placeholder="Enter email"
+												className="form-control form-control-lg"
+												value={newUserEmail}
+												required
+												onChange={e => { handleChange(e); setNewUserEmail(e.target.value); }}
+											/>
+											<label htmlFor={signUpId + "Email"} className="form-label">Email</label>
+										</div>
+										<div className={`form-input-element`}>
+											<input
+												type="password"
+												id={signUpId + "Password"}
+												placeholder="Create Password"
+												className="form-control form-control-lg no-css-validation"
+												value={newUserPassword}
+												required
+												onChange={e => { handleChange(e); setNewUserPassword(e.target.value); validatePassword(e) }}
+											/>
+											<label htmlFor={signUpId + "Password"} className="form-label">Password</label>
+										</div>
+										<div className={`form-input-element`}>
+											<input
+												type="password"
+												id={signUpId + "ConfirmPassword"}
+												placeholder="Confirm Password"
+												className="form-control form-control-lg no-css-validation"
+												value={confirmNewUserPassword}
+												required
+												onChange={e => { handleChange(e); setConfirmNewUserPassword(e.target.value); }}
+											/>
+											<label htmlFor={signUpId + "ConfirmPassword"} className="form-label">Password</label>
+										</div>
+										<div className={`px-3 form-text trans-p3s ${!passwordProvided ? 'opacity-75' : ''}`} style={{ fontSize: "80%" }}>
+											<p className="mb-0">
+												{passwordProvided &&
+													<span className="validation-icons me-1 opacity-75">
+														{lengthValidation
+															?
+															<CheckCircle size={15} weight='fill' className='text-success' />
+															:
+															<XCircle size={15} weight='fill' className='text-danger' />
+														}
+													</span>
+												}
+												<span className="jxqc78-5 eMFycA"></span> At least 8 characters long
 											</p>
-											<div className="pt-1 my-4">
-												<button type="submit" className="btn btn-sm btn-dark flex-center mb-3 px-3 rounded-pill w-100 clickDown" style={{ fontSize: "75%", paddingBlock: ".8rem" }}>CREATE ACCOUNT <UserCirclePlus size={20} className='ms-2' /></button>
-												<button type="reset" className="btn btn-sm btn-outline-danger d-block border-3 border-danger border-opacity-25 mx-auto px-5 rounded-pill w-fit clickDown" style={{ fontSize: "75%" }} onClick={resetRegisterForm}>Cancel</button>
-											</div>
-											<div className='mt-4'>
-												<CtaTextButton
-													text="I Have an account"
-													actionText="Sign in"
-													action={() => toggleSigninSignup()}
-													fallback={() => window.scrollTo({ top: 0, behavior: 'auto' })}
-													icon={<SignIn className='ms-1' />}
-													type='gray-200'
-													textFallbackColor='gray-700'
-												/>
-											</div>
-										</form>
-									</div>
+											<p className="mb-0">
+												{passwordProvided &&
+													<span className="validation-icons me-1 opacity-75">
+														{mixValidation
+															?
+															<CheckCircle size={15} weight='fill' className='text-success' />
+															:
+															<XCircle size={15} weight='fill' className='text-danger' />
+														}
+													</span>
+												}
+												<span className="jxqc78-5 eMFycA"></span> Mix of letters and numbers
+											</p>
+											<p className="mb-0">
+												{passwordProvided &&
+													<span className="validation-icons me-1 opacity-75">
+														{specialCharValidation
+															?
+															<CheckCircle size={15} weight='fill' className='text-success' />
+															:
+															<XCircle size={15} weight='fill' className='text-danger' />
+														}
+													</span>
+												}
+												<span className="jxqc78-5 eMFycA"></span> At least 1 special character
+											</p>
+											<p className="mb-0">
+												{passwordProvided &&
+													<span className="validation-icons me-1 opacity-75">
+														{caseValidation
+															?
+															<CheckCircle size={15} weight='fill' className='text-success' />
+															:
+															<XCircle size={15} weight='fill' className='text-danger' />
+														}
+													</span>
+												}
+												<span className="jxqc78-5 eMFycA"></span> At least 1 lowercase and 1 uppercase letters
+											</p>
+											<p className="mb-0">
+												{passwordProvided &&
+													<span className="validation-icons me-1 opacity-75">
+														{newUserPassword === confirmNewUserPassword
+															?
+															<CheckCircle size={15} weight='fill' className='text-success' />
+															:
+															<XCircle size={15} weight='fill' className='text-danger' />
+														}
+													</span>
+												}
+												<span className="jxqc78-5 eMFycA"></span> Password matches
+											</p>
+										</div>
+										<p className='my-3 text-center text-muted small'>
+											By submitting, you agree to our <Link to="/terms" className="text-muted">Terms of use</Link>.
+										</p>
+										<div className="pt-1 my-4">
+											<button type="submit" className="btn btn-sm btn-dark flex-center mb-3 px-3 rounded-pill w-100 clickDown" style={{ fontSize: "75%", paddingBlock: ".8rem" }}>CREATE ACCOUNT <UserCirclePlus size={20} className='ms-2' /></button>
+											<button type="reset" className="btn btn-sm btn-outline-danger d-block border-3 border-danger border-opacity-25 mx-auto px-5 rounded-pill w-fit clickDown" style={{ fontSize: "75%" }} onClick={resetRegisterForm}>Cancel</button>
+										</div>
+										<div className='mt-4'>
+											<CtaTextButton
+												text="I Have an account"
+												actionText="Sign in"
+												action={() => toggleSigninSignup()}
+												fallback={() => window.scrollTo({ top: 0, behavior: 'auto' })}
+												icon={<SignIn className='ms-1' />}
+												type='gray-200'
+												textFallbackColor='gray-700'
+											/>
+										</div>
+									</form>
 								</div>
 							</div>
 						</div>
