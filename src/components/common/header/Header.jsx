@@ -220,7 +220,7 @@ const Header = () => {
                             <div className="mt-auto ">
                                 <SocialMediaIcons />
                                 <div className="p-3 text-gray-600 fw-light small">
-                                    <i className='far fa-copyright'></i> {new Date().getFullYear()} <span className="fw-bold"> SamRealtor</span>. All rights reserved. <br />
+                                    <i className='far fa-copyright'></i> {new Date().getFullYear()} <span className="fw-bold"> SamRealEstate</span>. All rights reserved. <br />
                                     <Code weight='light' size={18} className='mb-1' /> Powered by <a href={developerWebsiteLink} className="text-gray-600 fw-bold" target='_blank' rel='noreferrer'>HirwaSofts</a>.
                                 </div>
                             </div>

@@ -35,7 +35,7 @@ const Terms = () => {
                 <PageInfo name="Terms" title="Terms of Use" cover={img} className="mb-0" />
                 <div className="container-fluid">
                     <Heading
-                        title="Samrealtor Terms of Use"
+                        title="Sam Real Estate Terms of Use"
                         subtitle={
                             <>
                                 <span className='fs-4'>October 09, 2024</span> <br />
