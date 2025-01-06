@@ -1,10 +1,10 @@
 import { Building, Check, Heart, Lightbulb, ListStar, X } from "@phosphor-icons/react";
 
 // Company's info
-export const companyName = "Sam Realtor";
+export const companyName = "Sam Real Estate";
 export const companyMotto = "Opening Doors to New Beginnings";
-export const companyEmail = "hirwawilly9@gmail.com";
-// export const companyEmail = "samrealtor60@gmail.com";
+// export const companyEmail = "hirwawilly9@gmail.com";
+export const companyEmail = "samrealestate02@gmail.com";
 export const companyPhoneNumber1 = { phone: "250789305885", text: "(+250) 789 305 885" };
 export const companyPhoneNumber2 = { phone: "250788321583", text: "(+250) 788 321 583" };
 export const facebookLink = "https://www.facebook.com/profile.php?id=61567054102525";
