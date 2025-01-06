@@ -62,7 +62,7 @@ const About = () => {
                             title="Our Mission"
                             content="Our mission is to redefine the real estate experience in Kigali by putting our clients' needs first. We aim to make property transactions straightforward and stress-free, providing reliable guidance and support at every stage. Whether you're looking to buy, sell, or rent, our team is committed to helping you make informed decisions with confidence and ease."
                             icon="flag"
-                            className="h-100 border-start border-end border-1 rad-0 text-justify"
+                            className="h-100 border-start border-end border-1 rounded-0 text-justify"
                         />
                     </div>
                     <div className="col-lg-6 mb-4 px-0 px-sm-2">
@@ -70,7 +70,7 @@ const About = () => {
                             title="Our Vision"
                             content="Our vision is to be Kigali's most trusted real estate agency, known for excellence, integrity, and community focus. We strive to build long-lasting relationships with our clients and contribute positively to the city's growth. By setting the standard for customer service and innovation, we aim to inspire and empower individuals to achieve their real estate dreams."
                             icon="compass"
-                            className="h-100 border-start border-end border-1 rad-0 text-justify"
+                            className="h-100 border-start border-end border-1 rounded-0 text-justify"
                         />
                     </div>
                 </div>
