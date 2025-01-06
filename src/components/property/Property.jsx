@@ -342,11 +342,11 @@ const Property = () => {
                                     <h2 className='h5 mb-4 text-center font-variant-small-caps'>Contact This Property</h2>
                                     <div>
                                         <div>
-                                            <button ref={reservePropertyRef} className="btn w-100 btn-secondary text-light d-block mb-3 fw-light rounded-pill clickDown"
+                                            {/* <button ref={reservePropertyRef} className="btn w-100 btn-secondary text-light d-block mb-3 fw-light rounded-pill clickDown"
                                                 onClick={handleReserveProperty}
                                             >
                                                 Reserve Property
-                                            </button>
+                                            </button> */}
 
                                             {/* <button className="btn w-100 border-dark text-dark d-block mb-3 fw-light rounded-pill clickDown">
                                 Request Tour
@@ -404,6 +404,7 @@ const Property = () => {
                                             content={[
                                                 <WorkingHours />
                                             ]}
+                                            fitContent
                                             toggler={workingHoursTogglerRef}
                                             onClose={() => setShowWorkingHours(false)} />
                                     </div>
@@ -515,7 +516,7 @@ const Property = () => {
                                     </div>
                                 </div>
                             }
-                            <div className="px-sm-2 px-md-4 py-3 d-flex">
+                            {/* <div className="px-sm-2 px-md-4 py-3 d-flex">
                                 <HashStraight size={30} className='me-2 me-md-3 flex-shrink-0' />
                                 <div>
                                     <h6 className='fs-5 text-muted'>More-in Special</h6>
@@ -523,7 +524,7 @@ const Property = () => {
                                         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aperiam dicta unde, nesciunt inventore est nobis error quas laboriosam perspiciatis expedita consequatur necessitatibus impedit, quisquam eius ad voluptates iure! Nihil, harum!
                                     </p>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 
