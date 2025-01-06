@@ -9,7 +9,7 @@ const ContentListing = ({ title, content, icon, className }) => {
                     <span className={`fa fa-${icon} mx-2 fs-3 opacity-50`}></span>
                 }
             </h6>
-            <p className='text-muted'>{content}</p>
+            <div className='text-muted mb-3'>{content}</div>
         </div>
     )
 }
