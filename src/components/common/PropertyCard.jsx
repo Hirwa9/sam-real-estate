@@ -392,7 +392,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                                         </span>
                                                         <span className="flex-align-center">
                                                             <span className="fs-70 fw-bold text-black2">
-                                                                {JSON.parse(likes).length > 0 && formatBigCountNumbers(JSON.parse(likes).length)}
+                                                                {likes && formatBigCountNumbers(JSON.parse(likes).length)}
                                                             </span>
                                                             <Heart className="text ms-1 fs-4 ptr me-1 bounceClick" />
                                                         </span>
