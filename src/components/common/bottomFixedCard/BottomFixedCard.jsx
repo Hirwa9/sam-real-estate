@@ -4,7 +4,7 @@ import './bottomFixedCard.css';
 import MyToast from '../Toast';
 import { CaretDown } from '@phosphor-icons/react';
 
-const BottomFixedCard = ({ show, content, className, id, blurBg, toggler, closeButton, onClose, avoidCloseReasons }) => {
+const BottomFixedCard = ({ show, content, className, id, fitContent, blurBg, toggler, closeButton, onClose, avoidCloseReasons }) => {
     // Custom hooks
     const {
         // Toast
@@ -89,7 +89,7 @@ const BottomFixedCard = ({ show, content, className, id, blurBg, toggler, closeB
                     <div ref={cardContainerRef} className={`position-fixed fixed-top inset-0 ${blurBg ? 'bg-white3 blur-bg-1px' : ''}`}>
                         <div
                             ref={cardRef}
-                            className={`position-absolute bottom-0 inx-inherit mx-auto col-sm-10 col-md-8 col-lg-6 col-xl-5 blur-bg-3px overflow-auto ${className !== undefined ? className : ''} rounded-scrollbar-button bottom-fixed-card`}
+                            className={`position-absolute bottom-0 inx-inherit mx-auto ${!fitContent ? 'col-sm-10 col-md-8 col-lg-6 col-xl-5' : 'w-fit'} blur-bg-3px overflow-auto ${className !== undefined ? className : ''} rounded-scrollbar-button bottom-fixed-card`}
                             id={id}
                         >
                             <div className="position-sticky top-0 inx-inherit d-flex align-items-center w-100 py-2 card-top" style={{ minHeight: '2.5rem' }}>
