@@ -12,8 +12,8 @@
 
 @media screen and (min-width: 992px) {
     #imageSlider {
-        min-height: 60vh;
-        min-height: 60dvh;
+        min-height: 80vh;
+        min-height: 80dvh;
     }
 }
 

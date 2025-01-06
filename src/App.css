@@ -343,6 +343,58 @@ label,
   mask: var(--mask);
 }
 
+.wavy-borders-t {
+  --mask:
+    radial-gradient(12px at 25% 0, #0000 98%, #000) 50% 12px/48px 100% repeat-x,
+    radial-gradient(12px at 75% 50%, #000 99%, #0000 101%) top/48px 24px repeat-x;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
+.wavy-borders-b {
+  --mask:
+    radial-gradient(12px at 75% 100%, #0000 98%, #000) 50% calc(100% - 12px)/48px 100% repeat-x,
+    radial-gradient(12px at 25% 50%, #000 99%, #0000 101%) bottom/48px 24px repeat-x;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
+.wavy-borders-l {
+  --mask:
+    radial-gradient(12px at 0 75%, #0000 98%, #000) 12px 50%/100% 48px repeat-y,
+    radial-gradient(12px at 50% 25%, #000 99%, #0000 101%) left/24px 48px repeat-y;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
+.wavy-borders-r {
+  --mask:
+    radial-gradient(12px at 100% 25%, #0000 98%, #000) calc(100% - 12px) 50%/100% 48px repeat-y,
+    radial-gradient(12px at 50% 75%, #000 99%, #0000 101%) right/24px 48px repeat-y;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
+.wavy-borders-tb {
+  --mask:
+    radial-gradient(12px at 25% 0, #0000 98%, #000) 50% 12px/48px 51% repeat-x,
+    radial-gradient(12px at 75% 50%, #000 99%, #0000 101%) top/48px 24px repeat-x,
+    radial-gradient(12px at 75% 100%, #0000 98%, #000) calc(50% + 24px) calc(100% - 12px)/48px 51% repeat-x,
+    radial-gradient(12px at 25% 50%, #000 99%, #0000 101%) calc(50% + 24px) 100%/48px 24px repeat-x;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
+.wavy-borders-lr {
+  --mask:
+    radial-gradient(12px at 0 75%, #0000 98%, #000) 12px 50%/51% 48px repeat-y,
+    radial-gradient(12px at 50% 25%, #000 99%, #0000 101%) left/24px 48px repeat-y,
+    radial-gradient(12px at 100% 25%, #0000 98%, #000) calc(100% - 12px) calc(50% + 24px)/51% 48px repeat-y,
+    radial-gradient(12px at 50% 75%, #000 99%, #0000 101%) 100% calc(50% + 24px)/24px 48px repeat-y;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
 /* adjust to control the size */
 /* .wavy-circle {
   --s: 300px;
@@ -351,6 +403,19 @@ label,
   --g: /calc(var(--s)*0.179) calc(var(--s)*0.179) radial-gradient(50% 50%, #000 99%, #0000 101%) no-repeat;
   mask: calc(50% + var(--s)*0.382) calc(50% + var(--s)*0) var(--g), calc(50% + var(--s)*0.309) calc(50% + var(--s)*0.225) var(--g), calc(50% + var(--s)*0.118) calc(50% + var(--s)*0.363) var(--g), calc(50% + var(--s)*-0.118) calc(50% + var(--s)*0.363) var(--g), calc(50% + var(--s)*-0.309) calc(50% + var(--s)*0.225) var(--g), calc(50% + var(--s)*-0.382) calc(50% + var(--s)*0) var(--g), calc(50% + var(--s)*-0.309) calc(50% + var(--s)*-0.225) var(--g), calc(50% + var(--s)*-0.118) calc(50% + var(--s)*-0.363) var(--g), calc(50% + var(--s)*0.118) calc(50% + var(--s)*-0.363) var(--g), calc(50% + var(--s)*0.309) calc(50% + var(--s)*-0.225) var(--g), radial-gradient(calc(var(--s)*0.435), #000 99%, #0000 101%) intersect, radial-gradient(#000 0 0) exclude, calc(50% + var(--s)*0.474) calc(50% + var(--s)*0.154) var(--g), calc(50% + var(--s)*0.293) calc(50% + var(--s)*0.403) var(--g), calc(50% + var(--s)*0) calc(50% + var(--s)*0.498) var(--g), calc(50% + var(--s)*-0.293) calc(50% + var(--s)*0.403) var(--g), calc(50% + var(--s)*-0.474) calc(50% + var(--s)*0.154) var(--g), calc(50% + var(--s)*-0.474) calc(50% + var(--s)*-0.154) var(--g), calc(50% + var(--s)*-0.293) calc(50% + var(--s)*-0.403) var(--g), calc(50% + var(--s)*0) calc(50% + var(--s)*-0.498) var(--g), calc(50% + var(--s)*0.293) calc(50% + var(--s)*-0.403) var(--g), calc(50% + var(--s)*0.474) calc(50% + var(--s)*-0.154) var(--g);
 } */
+
+.bg-flange-pattern {
+  --s: 20px;
+  --c1: var(--bs-gray-300);
+  --c2: var(--bodi);
+
+  --_g: radial-gradient(calc(var(--s)/2), var(--c1) 97%, #0000);
+  background:
+    var(--_g), var(--_g) calc(2*var(--s)) calc(2*var(--s)),
+    repeating-conic-gradient(from 45deg, #0000 0 25%, var(--c2) 0 50%) calc(-.707*var(--s)) calc(-.707*var(--s)),
+    repeating-linear-gradient(135deg, var(--c1) calc(var(--s)/-2) calc(var(--s)/2), var(--c2) 0 calc(2.328*var(--s)));
+  background-size: calc(4*var(--s)) calc(4*var(--s));
+}
 
 /* Section divider */
 
