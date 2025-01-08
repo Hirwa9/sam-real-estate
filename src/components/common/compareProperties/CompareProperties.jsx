@@ -101,7 +101,7 @@ const CompareProperties = ({ show, onClose, ids }) => {
                         {selectedCompareProperties.length === 0 ?
                             <>
                                 <div className="col-sm-8 col-md-6 info-message m-auto mt-5 px-3 rounded">
-                                    <ArrowsLeftRight size={80} className="dblock text-center w-100 mb-3 opacity-50" />
+                                    <ArrowsLeftRight size={80} className="text-center w-100 mb-3 opacity-50" />
                                     <p className="text-info-emphasis text-center small">
                                         Select multipe properties that you would like to compare.
                                     </p>
