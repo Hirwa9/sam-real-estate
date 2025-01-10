@@ -99,10 +99,10 @@ const Admin = () => {
      * Data
     */
 
-    // const [activeSection, setActiveSection] = useState("dashboard");
+    const [activeSection, setActiveSection] = useState("dashboard");
     // const [activeSection, setActiveSection] = useState("properties");
     // const [activeSection, setActiveSection] = useState("orders");
-    const [activeSection, setActiveSection] = useState("reports");
+    // const [activeSection, setActiveSection] = useState("reports");
     // const [activeSection, setActiveSection] = useState("messages");
     // const [activeSection, setActiveSection] = useState("usersList");
     // const [activeSection, setActiveSection] = useState("settings");
@@ -2421,8 +2421,8 @@ const Admin = () => {
                 )}
                 {/* Zero content */}
                 {!loadingProperties && !errorLoadingProperties && totalProperties === 0 &&
-                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 rounded info-message">
-                        <Building size={80} className="dblock text-center w-100 mb-3 opacity-50" />
+                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
+                        <Building size={80} className="text-center w-100 mb-3 opacity-50" />
                         <p className="text-muted text-center small">
                             No properties yet. Upload properties to be listed on your website and you can manage them from here.
                         </p>
@@ -2762,8 +2762,8 @@ const Admin = () => {
                 )}
                 {/* Zero content */}
                 {!loadingProperties && !errorLoadingProperties && openDealsNum === 0 &&
-                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 rounded info-message">
-                        <ShoppingCart size={80} className="dblock text-center w-100 mb-3 opacity-50" />
+                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
+                        <ShoppingCart size={80} className="text-center w-100 mb-3 opacity-50" />
                         <p className="text-muted text-center small">
                             No orders yet. Property reservations/orders will be listed and managed here as they come in.
                         </p>
@@ -2867,8 +2867,8 @@ const Admin = () => {
                 )}
                 {/* Zero content */}
                 {!loadingProperties && !errorLoadingProperties && closedPropertiesNum === 0 &&
-                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 rounded info-message">
-                        <SealCheck size={80} className="dblock text-center w-100 mb-3 opacity-50" />
+                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
+                        <SealCheck size={80} className="text-center w-100 mb-3 opacity-50" />
                         <p className="text-muted text-center small">
                             Closed properties will be listed here as they come in.
                         </p>
@@ -3002,8 +3002,8 @@ const Admin = () => {
                 )}
                 {/* Zero content */}
                 {!loadingMessages && !errorLoadingMessages && messages.length === 0 &&
-                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 rounded info-message">
-                        <ChatDots size={80} className="dblock text-center w-100 mb-3 opacity-50" style={{ animation: 'wobbleBottom 10s infinite' }} />
+                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
+                        <ChatDots size={80} className="text-center w-100 mb-3 opacity-50" style={{ animation: 'wobbleBottom 10s infinite' }} />
                         <p className="text-muted text-center small">
                             No messages yet. Messages from your website will appear here as they come in.
                         </p>
@@ -3094,8 +3094,8 @@ const Admin = () => {
                 )}
                 {/* Zero content */}
                 {!loadingCustomers && !errorLoadingCustomers && totalCustomers === 0 &&
-                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 rounded info-message">
-                        <User size={80} className="dblock text-center w-100 mb-3 opacity-50" />
+                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
+                        <User size={80} className="text-center w-100 mb-3 opacity-50" />
                         <p className="text-muted text-center small">
                             No customers yet. Clients who made orders will appear here.
                         </p>
@@ -3520,8 +3520,8 @@ const Admin = () => {
                             )}
                             {/* Zero content */}
                             {!loadingBusinessProfileSettings && !errorLoadingBusinessProfileSettings && businessProfileSettings.length === 0 &&
-                                <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 rounded info-message">
-                                    <ChatDots size={80} className="dblock text-center w-100 mb-3 opacity-50" style={{ animation: 'wobbleBottom 10s infinite' }} />
+                                <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
+                                    <ChatDots size={80} className="text-center w-100 mb-3 opacity-50" style={{ animation: 'wobbleBottom 10s infinite' }} />
                                     <p className="text-muted text-center small">
                                         No business profile setting available. Please contact you site developer for support.
                                     </p>
