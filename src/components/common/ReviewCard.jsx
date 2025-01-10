@@ -87,7 +87,7 @@ const ReviewCard = () => {
             )}
             {/* Zero content */}
             {!loadingReviews && !errorLoadingReviews && reviews.length === 0 &&
-                <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 rounded info-message">
+                <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
                     <ListStar size={80} className="text-center w-100 mb-3 opacity-50" style={{ animation: 'wobbleBottom 10s infinite' }} />
                     <p className="text-muted small">
                         No reviews yet. You will see our site reviews here as they come in.
