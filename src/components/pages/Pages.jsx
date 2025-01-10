@@ -19,6 +19,7 @@ import Login from "../login/Login";
 import Faqs from "../faqs/Faqs";
 import Terms from "../terms/Terms";
 import Admin from "../admin/Admin";
+import Customer from "../user/Customer";
 
 const Pages = () => {
     // Get the current path
@@ -26,7 +27,7 @@ const Pages = () => {
     const currentLocation = location.pathname;
     // Excluded Header and Footer in specific routes
     const excludedRoutes = ["/admin", "/admin/dashboard"];
-    const isExcludedRoute = excludedRoutes.includes(currentLocation);
+    const isExcludedRoute = excludedRoutes.includes(currentLocation) || currentLocation.includes('/user');
 
     return (
         <>
@@ -47,7 +48,7 @@ const Pages = () => {
                 <Route path="/terms" element={<Terms />} />
                 {/* Admin/user routes */}
                 <Route path="/admin" element={<Admin />} />
-                <Route path="/user/:userId" element={<Admin />} />
+                <Route path="/user/:userId" element={<Customer />} />
 
             </Routes>
             {/* Conditionally render the Footer */}
