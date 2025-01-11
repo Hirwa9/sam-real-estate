@@ -589,7 +589,7 @@ const Properties = () => {
                                 {/* Description */}
                                 <div className="alert alert-secondary border-0 rounded-0 text-justify text-gray-600 smaller">
                                     <span>
-                                        Combine different filters to refine your search and discover exactly what you're looking for
+                                        Combine different filters to refine your search and discover exactly what you're looking for.
                                     </span>
                                 </div>
                                 {/* Filters */}
