@@ -1097,13 +1097,12 @@ const Admin = () => {
             bedrooms, bathrooms, garages, videoUrl, mapUrl, booked, bookedBy, closed,
             media, likes, featured } = selectedProperty;
 
-
         const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
         const mainLightColor = category === "For Sale" ? "#25b5791a" : "#ff98001a"
         const bookedByLen = booked ? JSON.parse(bookedBy).length : null;
         let propImages = null;
         let isEligible = false;
-        // if (media && JSON.parse(JSON.parse(media))) {
+        
         if (media) {
             propImages = JSON.parse(JSON.parse(media)).images;
             if (propImages.length > 4) {
@@ -1150,24 +1149,24 @@ const Admin = () => {
                             }
                             {/* Iconic details */}
                             <div className="position-absolute bottom-0 gap-3 mb-2 mx-0 px-2 property-iconic-details">
-                                {bedrooms &&
+                                {bedrooms && bedrooms > 0 && (
                                     <div className='flex-align-center fw-light text-muted'>
                                         <Bed size={20} weight='fill' className='me-1 text-light' />
                                         <span className="text-light fs-70">{bedrooms}</span>
                                     </div>
-                                }
-                                {bathrooms &&
+                                )}
+                                {bathrooms && bathrooms > 0 && (
                                     <div className='flex-align-center fw-light text-muted'>
                                         <Shower size={20} weight='fill' className='me-1 text-light' />
                                         <span className="text-light fs-70">{bathrooms}</span>
                                     </div>
-                                }
-                                {garages &&
+                                )}
+                                {garages && garages > 0 && (
                                     <div className='flex-align-center fw-light text-muted'>
                                         <Car size={20} weight='fill' className='me-1 text-light' />
                                         <span className="text-light fs-70">{garages}</span>
                                     </div>
-                                }
+                                )}
                             </div>
                         </div>
                         <div className='col-xl-7 d-lg-flex flex-column px-2 pb-3 pb-xl-2 info'>
@@ -2578,19 +2577,20 @@ const Admin = () => {
                         {propertyListingFormat === 'list' &&
                             <div className='overflow-auto' style={{ minHeight: '50dvh', maxHeight: '100dvh' }}>
                                 {propertiesToShow
-                                    .sort((a, b) =>
-                                        new Date(sortPropertyAscending ? a.createdAt : b.createdAt)
-                                        - new Date(sortPropertyAscending ? b.createdAt : a.createdAt)
-                                    )
+                                    .sort((a, b) => {
+                                        const comparison = new Date(a.createdAt) - new Date(b.createdAt);
+                                        return sortPropertyAscending ? comparison : -comparison;
+                                    })
                                     .map((property, index) => {
-                                        const type = property.type;
-                                        const payment = property.payment;
-                                        const date = property.createdAt;
-                                        const mainColor = property.category === "For Sale" ? "#25b579" : "#ff9800";
+                                        const {
+                                            listed, category, type, name, location, price,
+                                            payment, booked, closed, createdAt
+                                        } = property;
 
-                                        const isActive = (property.booked && !property.closed) || false;
-                                        const isClosed = (property.closed) || false;
-                                        const isUnlisted = !property.listed || false;
+                                        const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
+                                        const isActive = (booked && !closed) || false;
+                                        const isClosed = closed || false;
+                                        const isUnlisted = !listed || false;
 
                                         return (
                                             <div key={index} className={`flex-align-center p-2 ${isActive ? 'border-start border-primary' : (isClosed && !showOnlyClosedProperties) ? 'opacity-50' : isUnlisted ? 'border-start border-warning' : ''} ${isUnlisted ? 'fst-italic' : ''} border-2 ptr clickDown`}
@@ -2608,15 +2608,15 @@ const Admin = () => {
                                                 </div>
                                                 <div className='flex-grow-1 d-sm-flex align-items-center gap-2 px-2'>
                                                     <div className='col-sm-6 mb-2 mb-sm-0'>
-                                                        <h6 className='m-0'>{property.name}</h6>
-                                                        <div className='fs-75 text-gray-600'> {property.location}</div>
+                                                        <h6 className='m-0'>{name}</h6>
+                                                        <div className='fs-75 text-gray-600'> {location}</div>
                                                     </div>
                                                     <div className='col-sm-6 d-flex align-items-center d-sm-block small px-sm-3'>
                                                         <div>
                                                             <span style={{ color: mainColor }}>
-                                                                {property.category}
+                                                                {category}
                                                             </span> - <span className='text-nowrap'>
-                                                                RWF {property.price.toLocaleString()}
+                                                                RWF {price.toLocaleString()}
                                                                 {payment === 'once' && <span className="opacity-50 fw-normal ms-1 smaller">/once</span>}
                                                                 {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 smaller">/year</span>}
                                                                 {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 smaller">/month</span>}
@@ -2626,7 +2626,7 @@ const Admin = () => {
                                                             </span>
                                                         </div>
                                                         <div className='ms-auto ps-2 ps-sm-0 fs-75'>
-                                                            {formatDate(date)}
+                                                            {formatDate(createdAt)}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2660,48 +2660,53 @@ const Admin = () => {
                                                 - new Date(sortPropertyAscending ? b.createdAt : a.createdAt)
                                             )
                                             .map((property, index) => {
+                                                const {
+                                                    listed, category, type, name, location, about,
+                                                    price, payment, booked, bookedBy, closed, createdAt
+                                                } = property;
+
                                                 let bookedByArray = [];
                                                 let bookedByLen;
 
-                                                if (property.bookedBy) {
+                                                if (bookedBy) {
                                                     try {
-                                                        bookedByArray = JSON.parse(property.bookedBy);
+                                                        bookedByArray = JSON.parse(bookedBy);
                                                     } catch (parseError) {
                                                         cError("Error parsing bookedBy array:", parseError);
                                                     }
                                                 }
                                                 bookedByLen = Array.isArray(bookedByArray) ? bookedByArray.length : 0;
 
-                                                const isActive = (property.booked && !property.closed) || false;
-                                                const isClosed = (property.closed) || false;
-                                                const isLive = (property.listed && !property.booked) || false;
-                                                const isUnlisted = !property.listed || false;
+                                                const isActive = (booked && !closed) || false;
+                                                const isClosed = (closed) || false;
+                                                const isLive = (listed && !booked) || false;
+                                                const isUnlisted = !listed || false;
 
                                                 return (
                                                     <tr key={index}
-                                                        className={`small ${property.closed && !showOnlyClosedProperties ? 'opacity-50' : ''} ${isUnlisted ? 'fst-italic' : ''} cursor-default clickDown table-secondary property-row`}
+                                                        className={`small ${closed && !showOnlyClosedProperties ? 'opacity-50' : ''} ${isUnlisted ? 'fst-italic' : ''} cursor-default clickDown table-secondary property-row`}
                                                         onClick={() => { setShowSelectedPropertyInfo(true); setSelectedProperty(property) }}
                                                     >
                                                         <td className={`ps-sm-3 ${isClosed ? 'text-success' : ''} border-0 border-end ${isActive ? 'border-2 border-primary' : isClosed ? 'border-1 border-success' : isUnlisted ? 'border-1 border-warning' : ''}`}>
                                                             {index + 1}
                                                         </td>
-                                                        <td title={`Location: ` + property.location + `,\n\n` + property.about}>
-                                                            {property.name}
+                                                        <td title={`Location: ` + location + `,\n\n` + about}>
+                                                            {name}
                                                         </td>
                                                         <td className="text-muted fs-75" >
-                                                            {property.type}
+                                                            {type}
                                                         </td>
-                                                        <td title={`Paid ${property.payment}`} >
-                                                            {property.price.toLocaleString()}
+                                                        <td title={`Paid ${payment}`} >
+                                                            {price.toLocaleString()}
                                                         </td>
-                                                        <td style={{ color: property.category === "For Sale" ? "#25b579" : "#ff9800" }}>
-                                                            {property.category}
+                                                        <td style={{ color: category === "For Sale" ? "#25b579" : "#ff9800" }}>
+                                                            {category}
                                                         </td>
                                                         <td className='text-nowrap fs-75'>
-                                                            {property.location}
+                                                            {location}
                                                         </td>
                                                         <td className='text-muted text-nowrap small'>
-                                                            {formatDate(property.createdAt, { longMonthFormat: true })}
+                                                            {formatDate(createdAt, { longMonthFormat: true })}
                                                         </td>
                                                         <td className={`${isClosed ? 'text-success' : isActive ? 'text-primary' : isUnlisted ? 'text-secondary' : ''} text-nowrap`}
                                                             title={isActive ? `Reserved by ${bookedByLen} client${bookedByLen > 1 ? 's' : ''}` : undefined}
