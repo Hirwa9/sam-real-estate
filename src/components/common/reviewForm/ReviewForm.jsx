@@ -176,7 +176,7 @@ const ReviewForm = ({ onClose, setDontCloseCard, setRefreshReviews }) => {
                     {/* Reviewer rating */}
                     <div className="mb-3">
                         <label className="form-label w-100 text-center fw-bold fs-4 text-gray-600">Rating</label>
-                        <div className="d-flex justify-content-center gap-2 mb-2">
+                        <div className="d-flex justify-content-center gap-2">
                             {[1, 2, 3, 4, 5].map((num) => (
                                 <Star
                                     key={num}
