@@ -1151,24 +1151,24 @@ const Customer = () => {
                             }
                             {/* Iconic details */}
                             <div className="position-absolute bottom-0 gap-3 mb-2 mx-0 px-2 property-iconic-details">
-                                {bedrooms &&
+                                {bedrooms && bedrooms > 0 && (
                                     <div className='flex-align-center fw-light text-muted'>
                                         <Bed size={20} weight='fill' className='me-1 text-light' />
                                         <span className="text-light fs-70">{bedrooms}</span>
                                     </div>
-                                }
-                                {bathrooms &&
+                                )}
+                                {bathrooms && bathrooms > 0 && (
                                     <div className='flex-align-center fw-light text-muted'>
                                         <Shower size={20} weight='fill' className='me-1 text-light' />
                                         <span className="text-light fs-70">{bathrooms}</span>
                                     </div>
-                                }
-                                {garages &&
+                                )}
+                                {garages && garages > 0 && (
                                     <div className='flex-align-center fw-light text-muted'>
                                         <Car size={20} weight='fill' className='me-1 text-light' />
                                         <span className="text-light fs-70">{garages}</span>
                                     </div>
-                                }
+                                )}
                             </div>
                         </div>
                         <div className='col-xl-7 d-lg-flex flex-column px-2 pb-3 pb-xl-2 info'>
