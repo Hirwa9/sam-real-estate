@@ -16,6 +16,10 @@
     color: #ed201f;
 }
 
+#propertyCard > :last-child {
+    margin-right: auto;
+}
+
 #propertyCard .img img,
 #propertyCard .loading-skeleton .img-skeleton {
     border-radius: 0.375rem 0.375rem 0 0;
