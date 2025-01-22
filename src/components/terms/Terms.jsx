@@ -54,13 +54,13 @@ const Terms = () => {
                             <b>{companyName}</b> provides an online platform for listing, viewing, and exploring real estate properties. We facilitate connections between property owners, buyers, renters, and other stakeholders, but we do not directly own, sell, or manage any properties. We act as a service provider to assist users in finding the properties that suit their needs.
                         </p>
                         <div className='px-3'>
+                            <h5>Legal Advice Provision</h5>
+                            <p>
+                                Our platform provides genuine real estate advice tailored to the current market for renting, buying, and selling properties, directly from experienced real estate agents.
+                            </p>
                             <h5>No Real Estate Broker Services</h5>
                             <p>
                                 We do not provide real estate brokerage services, nor do we act as a buyer's or seller's agent. Our platform is informational and acts only as a tool to streamline your real estate process.
-                            </p>
-                            <h5>No Legal Advice</h5>
-                            <p>
-                                The information provided on our platform is for general informational purposes only and does not constitute legal advice. Please consult a licensed real estate professional or attorney for specific advice.
                             </p>
                         </div>
                     </section>
