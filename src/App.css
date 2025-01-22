@@ -1144,6 +1144,10 @@ label,
   color: var(--black) !important;
 }
 
+.text-inherit {
+  color: inherit !important;
+}
+
 .btn-primaryColor {
   background-color: var(--primaryColor) !important;
 }
