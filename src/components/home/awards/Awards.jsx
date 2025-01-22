@@ -6,6 +6,7 @@ import Heading from "../../common/Heading";
 import { ArrowClockwise } from "@phosphor-icons/react";
 import LoadingBubbles from "../../common/LoadingBubbles";
 import FetchError from "../../common/FetchError";
+import CountUp from 'react-countup';
 // import Heading from "../../common/Heading";
 
 const Awards = () => {
@@ -134,7 +135,7 @@ const Awards = () => {
                                                 {val.icon}
                                             </div>
                                             {val.name === "Properties" &&
-                                                <div className="h1 fw-bold text-center my-4">{propertiesCount}</div>
+                                                <div className="h1 fw-bold text-center my-4"><CountUp start={propertiesCount - 10} end={propertiesCount} /></div>
                                             }
                                             {val.name === "Reviews" && (
                                                 <>
@@ -149,7 +150,7 @@ const Awards = () => {
                                                                 </button>
                                                             )
                                                                 : (
-                                                                    <div className="h1 fw-bold text-center my-4">{reviews.length}</div>
+                                                                    <div className="h1 fw-bold text-center my-4"><CountUp end={reviews.length} /></div>
                                                                 )
                                                     }
                                                 </>
@@ -160,11 +161,10 @@ const Awards = () => {
                                     );
                                 })}
                             </div>
-
                         </>
                     }
                 </div>
-            </section >
+            </section>
         </>
     );
 }
