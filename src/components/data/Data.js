@@ -285,7 +285,7 @@ export const faqs = [
             },
             {
                 question: "How long does the home buying process take?",
-                answer: "The timeline can vary, but on average, it takes about 30-45 days from the time an offer is accepted to the final closing.",
+                answer: "The home buying process in Rwanda usually takes 1 to 2 weeks, plus application processing time. The local administration reviews documents and initiates the transfer. After completion, the buyer receives the land title in their name.",
             },
             {
                 question: "Do I need a real estate agent to buy or sell a home?",
@@ -347,24 +347,24 @@ export const faqs = [
             },
         ],
     },
-    {
-        type: "mortgage_financing",
-        title: "Mortgage and Financing",
-        content: [
-            {
-                question: "What is a mortgage pre-approval?",
-                answer: "A pre-approval is a process in which a lender evaluates your financials and conditionally approves you for a loan, showing sellers you're serious about buying.",
-            },
-            {
-                question: "What types of mortgages are available?",
-                answer: "There are several types of mortgages, including fixed-rate, adjustable-rate, FHA loans, VA loans, and jumbo loans, each with its own advantages depending on your situation.",
-            },
-            {
-                question: "Can I get a mortgage with bad credit?",
-                answer: "It may be more difficult, but it's possible to get a mortgage with bad credit. However, you may have to pay a higher interest rate or provide a larger down payment.",
-            },
-        ],
-    },
+    // {
+    //     type: "mortgage_financing",
+    //     title: "Mortgage and Financing",
+    //     content: [
+    //         {
+    //             question: "What is a mortgage pre-approval?",
+    //             answer: "A pre-approval is a process in which a lender evaluates your financials and conditionally approves you for a loan, showing sellers you're serious about buying.",
+    //         },
+    //         {
+    //             question: "What types of mortgages are available?",
+    //             answer: "There are several types of mortgages, including fixed-rate, adjustable-rate, FHA loans, VA loans, and jumbo loans, each with its own advantages depending on your situation.",
+    //         },
+    //         {
+    //             question: "Can I get a mortgage with bad credit?",
+    //             answer: "It may be more difficult, but it's possible to get a mortgage with bad credit. However, you may have to pay a higher interest rate or provide a larger down payment.",
+    //         },
+    //     ],
+    // },
     {
         type: "legal_documentation",
         title: "Legal and Documentation",
