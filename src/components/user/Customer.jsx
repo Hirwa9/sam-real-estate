@@ -118,21 +118,7 @@ const Customer = () => {
     const totalProperties = allProperties.length;
 
     // Filtered properties
-    const listedProperties = useMemo(() => {
-        return allProperties.filter(property => property.listed);
-    }, [allProperties]);
-    const listedPropertiesNum = listedProperties.length;
-
-    const unlistedProperties = useMemo(() => {
-        return allProperties.filter(property => !property.listed);
-    }, [allProperties]);
-    const unlistedPropertiesNum = unlistedProperties.length;
-
-    const featuredProperties = useMemo(() => {
-        return allProperties.filter(property => property.featured);
-    }, [allProperties]);
-    const featuredPropertiesNum = featuredProperties.length;
-
+    // Count booked properties
     const bookedProperties = useMemo(() => {
         return allProperties.filter(
             property => (
@@ -144,11 +130,7 @@ const Customer = () => {
     }, [allProperties]);
     const bookedPropertiesNum = bookedProperties.length;
 
-    const liveProperties = useMemo(() => {
-        return allProperties.filter(property => (property.listed && !property.closed));
-    }, [allProperties]);
-    const livePropertiesNum = liveProperties.length;
-
+    // Count closed properties
     const closedProperties = useMemo(() => {
         return allProperties
             .filter(
@@ -160,28 +142,6 @@ const Customer = () => {
     }, [allProperties]);
     const closedPropertiesNum = closedProperties.length;
 
-    const forSaleProperties = useMemo(() => {
-        return allProperties.filter(property => property.category === 'For Sale');
-    }, [allProperties]);
-    const forSalePropertiesNum = forSaleProperties.length;
-
-    const forRentProperties = useMemo(() => {
-        return allProperties.filter(property => property.category === 'For Rent');
-    }, [allProperties]);
-    const forRentPropertiesNum = forRentProperties.length;
-
-    // Count open deals
-    const openDealsNum = bookedProperties.reduce((sum, item) => {
-        let bookedByArray = [];
-        if (item.bookedBy) {
-            try {
-                bookedByArray = JSON.parse(item.bookedBy);
-            } catch (parseError) {
-                cError("Error parsing bookedBy array:", parseError);
-            }
-        }
-        return sum + (Array.isArray(bookedByArray) ? bookedByArray.length : 0);
-    }, 0);
 
     const [propertyListingFormat, setPropertyListingFormat] = useState('list');
 
@@ -771,13 +731,13 @@ const Customer = () => {
                 <div className="d-xl-flex pt-xl-4">
                     <div className="p-4 small col-xl-8 clip-text-gradient">
                         <p className="mb-3 text-justify">
-                            <span className='fs-3'>Welcome Hirwa</span> <br />
-                            With your user dashboard, you can manage your activities and interactions on the platform effortlessly. Here’s what you can do:
+                            <span className='fs-3'>Welcome [User Name]</span> <br />
+                            With your dashboard, you can manage your activities and interactions on the platform effortlessly. Here's what you can do:
                         </p>
                         <ul className="mb-0 list-unstyled">
-                            <li className="ps-3 my-4 border-start border-2 border-success border-opacity-25"><b className="me-1">Manage Site Activity:</b> Review your recent activity and explore updates.</li>
-                            <li className="ps-3 my-4 border-start border-2 border-success border-opacity-25"><b className="me-1">Manage Properties:</b> Manage and explore properties you've interacted with or favorited.</li>
-                            <li className="ps-3 my-4 border-start border-2 border-success border-opacity-25"><b className="me-1">Monitor Orders:</b> View and track your orders, including any property reservations or purchases.</li>
+                            <li className="ps-3 my-4 border-start border-2 border-success border-opacity-25"><b className="me-1">View Your Properties:</b> Track and manage properties you've reserved, purchased, or favorited.</li>
+                            <li className="ps-3 my-4 border-start border-2 border-success border-opacity-25"><b className="me-1">Track Your Orders:</b> Monitor your property reservations and finalized deals.</li>
+                            <li className="ps-3 my-4 border-start border-2 border-success border-opacity-25"><b className="me-1">Manage Setting:</b> Review your personal information shared with us.</li>
                         </ul>
                         <a href="#siteStats" className='btn brn-lg d-grid d-xl-none mx-auto mt-4 mt-md-5 text-decoration-none border-0 fw-bold fs-4' style={{ placeItems: 'center' }}>
                             Site activity <CaretDown className='ms-2 opacity-50' />
@@ -792,14 +752,14 @@ const Customer = () => {
                                     <a href="#siteStats" className='text-decoration-none text-gray-600 fw-bold fs-4'><CaretRight className='me-2 opacity-75' /> Site activity </a>
                                 </li>
                                 <li className="my-3 py-1 ptr"
-                                    onClick={() => setActiveSection("properties")}
-                                >
-                                    <span className='fw-bold fs-4'><CaretRight className='me-2 opacity-75' /> Properties </span>
-                                </li>
-                                <li className="my-3 py-1 ptr"
                                     onClick={() => setActiveSection("orders")}
                                 >
                                     <span className='fw-bold fs-4'><CaretRight className='me-2 opacity-75' /> Orders </span>
+                                </li>
+                                <li className="my-3 py-1 ptr"
+                                    onClick={() => setActiveSection("settings")}
+                                >
+                                    <span className='fw-bold fs-4'><CaretRight className='me-2 opacity-75' /> Settings </span>
                                 </li>
                             </ul>
                         </div>
@@ -828,7 +788,7 @@ const Customer = () => {
                             onClick={() => setActiveSection("orders")}
                         >
                             <span className="fs-6 mb-3 mb-xl-4 fw-bold">Orders</span>
-                            <span className="display-5 mx-auto">{openDealsNum}</span>
+                            <span className="display-5 mx-auto">{bookedPropertiesNum}</span>
                         </div>
                         <ShoppingCart size={22} className='position-absolute b-0 r-0 me-3 mb-2 text-gray-500' />
                     </div>
@@ -890,7 +850,7 @@ const Customer = () => {
                     />
                 )}
                 {/* Zero content */}
-                {!loadingProperties && !errorLoadingProperties && openDealsNum === 0 &&
+                {!loadingProperties && !errorLoadingProperties && bookedPropertiesNum === 0 &&
                     <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
                         <ShoppingCart size={80} className="text-center w-100 mb-3 opacity-50" />
                         <p className="text-muted text-center small">
@@ -899,7 +859,7 @@ const Customer = () => {
                     </div>
                 }
                 {/* Available content */}
-                {!loadingProperties && !errorLoadingProperties && openDealsNum > 0 &&
+                {!loadingProperties && !errorLoadingProperties && bookedPropertiesNum > 0 &&
                     <>
                         <div className='container mb-4 py-3 border border-2'>
                             <h4 className='text-info-emphasis mb-4 fs-4 text-uppercase'>Reserved properties ( {bookedPropertiesNum} )</h4>
