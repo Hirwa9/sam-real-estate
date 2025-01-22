@@ -4,7 +4,7 @@ import './admin.css';
 import logo from "../../components/images/logo.jpg";
 import { Link, useNavigate } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WhatsappLogo, X } from '@phosphor-icons/react';
+import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatBigCountNumbers, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
@@ -820,11 +820,10 @@ const Admin = () => {
     const handleImageFileChange = (e) => {
         const file = e.target.files[0];
         if (file && !file.type.startsWith("image/")) {
-            toast({
-                message: "Please upload a valid image file.",
-                type: "danger",
+            return toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Please upload a valid image file.</>,
+                type: 'danger'
             });
-            return;
         }
         setImageFile(file);
         setImageFileName(file?.name || ""); // Set the file name
@@ -833,11 +832,10 @@ const Admin = () => {
     const handleVideoFileChange = (e) => {
         const file = e.target.files[0];
         if (file && !file.type.startsWith("video/")) {
-            toast({
-                message: "Please upload a valid video file.",
-                type: "danger",
+            return toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Please upload a valid video file.</>,
+                type: 'danger'
             });
-            return;
         }
         setVideoFile(file);
         setVideoFileName(file?.name || ""); // Set the file name
@@ -845,11 +843,10 @@ const Admin = () => {
 
     const addPropertyImage = async () => {
         if (!imageFile) {
-            toast({
-                message: "Please select an image file before submitting.",
-                type: "gray-700",
+            return toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Please select an image file before submitting.</>,
+                type: 'gray-700'
             });
-            return;
         }
 
         const propertyId = selectedProperty.id;
@@ -861,11 +858,10 @@ const Admin = () => {
 
     const addPropertyVideo = async () => {
         if (!videoFile) {
-            toast({
-                message: "Please select a video file before submitting.",
-                type: "gray-700",
+            return toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Please select a video file before submitting.</>,
+                type: 'gray-700'
             });
-            return;
         }
 
         const propertyId = selectedProperty.id;
@@ -1102,7 +1098,7 @@ const Admin = () => {
         const bookedByLen = booked ? JSON.parse(bookedBy).length : null;
         let propImages = null;
         let isEligible = false;
-        
+
         if (media) {
             propImages = JSON.parse(JSON.parse(media)).images;
             if (propImages.length > 4) {
@@ -2231,8 +2227,10 @@ const Admin = () => {
 
         // Ensure the reply message is not empty
         if (!replyMessage.trim()) {
-            toast({ message: "Reply message cannot be empty", type: "warning" });
-            return;
+            return toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Reply message cannot be empty</>,
+                type: 'warning'
+            });
         }
 
         try {
@@ -2791,8 +2789,12 @@ const Admin = () => {
                         <div className='row align-items-stretch'>
                             {
                                 bookedProperties.map((property, index) => {
-                                    const { name, type, category, location, bookedBy } = property;
+                                    const { name, type, category, location, bookedBy, closeRequests } = property;
                                     const orderEmails = JSON.parse(bookedBy);
+                                    let closeRequestsNum = 0;
+                                    if (closeRequests) {
+                                        closeRequestsNum = JSON.parse(property.closeRequests).length
+                                    }
                                     const orderCount = orderEmails.length;
 
                                     const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
@@ -2826,11 +2828,15 @@ const Admin = () => {
                                                         </div>
                                                     </div>
                                                     {/* <div> */}
-                                                    <button className="w-100 btn btn-sm btn-outline-success mt-3 py-2 rounded-0 fw-light"
-                                                        onClick={() => { setSelectedProperty(property); setShowClosePropertyForm(true) }}
-                                                    >
-                                                        (1) close request
-                                                    </button>
+                                                    {closeRequestsNum > 0 && (
+                                                        <>
+                                                            <button className="w-100 btn btn-sm btn-outline-success mt-3 py-2 rounded-0 fw-light"
+                                                                onClick={() => { setSelectedProperty(property); setShowClosePropertyForm(true) }}
+                                                            >
+                                                                ({closeRequestsNum}) close request
+                                                            </button>
+                                                        </>
+                                                    )}
                                                     {/* </div> */}
                                                 </div>
                                             </div>
@@ -3363,11 +3369,10 @@ const Admin = () => {
         const handleImageFileChange = (e) => {
             const file = e.target.files[0];
             if (file && !file.type.startsWith("image/")) {
-                toast({
-                    message: "Please upload a valid image file.",
-                    type: "danger",
+                return toast({
+                    message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Please upload a valid image file.</>,
+                    type: 'danger'
                 });
-                return;
             }
             setNewLogoFile(file);
             setNewLogoFileName(file?.name || ""); // Set the file name
@@ -3783,7 +3788,7 @@ const Admin = () => {
                         </div>
                     </div>
                 </div>
-            </section >
+            </section>
         );
     };
 
@@ -3830,9 +3835,9 @@ const Admin = () => {
                         <button className="nav-link px-3" >Sign out</button>
                     </div>
                 </div>
-                <div className='d-flex align-items-center gap-2 d-md-none'>
-                    <button className="rounded-0 border-0 box-shadow-none clickDown" type="button" onClick={() => setShowCreatePropertyForm(true)}>
-                        <Plus weight='bold' fill='var(--bs-primary)' />
+                <div className='d-flex align-items-center gap-2 d-md-none text-gray-700'>
+                    <button className="rounded-0 border-0 box-shadow-none  text-inherit clickDown" type="button" onClick={() => setShowCreatePropertyForm(true)}>
+                        <Plus weight='bold' />
                     </button>
                     <button ref={sideNavbarTogglerRef} className="rounded-0 border-0 navbar-toggler" type="button" aria-controls="sidebarMenu" aria-label="Toggle navigation" onClick={() => setSideNavbarIsFloated(!sideNavbarIsFloated)}>
                         <List />
