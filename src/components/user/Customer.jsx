@@ -4,7 +4,7 @@ import './customer.css';
 import logo from "../../components/images/logo.jpg";
 import { Link, useNavigate } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WhatsappLogo, X } from '@phosphor-icons/react';
+import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HourglassHigh, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatBigCountNumbers, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
@@ -15,6 +15,7 @@ import { aboutProperties, companyAddress, companyEmail, companyMotto, companyNam
 import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
+import axios from 'axios';
 // import userPlaceholderImg from '/images/user_placeholder_image.jpg';
 // import userPlaceholderImg from '/images/user_placeholder_image.jpg';
 
@@ -133,7 +134,13 @@ const Customer = () => {
     const featuredPropertiesNum = featuredProperties.length;
 
     const bookedProperties = useMemo(() => {
-        return allProperties.filter(property => (property.booked && !property.closed));
+        return allProperties.filter(
+            property => (
+                JSON.parse(property.bookedBy)?.includes('hirwawilly9@gmail.com')
+                && property.booked
+                && !property.closed
+            )
+        );
     }, [allProperties]);
     const bookedPropertiesNum = bookedProperties.length;
 
@@ -143,7 +150,13 @@ const Customer = () => {
     const livePropertiesNum = liveProperties.length;
 
     const closedProperties = useMemo(() => {
-        return allProperties.filter(property => property.closed);
+        return allProperties
+            .filter(
+                property => (
+                    property.closed
+                    && property.closedBy === 'hirwawilly9@gmail.com'
+                )
+            );
     }, [allProperties]);
     const closedPropertiesNum = closedProperties.length;
 
@@ -170,226 +183,11 @@ const Customer = () => {
         return sum + (Array.isArray(bookedByArray) ? bookedByArray.length : 0);
     }, 0);
 
-    // States for filtering and displaying properties
-    const [propertiesToShow, setPropertiesToShow] = useState(allProperties);
-
-    const [showOnlyListedProperties, setShowOnlyListedProperties] = useState(false);
-    const [showOnlyUnlistedProperties, setShowOnlyUnlistedProperties] = useState(false);
-    const [showOnlyReservedProperties, setShowOnlyReservedProperties] = useState(false);
-    const [showOnlyFeaturedProperties, setShowOnlyFeaturedProperties] = useState(false);
-    const [showOnlyLiveProperties, setShowOnlyLiveProperties] = useState(false);
-    const [showOnlyClosedProperties, setShowOnlyClosedProperties] = useState(false);
-    const [showOnlyForSaleProperties, setShowOnlyForSaleProperties] = useState(false);
-    const [showOnlyForRentProperties, setShowOnlyForRentProperties] = useState(false);
-    const [showAllAvailableProperties, setShowAllAvailableProperties] = useState(true);
-
-    // const allFilters = [
-    //     { name: showOnlyListedProperties, disabler: () => setShowOnlyListedProperties(false) },
-    //     { name: showOnlyReservedProperties, disabler: () => setShowOnlyReservedProperties(false) },
-    //     { name: showOnlyFeaturedProperties, disabler: () => setShowOnlyFeaturedProperties(false) },
-    //     { name: showOnlyClosedProperties, disabler: () => setShowOnlyClosedProperties(false) },
-    //     { name: showOnlyForSaleProperties, disabler: () => setShowOnlyForSaleProperties(false) },
-    //     { name: showOnlyForRentProperties, disabler: () => setShowOnlyForRentProperties(false) },
-    //     { name: showAllAvailableProperties, disabler: () => setShowAllAvailableProperties(false) },
-    // ];
-
-    // Helpers to set filter states
-    const showOnlyListed = () => {
-        setShowOnlyListedProperties(true);
-        setShowOnlyUnlistedProperties(false);
-        setShowOnlyFeaturedProperties(false);
-        setShowOnlyReservedProperties(false);
-        setShowOnlyLiveProperties(false);
-        setShowOnlyClosedProperties(false);
-        setShowOnlyForSaleProperties(false);
-        setShowOnlyForRentProperties(false);
-    };
-
-    const showOnlyUnlisted = () => {
-        setShowOnlyUnlistedProperties(true);
-        setShowOnlyListedProperties(false);
-        setShowOnlyFeaturedProperties(false);
-        setShowOnlyReservedProperties(false);
-        setShowOnlyLiveProperties(false);
-        setShowOnlyClosedProperties(false);
-        setShowOnlyForSaleProperties(false);
-        setShowOnlyForRentProperties(false);
-    };
-
-    const showOnlyFeatured = () => {
-        setShowOnlyFeaturedProperties(true);
-        setShowOnlyListedProperties(false);
-        setShowOnlyUnlistedProperties(false);
-        setShowOnlyReservedProperties(false);
-        setShowOnlyLiveProperties(false);
-        setShowOnlyClosedProperties(false);
-        setShowOnlyForSaleProperties(false);
-        setShowOnlyForRentProperties(false);
-    };
-
-    const showOnlyReserved = () => {
-        setShowOnlyReservedProperties(true);
-        setShowOnlyListedProperties(false);
-        setShowOnlyUnlistedProperties(false);
-        setShowOnlyFeaturedProperties(false);
-        setShowOnlyLiveProperties(false);
-        setShowOnlyClosedProperties(false);
-        setShowOnlyForSaleProperties(false);
-        setShowOnlyForRentProperties(false);
-    };
-
-    const showOnlyLiveDeals = () => {
-        setShowOnlyLiveProperties(true);
-        setShowOnlyListedProperties(false);
-        setShowOnlyUnlistedProperties(false);
-        setShowOnlyFeaturedProperties(false);
-        setShowOnlyReservedProperties(false);
-        setShowOnlyClosedProperties(false);
-        setShowOnlyForSaleProperties(false);
-        setShowOnlyForRentProperties(false);
-    };
-
-    const showOnlyClosedDeals = () => {
-        setShowOnlyClosedProperties(true);
-        setShowOnlyListedProperties(false);
-        setShowOnlyUnlistedProperties(false);
-        setShowOnlyFeaturedProperties(false);
-        setShowOnlyReservedProperties(false);
-        setShowOnlyLiveProperties(false);
-        setShowOnlyForSaleProperties(false);
-        setShowOnlyForRentProperties(false);
-    };
-
-    const showOnlyForSale = () => {
-        setShowOnlyForSaleProperties(true);
-        setShowOnlyListedProperties(false);
-        setShowOnlyUnlistedProperties(false);
-        setShowOnlyFeaturedProperties(false);
-        setShowOnlyReservedProperties(false);
-        setShowOnlyLiveProperties(false);
-        setShowOnlyClosedProperties(false);
-        setShowOnlyForRentProperties(false);
-
-    };
-
-    const showOnlyForRent = () => {
-        setShowOnlyForRentProperties(true);
-        setShowOnlyListedProperties(false);
-        setShowOnlyUnlistedProperties(false);
-        setShowOnlyFeaturedProperties(false);
-        setShowOnlyReservedProperties(false);
-        setShowOnlyLiveProperties(false);
-        setShowOnlyClosedProperties(false);
-        setShowOnlyForSaleProperties(false);
-    };
-
-    const showAllProperties = () => {
-        setShowAllAvailableProperties(true);
-        setShowOnlyListedProperties(false);
-        setShowOnlyUnlistedProperties(false);
-        setShowOnlyFeaturedProperties(false);
-        setShowOnlyReservedProperties(false);
-        setShowOnlyLiveProperties(false);
-        setShowOnlyClosedProperties(false);
-        setShowOnlyForSaleProperties(false);
-        setShowOnlyForRentProperties(false);
-    };
-
-    // Toggling properties to show
-    useEffect(() => {
-        let shownProps;
-
-        if (showOnlyListedProperties) {
-            shownProps = listedProperties;
-        } else if (showOnlyUnlistedProperties) {
-            shownProps = unlistedProperties;
-        } else if (showOnlyFeaturedProperties) {
-            shownProps = featuredProperties;
-        } else if (showOnlyReservedProperties) {
-            shownProps = bookedProperties;
-        } else if (showOnlyLiveProperties) {
-            shownProps = liveProperties;
-        } else if (showOnlyClosedProperties) {
-            shownProps = closedProperties;
-        } else if (showOnlyForSaleProperties) {
-            shownProps = forSaleProperties;
-        } else if (showOnlyForRentProperties) {
-            shownProps = forRentProperties;
-        } else {
-            shownProps = allProperties;
-        }
-
-        // Detect toggled states
-        if (
-            showOnlyListedProperties ||
-            showOnlyUnlistedProperties ||
-            showOnlyFeaturedProperties ||
-            showOnlyReservedProperties ||
-            showOnlyLiveProperties ||
-            showOnlyClosedProperties ||
-            showOnlyForSaleProperties ||
-            showOnlyForRentProperties
-        ) {
-            setShowAllAvailableProperties(false);
-        }
-
-        setPropertiesToShow(shownProps);
-    }, [
-        showOnlyListedProperties,
-        showOnlyUnlistedProperties,
-        showOnlyFeaturedProperties,
-        showOnlyReservedProperties,
-        showOnlyLiveProperties,
-        showOnlyClosedProperties,
-        showOnlyForSaleProperties,
-        showOnlyForRentProperties,
-        listedProperties,       // memoized
-        unlistedProperties,     // memoized
-        featuredProperties,     // memoized
-        bookedProperties,       // memoized
-        liveProperties,         // memoized
-        closedProperties,       // memoized
-        forSaleProperties,      // memoized
-        forRentProperties,      // memoized
-        allProperties           // Raw context
-    ]);
-
     const [propertyListingFormat, setPropertyListingFormat] = useState('list');
 
     // Filter Properties by search bar
     const propSearcherRef = useRef();
     const [propSearchValue, setPropSearchValue] = useState('');
-
-    const filterPropertiesBySearch = useCallback(() => {
-        let searchString = propSearcherRef.current.value.toLowerCase().trim();
-        if (searchString !== null && searchString !== undefined && searchString !== '') {
-            showAllProperties();
-            setPropSearchValue(searchString);
-            setTimeout(() => {
-                const filteredProps = allProperties.filter(val => (
-                    val.name.toLowerCase().includes(searchString) ||
-                    val.type.toLowerCase().includes(searchString) ||
-                    val.location.toLowerCase().includes(searchString) ||
-                    val.about.toLowerCase().includes(searchString)
-                ));
-                setPropertiesToShow(filteredProps);
-            });
-        }
-    }, [allProperties]);
-
-    const filterPropertiesByType = useCallback(() => {
-        let searchString = propSearcherRef.current.value;
-        if (searchString !== null && searchString !== undefined && searchString !== '') {
-            showAllProperties();
-            setPropSearchValue(searchString);
-            setTimeout(() => {
-                const filteredProps = allProperties.filter(val => (
-                    val.type === searchString
-                ));
-                setPropertiesToShow(filteredProps);
-            });
-        }
-    }, [allProperties]);
 
     // Showing and edditing selected property;
     const navigate = useNavigate();
@@ -415,358 +213,25 @@ const Customer = () => {
     const [dontCloseCard, setDontCloseCard] = useState([]);
     const [refreshProperties, setRefreshProperties] = useState(false);
 
-    // Create new property
-    const [showCreatePropertyForm, setShowCreatePropertyForm] = useState(false);
-    const [newPropertyType, setNewPropertyType] = useState('House');
 
-    // Handle create property
-    const handleCreateProperty = async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const propertyData = Object.fromEntries(formData.entries());
-        propertyData.type = newPropertyType; // Include selected property type
-
+    // Handle request property closure
+    const requestPropertyClosure = async (propertyId) => {
         try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/properties/createProperty`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(propertyData),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error adding the property');
-            }
-
-            const data = await response.json();
-            toast({ message: data.message, type: 'dark' });
-            setShowCreatePropertyForm(false);
-            fetchProperties();
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: error.message, type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-        }
-    };
-
-    // Handle create property
-    const handleDeleteProperty = async (e) => {
-        if (e) e.preventDefault();
-
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/delete`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error deleting the property');
-            }
-            const data = await response.json();
+            const response = await axios.post(`${BASE_URL}/property/${propertyId}/close-request`, { customerEmail: 'hirwawilly9@gmail.com' });
             resetConfirmDialog();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setConfirmDialogActionWaiting(false);
-        }
-    };
-
-    // Feature prop
-    const showProperty = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/show`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            toast({
+                message: <><SealCheck size={22} weight='fill' className='me-1 opacity-50' /> {response.data.message}</>,
+                type: 'gray-800'
             });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error showing property');
-            }
-            const data = await response.json();
-            resetConfirmDialog();
             fetchProperties();
-            toast({ message: data.message, type: 'dark' });
+            return response.data; // Return the response data for further use
         } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setConfirmDialogActionWaiting(false);
-        }
-    };
-
-    // Feature prop
-    const hideProperty = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/hide`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            console.error("Error requesting property closure:", error.response?.data || error.message);
+            toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> {error.response?.data}</>,
+                type: 'warning'
             });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error hidding property');
-            }
-            const data = await response.json();
-            resetConfirmDialog();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setConfirmDialogActionWaiting(false);
-        }
-    };
-
-    // Feature prop
-    const featureProperty = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/feature`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error pinning property');
-            }
-            const data = await response.json();
-            resetConfirmDialog();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setConfirmDialogActionWaiting(false);
-        }
-    };
-
-    // Unfeature prop
-    const unfeatureProperty = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/unfeature`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error unpining property');
-            }
-            const data = await response.json();
-            resetConfirmDialog();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setConfirmDialogActionWaiting(false);
-        }
-    };
-
-    // Change prop's name
-    const changePropertyName = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/changeName`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: promptInputValue.current }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error changing name');
-            }
-            const data = await response.json();
-            resetPrompt();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setPromptActionWaiting(false);
-        }
-    };
-
-    // Change prop's about
-    const changePropertyAbout = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/changeAbout`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ about: promptInputValue.current }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error changing about');
-            }
-            const data = await response.json();
-            resetPrompt();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setPromptActionWaiting(false);
-        }
-    };
-
-    // Change prop's location
-    const changePropertyLocation = async () => {
-
-        // Check if embed link is provided
-        // if (!promptInputValue.current === '') {
-        //     setTimeout(() => {
-        //         setPromptActionWaiting(false);
-        //     });
-        //     return toast({ message: 'Only embed link supported', type: 'gray-200' }); // Return if not
-        // }
-
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/changeLocation`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ location: promptInputValue.current }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error changing location');
-            }
-            const data = await response.json();
-            resetPrompt();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setPromptActionWaiting(false);
-        }
-    };
-
-    // Change prop's price
-    const changePropertyPrice = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/changePrice`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ price: promptInputValue.current }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error changing price');
-            }
-            const data = await response.json();
-            resetPrompt();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setPromptActionWaiting(false);
-        }
-    };
-
-    // Change prop's payment
-    const changePropertyPayment = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/changePayment`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ payment: promptInputValue.current }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error changing payment');
-            }
-            const data = await response.json();
-            resetPrompt();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setPromptActionWaiting(false);
-        }
-    };
-
-    // Change prop's type
-    const changePropertyType = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/changeType`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: promptInputValue.current }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error changing type');
-            }
-            const data = await response.json();
-            resetPrompt();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setPromptActionWaiting(false);
-        }
-    };
-
-    // Change prop's category
-    const changePropertyCategory = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/changeCategory`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ category: promptInputValue.current }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error changing category');
-            }
-            const data = await response.json();
-            resetPrompt();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setPromptActionWaiting(false);
+            throw error; // Re-throw the error to handle it outside
         }
     };
 
@@ -810,213 +275,6 @@ const Customer = () => {
         }
     };
 
-    // Edit prop's media
-    const [imageFile, setImageFile] = useState(null);
-    const [videoFile, setVideoFile] = useState(null);
-    const [showAddImageForm, setShowAddImageForm] = useState(false);
-    const [showAddVideoForm, setShowAddVideoForm] = useState(false);
-    const [imageFileName, setImageFileName] = useState(null);
-    const [videoFileName, setVideoFileName] = useState(null);
-
-    const handleImageFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file && !file.type.startsWith("image/")) {
-            toast({
-                message: "Please upload a valid image file.",
-                type: "danger",
-            });
-            return;
-        }
-        setImageFile(file);
-        setImageFileName(file?.name || ""); // Set the file name
-    };
-
-    const handleVideoFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file && !file.type.startsWith("video/")) {
-            toast({
-                message: "Please upload a valid video file.",
-                type: "danger",
-            });
-            return;
-        }
-        setVideoFile(file);
-        setVideoFileName(file?.name || ""); // Set the file name
-    };
-
-    const addPropertyImage = async () => {
-        if (!imageFile) {
-            toast({
-                message: "Please select an image file before submitting.",
-                type: "gray-700",
-            });
-            return;
-        }
-
-        const propertyId = selectedProperty.id;
-        await uploadMedia(propertyId, imageFile, "image");
-        setImageFile(null); // Clear the input after upload
-        // setSelectedProperty(propertiesToShow.filter(p => p.id === propertyId));
-        setShowSelectedPropertyInfo(false);
-    };
-
-    const addPropertyVideo = async () => {
-        if (!videoFile) {
-            toast({
-                message: "Please select a video file before submitting.",
-                type: "gray-700",
-            });
-            return;
-        }
-
-        const propertyId = selectedProperty.id;
-        await uploadMedia(propertyId, videoFile, "video");
-        setVideoFile(null); // Clear the input after upload
-        // setSelectedProperty(propertiesToShow.filter(p => p.id === propertyId));
-        setShowSelectedPropertyInfo(false);
-    };
-
-    // Remove prop's image
-    const [selectedImageUrl, setSelectedImageUrl] = useState('');
-    const removePropertyImage = async () => {
-        if (selectedImageUrl === '') {
-            return toast({ message: 'Select an image to remove', type: 'gray-700' }); // Return if no image seleted
-        }
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/removeImage`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ imageUrl: selectedImageUrl })
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error removing image');
-            }
-            const data = await response.json();
-            resetConfirmDialog();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-        }
-    };
-
-    // Set prop's cover image
-    const setPropertyImageCover = async () => {
-        if (selectedImageUrl === '') {
-            return toast({ message: 'Select an image to use as cover', type: 'gray-700' }); // Return if no image seleted
-        }
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/setCoverImage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ imageUrl: selectedImageUrl })
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error setting cover image');
-            }
-            const data = await response.json();
-            resetConfirmDialog();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-        }
-    };
-
-    // Remove prop's video
-    const removePropertyVideo = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/removeVideo`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error removing video');
-            }
-            const data = await response.json();
-            resetConfirmDialog();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-        }
-    };
-
-    // Add prop's map
-    const addPropertyMap = async () => {
-        // Check if embed link is provided
-        if (!promptInputValue.current.startsWith('<iframe ')
-            || (promptInputValue.current.startsWith('<iframe ') && !promptInputValue.current.endsWith('</iframe>'))
-        ) {
-            setTimeout(() => {
-                setPromptActionWaiting(false);
-            });
-            return toast({ message: 'Only embed link supported', type: 'gray-200' }); // Return if not
-        }
-
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/addMap`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mapUrl: promptInputValue.current })
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error adding the map');
-            }
-            const data = await response.json();
-            resetPrompt();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setPromptActionWaiting(false);
-        }
-    };
-
-    // Remove prop's map
-    const removePropertyMap = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/removeMap`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error removing the map');
-            }
-            const data = await response.json();
-            resetConfirmDialog();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-        }
-    };
-
     // Close property
 
     const [showClosePropertyForm, setShowClosePropertyForm] = useState(false);
@@ -1051,30 +309,6 @@ const Customer = () => {
         }
     };
 
-    // Close property options
-    useEffect(() => {
-        if (selectedProperty.length > 0) {
-            if (selectedProperty.bookedBy !== null) {
-                setCloseBookedProperty(true);
-            } else { setCloseBookedProperty(false) };
-        } else {
-            setCloseBookedProperty(false);
-        };
-    }, [selectedProperty]);
-
-    // Trigger refreshments
-    useEffect(() => {
-        if (refreshProperties) {
-            fetchProperties();
-        }
-        if (!showSelectedPropertyInfo) {
-            setSelectedImageUrl('');
-            setShowAddImageForm(false);
-            setShowAddVideoForm(false);
-            setEditSelectedProperty(false);
-            setShowSelectedPropertyDangerZone(false);
-        }
-    }, [showSelectedPropertyInfo, refreshProperties, fetchProperties]);
 
     // Prevent closing the card/form
     useEffect(() => {
@@ -1091,761 +325,6 @@ const Customer = () => {
         });
 
     }, [isWaitingAdminEditAction]);
-
-    // Property preview
-    const PropertyPreview = ({ setDontCloseCard, setRefreshProperties }) => {
-        const { id, listed, cover, category, type, name, location, about, price, payment,
-            bedrooms, bathrooms, garages, videoUrl, mapUrl, booked, bookedBy, closed,
-            media, likes, featured } = selectedProperty;
-
-
-        const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
-        const mainLightColor = category === "For Sale" ? "#25b5791a" : "#ff98001a"
-        const bookedByLen = booked ? JSON.parse(bookedBy).length : null;
-        let propImages = null;
-        let isEligible = false;
-        // if (media && JSON.parse(JSON.parse(media))) {
-        if (media) {
-            propImages = JSON.parse(JSON.parse(media)).images;
-            if (propImages.length > 4) {
-                isEligible = true;
-            }
-        }
-
-        return (
-            <>
-                <div className="mb-4 mb-md-0" id="propertyCard">
-                    {/* Property previrew card */}
-                    <div className={`position-relative d-xl-flex h-100 ${!closed ? 'mb-4 mb-lg-5' : ''} box`}
-                        style={{ "--_mainColor": mainColor, "--_mainLightColor": mainLightColor, }}
-                    >
-                        <div className="position-relative col-xl-5 img">
-                            {/* Closed mark */}
-                            {closed &&
-                                <div className="flex-align-center bg-success text-light fw-normal small ribbon">
-                                    {category === 'For Rent' ? <>Rent <CircleWavyCheck weight="bold" className="ms-1" /></> : category === 'For Sale' ? <>Sold <CircleWavyCheck weight="bold" className="ms-1" /></> : "Closed"}
-                                </div>
-                            }
-                            {/* Reserved mark */}
-                            {!closed && booked &&
-                                <div className="fw-normal fs-65 flex-align-center ribbon"
-                                    title={bookedByLen + ` potential client${bookedByLen > 1 ? 's' : ''}`}>
-                                    <Bookmark size={15} weight="fill" /> {bookedByLen}
-                                </div>
-                            }
-                            <img src={cover ? cover : '/images/image_placeholder.png'} alt="Property" className={`dim-100 object-fit-cover ${!cover ? 'bg-gray-500' : ''}`} />
-                            {/* CAT buttons */}
-                            {listed &&
-                                <div className="position-absolute top-0 mt-3 me-3 property-actions">
-                                    <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 fst-italic small rounded-pill clickDown"
-                                        onClick={() => goToProperty(id)} title="View property">
-                                        View property <CaretDoubleRight size={16} className="ms-1" />
-                                    </button>
-                                    {!closed &&
-                                        <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 fst-italic small rounded-pill clickDown" title="Share property"
-                                            onClick={() => shareProperty(id, name, category)} >
-                                            Share <ShareFat size={16} className="ms-1" />
-                                        </button>
-                                    }
-                                </div>
-                            }
-                            {/* Iconic details */}
-                            <div className="position-absolute bottom-0 gap-3 mb-2 mx-0 px-2 property-iconic-details">
-                                {bedrooms && bedrooms > 0 && (
-                                    <div className='flex-align-center fw-light text-muted'>
-                                        <Bed size={20} weight='fill' className='me-1 text-light' />
-                                        <span className="text-light fs-70">{bedrooms}</span>
-                                    </div>
-                                )}
-                                {bathrooms && bathrooms > 0 && (
-                                    <div className='flex-align-center fw-light text-muted'>
-                                        <Shower size={20} weight='fill' className='me-1 text-light' />
-                                        <span className="text-light fs-70">{bathrooms}</span>
-                                    </div>
-                                )}
-                                {garages && garages > 0 && (
-                                    <div className='flex-align-center fw-light text-muted'>
-                                        <Car size={20} weight='fill' className='me-1 text-light' />
-                                        <span className="text-light fs-70">{garages}</span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        <div className='col-xl-7 d-lg-flex flex-column px-2 pb-3 pb-xl-2 info'>
-                            <div className="text px-0 px-md-2 small">
-                                <div className="d-flex align-items-center justify-content-between gap-3 my-2 category">
-                                    <span className="catgType" style={{ background: mainLightColor, color: mainColor }}>
-                                        {category}
-                                    </span>
-                                    <span className="flex-align-center">
-                                        <span className="fs-70 fw-bold text-black2">
-                                            {likes !== null && formatBigCountNumbers(Array(likes).length)}
-                                        </span>
-                                        <Heart className="text ms-1 fs-4 ptr me-1" />
-                                    </span>
-                                </div>
-                                <h4 className="m-0 fs-6 text-gray-700">{name}</h4>
-                                <p className="mb-2"><MapPinArea size={20} weight="fill" /> {location}</p>
-                                <p className="small text-muted">{about}</p>
-                            </div>
-                            <div className="d-flex align-items-center justify-content-between flex-wrap column-gap-3 row-gap-1 mt-lg-auto px-0 px-md-2">
-                                <div className="d-flex align-items-center gap-2">
-                                    <button className={`btn btn-sm flex-align-center px-3 py-1 border-2 bg-warning bg-opacity-25 text-success clickDown rounded-pill small ${closed ? 'text-decoration-line-through' : ''}`}
-                                        title="View property" onClick={() => goToProperty(id)} >
-                                        {/* <CurrencyDollar weight="bold" className="me-1" /> {price.toLocaleString()} */}
-                                        RWF {price.toLocaleString()}
-                                        {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 fs-75">/year</span>}
-                                        {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 fs-75">/month</span>}
-                                        {payment === 'weekly' && <span className="opacity-50 fw-normal ms-1 fs-75">/week</span>}
-                                        {payment === 'daily' && <span className="opacity-50 fw-normal ms-1 fs-75">/day</span>}
-                                        {payment === 'hourly' && <span className="opacity-50 fw-normal ms-1 fs-75">/hour</span>}
-                                        <CaretDoubleRight size={16} weight="bold" className="ms-2" /></button>
-                                </div>
-                                <span className="d-flex align-items-center ms-auto fw-bold small text-muted opacity-50">
-                                    {type === "Apartment" && <BuildingApartment size={20} weight="duotone" className="me-1" />}
-                                    {type === "House" && <HouseLine size={20} weight="duotone" className="me-1" />}
-                                    {type === "Commercial" && <Storefront size={20} weight="duotone" className="me-1" />}
-                                    {type === "Office" && <BuildingOffice size={20} weight="duotone" className="me-1" />}
-                                    {type === "Land Plot" && <Mountains size={20} weight="duotone" className="me-1" />}
-                                    {type}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div className='badge text-gray-700 flex-center d-flex fw-normal ptr'>
-                            <span>{media !== null ? propImages.length : 0} images {!isEligible ? ' (Not eligible)' : ''}</span> {videoUrl ? <span><Dot size={20} /> 1 video</span> : ''} {mapUrl ? <span><Dot size={20} /> Map</span> : ''}
-                        </div>
-                        {media !== null && (
-                            <>
-                                <div className='d-flex gap-1 mb-3 pb-2 overflow-auto'>
-                                    {propImages
-                                        .map((image, index) => (
-                                            <img key={index} src={image.url} alt={`Image_${index + 1}`} className={`col-5 col-md-3 ${selectedImageUrl === image.url ? 'border border-warning border-3 rounded-4' : ''} trans-p3s`}
-                                                onClick={() => {
-                                                    if (selectedImageUrl === '') {
-                                                        setSelectedImageUrl(image.url)
-                                                    } else if (selectedImageUrl !== '' && selectedImageUrl !== image.url) {
-                                                        setSelectedImageUrl(image.url)
-                                                    } else {
-                                                        setSelectedImageUrl('');
-                                                    }
-                                                }}
-                                            />
-                                        ))
-                                    }
-                                </div>
-                                {selectedImageUrl !== '' && (
-                                    <ul className="list-unstyled flex-center flex-wrap gap-3">
-                                        <li className='col-5 btn btn-sm btn-outline-secondary rounded-pill clickDown'
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customConfirmDialog({
-                                                        message: (
-                                                            <>
-                                                                <h5 className="h6 border-bottom border-dark border-opacity-25 mb-3 pb-2">Set cover image</h5>
-                                                                <p>
-                                                                    Set the selected image as the <b>cover image</b> for this property. <br /><br />
-                                                                    A cover image is the primary image displayed for a property in listings, ensuring it stands out to potential viewers.
-                                                                </p>
-                                                            </>
-                                                        ),
-                                                        type: 'gray-700',
-                                                        action: setPropertyImageCover,
-                                                        closeCallback: () => setShowSelectedPropertyInfo(true),
-                                                    });
-                                                }
-                                            }
-                                        ><Image /> Set as cover</li>
-                                        <li className='col-5 btn btn-sm btn-outline-danger rounded-pill clickDown'
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customConfirmDialog({
-                                                        message: (
-                                                            <>
-                                                                <h5 className="h6 border-bottom border-dark border-opacity-25 mb-3 pb-2">Delete image</h5>
-                                                                <p>
-                                                                    Remove/Delete selected image from this property's media
-                                                                </p>
-                                                            </>
-                                                        ),
-                                                        type: 'gray-700',
-                                                        action: removePropertyImage,
-                                                        closeCallback: () => setShowSelectedPropertyInfo(true),
-                                                    });
-                                                }
-                                            }
-                                        ><Trash /> Delete image</li>
-                                    </ul>
-                                )}
-                            </>
-                        )}
-                    </div>
-
-                    {/* Property editor */}
-                    {!closed &&
-                        <>
-                            <DividerText text={!editSelectedProperty ? <><Pen className='me-1' /> EDIT DETAILS</> : <><X className='me-1' /> CLOSE EDITOR</>} type="gray-700" className="my-4 ptr" clickable onClick={() => setEditSelectedProperty(!editSelectedProperty)} />
-
-                            <div className={`collapsible-grid-y ${editSelectedProperty ? 'working' : ''}`}>
-                                <div className="collapsing-content dim-100">
-                                    <div className='d-flex flex-wrap gap-2 mb-4 pb-2'>
-                                        {isEligible ?
-                                            <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                                onClick={
-                                                    () => {
-                                                        setShowSelectedPropertyInfo(false);
-                                                        customConfirmDialog({
-                                                            message: (
-                                                                <>
-                                                                    <h5 className="h6 border-bottom border-dark border-opacity-25 mb-3 pb-2">{name}</h5>
-                                                                    <p>
-                                                                        {!listed ?
-                                                                            <>Show this property in your listing</>
-                                                                            :
-                                                                            <>
-                                                                                Hide/unlist this property from your listing. {booked ?
-                                                                                    <>
-                                                                                        <span className='d-block mt-2 px-3 py-2 t bg-danger text-light'>
-                                                                                            This property was reseved by {bookedByLen ? (bookedByLen > 1 ? 'several customers' : 'a customer') : ''}. <b>Are you sure to continue ?</b>
-                                                                                        </span>
-
-                                                                                    </> : ''
-                                                                                }
-                                                                            </>
-                                                                        }
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            type: !listed ? 'gray-700' : 'warning',
-                                                            action: !listed ? showProperty : hideProperty,
-                                                            closeCallback: () => setShowSelectedPropertyInfo(true),
-                                                        });
-                                                    }
-                                                }
-                                            >
-                                                {!listed ?
-                                                    <><Eye size={16} weight='fill' className='me-2 opacity-75' /> SHOW</>
-                                                    : <><EyeSlash size={16} weight='fill' className='me-2 opacity-75' /> HIDE</>
-                                                }
-                                            </button>
-                                            :
-                                            <div className="btn btn-sm btn-outline-warning border-warning border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                                onClick={() => toast({ message: 'At least 5 images are required to display this property in listing', type: 'gray-700' })}
-                                            ><Eye size={16} weight='fill' className='me-2 opacity-75' /> SHOW</div>
-                                        }
-
-                                        <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customConfirmDialog({
-                                                        message: (
-                                                            <>
-                                                                <h5 className="h6 border-bottom border-dark border-opacity-25 mb-3 pb-2">{name}</h5>
-                                                                <p>
-                                                                    {!featured ?
-                                                                        <>Mark this property as featured (Pin property)</>
-                                                                        :
-                                                                        <>Remove featured mark from this property (Unpin property)</>
-                                                                    }
-                                                                </p>
-                                                            </>
-                                                        ),
-                                                        type: !featured ? 'gray-700' : 'warning',
-                                                        action: !featured ? featureProperty : unfeatureProperty,
-                                                        closeCallback: () => setShowSelectedPropertyInfo(true),
-                                                    });
-                                                }
-                                            }
-                                        >
-                                            {!featured ?
-                                                <><PushPinSimple size={16} weight='fill' className='me-2 opacity-75' /> PIN</>
-                                                : <><PushPinSimpleSlash size={16} weight='fill' className='me-2 opacity-75' /> UNPIN</>
-                                            }
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <p>
-                                                                        Enter new name for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''}
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'text',
-                                                            action: changePropertyName,
-                                                            placeholder: 'Enter new name',
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        >
-                                            <TextAUnderline size={16} weight='fill' className='me-2 opacity-75' /> RENAME
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <strong>Current property about:</strong><br />
-                                                                    <p className='fst-italic small'>
-                                                                        {about}
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'textarea',
-                                                            action: changePropertyAbout,
-                                                            placeholder: 'Enter new about',
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        >
-                                            <TextAlignLeft size={16} weight='fill' className='me-2 opacity-75' /> EDIT ABOUT
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <strong>Current location: "{location}"</strong>
-                                                                    <p>
-                                                                        Enter new location for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''} <br />
-                                                                        {mapUrl ?
-                                                                            <small className='text-warning'>
-                                                                                You might also need to change the property's location map.
-                                                                            </small>
-                                                                            : ''
-                                                                        }
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'text',
-                                                            action: changePropertyLocation,
-                                                            placeholder: 'Enter new location',
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        >
-                                            <MapPinArea size={16} weight='fill' className='me-2 opacity-75' /> EDIT LOCATION
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <strong>Current price: "{price.toLocaleString()} RWF"</strong>
-                                                                    <p>
-                                                                        Enter new price for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''}
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'number',
-                                                            action: changePropertyPrice,
-                                                            placeholder: 'Enter new price',
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        >
-                                            <MoneyWavy size={16} weight='fill' className='me-2 opacity-75' /> EDIT PRICE
-                                        </button>
-
-                                        <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <strong>Current payment method: "{payment}"</strong>
-                                                                    <p>
-                                                                        Select a new payment method for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''}
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'select',
-                                                            selectOptions: ['once', 'annually', 'monthly', 'weekly', 'daily', 'hourly', { default: payment }],
-                                                            action: changePropertyPayment,
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        >
-                                            <Money size={16} weight='fill' className='me-2 opacity-75' /> EDIT PAYMENT
-                                        </button>
-
-                                        <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <strong>Current type: "{type}"</strong>
-                                                                    <p>
-                                                                        Select a new type for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''}
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'select',
-                                                            selectOptions: ['Apartment', 'House', 'Office', 'Commercial', 'Land Plot', { default: type }],
-                                                            action: changePropertyType,
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        >
-                                            <Building size={16} weight='fill' className='me-2 opacity-75' /> EDIT TYPE
-                                        </button>
-
-                                        <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <strong>Current category: "{category}"</strong>
-                                                                    <p>
-                                                                        Select a new category for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''}
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'select',
-                                                            selectOptions: ['For Sale', 'For Rent', { default: category }],
-                                                            action: changePropertyCategory,
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        >
-                                            <Swap size={16} weight='fill' className='me-2 opacity-75' /> EDIT CATEGORY
-                                        </button>
-
-                                        <hr className='w-100 my-2 opacity-0' />
-
-                                        {(media === null || (media !== null || JSON.parse(media).images.length < 25)) &&
-                                            <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                                onClick={() => { setShowAddImageForm(true); setShowAddVideoForm(false) }}
-                                            >
-                                                <Image size={16} weight='fill' className='me-2 opacity-75' /> ADD IMAGE
-                                            </button>
-                                        }
-
-                                        <button type="button" className={`btn btn-sm btn-outline-${!videoUrl ? 'secondary' : 'danger'} border-${!videoUrl ? 'secondary' : 'danger'} border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown`}
-                                            onClick={() => {
-                                                if (videoUrl) {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customConfirmDialog({
-                                                        message: (
-                                                            <>
-                                                                <h5 className="h6 border-bottom border-dark border-opacity-25 mb-3 pb-2">{name}</h5>
-                                                                <p>Remove video footage from this property</p>
-                                                            </>
-                                                        ),
-                                                        type: 'warning',
-                                                        action: removePropertyVideo,
-                                                    });
-                                                } else {
-                                                    setShowAddImageForm(false);
-                                                    setShowAddVideoForm(true);
-                                                }
-                                            }}
-                                        >
-                                            <Video size={16} weight='fill' className='me-2 opacity-75' />
-                                            {!videoUrl ?
-                                                <>ADD VIDEO</>
-                                                : <>REMOVE VIDEO</>
-                                            }
-                                        </button>
-
-                                        <button type="button" className={`btn btn-sm btn-outline-${!mapUrl ? 'secondary' : 'danger'} border-${!mapUrl ? 'secondary' : 'danger'} border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown`}
-                                            onClick={() => {
-                                                setShowSelectedPropertyInfo(false);
-                                                if (mapUrl) {
-                                                    customConfirmDialog({
-                                                        message: (
-                                                            <>
-                                                                <h5 className="h6 border-bottom border-dark border-opacity-25 mb-3 pb-2">{name}</h5>
-                                                                <p>Remove location map from this property</p>
-                                                            </>
-                                                        ),
-                                                        type: 'warning',
-                                                        action: removePropertyMap,
-                                                    });
-                                                } else {
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <p>
-                                                                        Paste here a link for the property's location map.<br /><strong> Make sure to copy the embed link</strong> from Google Maps.
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'text',
-                                                            action: addPropertyMap,
-                                                            placeholder: 'Paste link',
-                                                        }
-                                                    )
-                                                }
-                                            }}
-                                        >
-                                            <MapTrifold size={16} weight='fill' className='me-2 opacity-75' />
-                                            {!mapUrl ?
-                                                <>ADD LOCATION MAP</>
-                                                : <>REMOVE LOCATION MAP</>
-                                            }
-                                        </button>
-
-                                        <hr className='w-100 my-2 opacity-0' />
-                                        {/* Image form */}
-                                        {showAddImageForm && (
-                                            <div className="w-100 p-3 bg-gray-300 small add-property-image">
-                                                <h6 className='flex-align-center text-gray-600'><Image size={20} weight="fill" className='me-1' /> Add Property Image</h6>
-                                                <div className="flex-align-center flex-wrap gap-2 mb-3">
-                                                    <input
-                                                        type="file"
-                                                        accept="image/jpeg, image/jpg, image/png"
-                                                        name="propImage"
-                                                        id="propImage"
-                                                        className="form-control rounded-0 file-input"
-                                                        onChange={handleImageFileChange}
-                                                    />
-                                                    <p className={`${imageFileName ? 'text-success' : ''} mb-0 px-2`}>{imageFileName || "No file chosen"}</p>
-                                                </div>
-                                                <div className="modal-footer justify-content-around">
-                                                    <button
-                                                        type="button"
-                                                        className={`col-5 btn btn-sm text-secondary border-0 ${isWaitingAdminEditAction ? 'opacity-25' : 'opacity-75'
-                                                            } clickDown`}
-                                                        disabled={isWaitingAdminEditAction}
-                                                        onClick={() => { setImageFileName(null); setShowAddImageForm(false) }}
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                    <button
-                                                        type="submit"
-                                                        className="col-5 btn btn-sm btn-secondary flex-center px-3 rounded-pill clickDown"
-                                                        id="uploadImage"
-                                                        onClick={addPropertyImage}
-                                                        disabled={imageFileName === null || isWaitingAdminEditAction}
-                                                    >
-                                                        {!isWaitingAdminEditAction ? (
-                                                            <>
-                                                                Submit <CaretRight size={18} className="ms-1" />
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                Working <span className="spinner-grow spinner-grow-sm ms-2"></span>
-                                                            </>
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {/* Video form */}
-                                        {showAddVideoForm && (
-                                            <div className="w-100 p-3 bg-gray-300 small add-property-video">
-                                                <h6 className='flex-align-center text-gray-600'><Video size={20} weight="fill" className='me-1' /> Add Property Video</h6>
-                                                <div className="flex-align-center flex-wrap gap-2 mb-3">
-                                                    <input
-                                                        type="file"
-                                                        accept="video/mp4, video/quicktime, video/x-msvideo, video/x-matroska, video/3gpp"
-                                                        name="propVideo"
-                                                        id="propVideo"
-                                                        className="form-control rounded-0 file-input"
-                                                        onChange={handleVideoFileChange}
-                                                    />
-                                                    <p className={`${videoFileName ? 'text-success' : ''} mb-0 px-2`}>{videoFileName || "No file chosen"}</p>
-                                                </div>
-                                                <div className="modal-footer justify-content-around">
-                                                    <button
-                                                        type="button"
-                                                        className={`col-5 btn btn-sm text-secondary border-0 ${isWaitingAdminEditAction ? 'opacity-25' : 'opacity-75'
-                                                            } clickDown`}
-                                                        disabled={isWaitingAdminEditAction}
-                                                        onClick={() => { setVideoFileName(null); setShowAddVideoForm(false) }}
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                    <button
-                                                        type="submit"
-                                                        className="col-5 btn btn-sm btn-secondary flex-center px-3 rounded-pill clickDown"
-                                                        id="uploadVideo"
-                                                        onClick={addPropertyVideo}
-                                                        disabled={videoFileName === null || isWaitingAdminEditAction}
-                                                    >
-                                                        {!isWaitingAdminEditAction ? (
-                                                            <>
-                                                                Submit <CaretRight size={18} className="ms-1" />
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                Working <span className="spinner-grow spinner-grow-sm ms-2"></span>
-                                                            </>
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center my-2 px-3 rounded-pill w-100 fs-75 clickDown"
-                                            onClick={() => setEditSelectedProperty(true)}
-                                        >
-                                            <Pen size={16} weight='fill' className='me-2 opacity-75' /> EDIT MORE
-                                        </button>
-
-                                        <hr className='w-100 my-2 opacity-0' />
-
-                                        {/* {booked && !closed && */}
-                                        {!closed && listed && (
-                                            <>
-                                                {/* Toggle Close Property Form */}
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-sm btn-success flex-center px-3 py-2 rounded-0 w-100 fs-75 clickDown"
-                                                    onClick={() => { setShowSelectedPropertyInfo(false); setShowClosePropertyForm(true) }}
-                                                >
-                                                    <SealCheck size={16} weight="fill" className="me-2 opacity-75" /> CLOSE PROPERTY
-                                                </button>
-                                            </>
-                                        )}
-                                        {/* <hr class /> */}
-
-                                        <DividerText text="DANGER ZONE" className="my-4 mx-auto text-danger ptr" clickable onClick={() => setShowSelectedPropertyDangerZone(!showSelectedPropertyDangerZone)} />
-                                        {showSelectedPropertyDangerZone && (
-                                            <div className="border border-danger border-opacity-25 p-3 rounded bg-light-danger small">
-                                                <p className="text-danger-emphasis mb-3">
-                                                    <Warning className='me-1' />
-                                                    Actions performed in this section are <u>irreversible</u>. Proceed with caution!
-                                                </p>
-
-                                                <ul className="mb-3">
-                                                    <li className="mb-2">
-                                                        <span className="text-danger">Clear Bookings:</span> Removes all booking records associated with this property.
-                                                    </li>
-                                                    <li>
-                                                        <span className="text-danger">Reset Status:</span> Resets the property's status to its default state.
-                                                    </li>
-                                                    <li className="mb-2">
-                                                        <span className="text-danger">Delete Property:</span> Permanently deletes the property, including all associated media (images, videos, etc.).
-                                                    </li>
-                                                </ul>
-
-                                                <div className="alert alert-danger d-flex align-items-start rounded-0">
-                                                    <i className="bi bi-shield-exclamation me-3 fs-5"></i>
-                                                    <div>
-                                                        <strong>Warning:</strong> Make sure to double-check these actions. Deleted data cannot be recovered.
-                                                    </div>
-                                                </div>
-
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-sm btn-outline-danger flex-center px-3 py-2 rounded-0 w-100 fs-75 clickDown"
-                                                    onClick={() => {
-                                                        setShowSelectedPropertyInfo(false);
-                                                        customConfirmDialog({
-                                                            message: (
-                                                                <>
-                                                                    <h5 className="h6 border-bottom border-dark border-opacity-25 mb-3 pb-2">{name}</h5>
-                                                                    <p>
-                                                                        {/* General message for deleting a property */}
-                                                                        {!listed ? (
-                                                                            <>{`You are about to delete this property from your listing.`}</>
-                                                                        ) : (
-                                                                            <>
-                                                                                {`You are about to delete this property from your listing. `}
-                                                                                {booked ? (
-                                                                                    <span className="d-block mt-2 px-3 py-2 bg-warning text-dark">
-                                                                                        <b>Warning:</b> This property is reserved by {bookedByLen ? (bookedByLen > 1 ? 'several customers' : 'a customer') : 'no one'}.
-                                                                                        <br />
-                                                                                        <b>Are you sure you want to delete this property and all associated media?</b>
-                                                                                        <br />
-                                                                                        <b>This action cannot be undone!</b>
-                                                                                    </span>
-                                                                                ) : (
-                                                                                    <span className="d-block mt-2 px-3 py-2 bg-info text-dark">
-                                                                                        <b>Info:</b> This property is listed but not currently reserved.
-                                                                                    </span>
-                                                                                )}
-                                                                            </>
-                                                                        )}
-                                                                        <br />
-                                                                        {closed && (
-                                                                            <span className="d-block mt-2 px-3 py-2 bg-secondary text-dark">
-                                                                                <b>This property has been marked as closed.</b>
-                                                                                <br />
-                                                                                <b>Are you sure you want to permanently delete this record and all associated media?</b>
-                                                                            </span>
-                                                                        )}
-                                                                        <br />
-                                                                        <span className="d-block mt-2">
-                                                                            Deleting this property will remove all associated media (images, videos, etc.) and it cannot be recovered.
-                                                                        </span>
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            type: 'danger',
-                                                            action: handleDeleteProperty,
-                                                            closeCallback: () => setShowSelectedPropertyInfo(true),
-                                                        });
-                                                    }}
-                                                >
-                                                    <Trash size={16} weight="fill" className="me-2 opacity-75" /> DELETE PROPERTY
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </>
-                    }
-                </div>
-            </>
-        )
-    }
 
     // Closed properties report
     const [showClosedPropertiesReport, setShowClosedPropertiesReport] = useState(false);
@@ -2392,7 +871,7 @@ const Customer = () => {
                 <div>
                     <h1 className='text-center mb-4 fw-bold text-secondary'>Orders</h1>
                     <div className="d-lg-flex px-4 fs-5 text-gray-600">
-                        Manage and track all property reservations made through your website.
+                        Track your reserved properties and finalize your next steps.
                     </div>
                 </div>
                 <ShoppingCart size={200} className='d-none d-lg-block px-4 col-lg-4 text-gray-400 mask-bottom section-icon' />
@@ -2427,17 +906,21 @@ const Customer = () => {
                             <div className='alert alert-info small'>
                                 <div className='grid-center'>
                                     <p>
-                                        <Info size={20} className='me-1' /> Here is a list of reserved properties. These properties have been temporarily held for potential buyers or tenants and are awaiting final confirmation or payment. While reserved, they remain unavailable for other inquiries or listings
+                                        <Info size={20} className='me-1' /> Reserved properties are temporarily held for you, awaiting your confirmation or payment. While reserved, they are unavailable for others. However, multiple users can reserve the same property, with the deal finalized by the first successful confirmation.
                                     </p>
                                     <CaretDown />
                                 </div>
                             </div>
                         </div>
                         <div className='row align-items-stretch'>
-                            {
-                                bookedProperties.map((property, index) => {
-                                    const { name, type, category, location, bookedBy } = property;
+                            {bookedProperties
+                                .map((property, index) => {
+                                    const { name, type, category, price, payment, location, bookedBy, closeRequests } = property;
                                     const orderEmails = JSON.parse(bookedBy);
+                                    let closeRequestsEmails = [];
+                                    if (closeRequests) {
+                                        closeRequestsEmails = JSON.parse(property.closeRequests)
+                                    }
                                     const orderCount = orderEmails.length;
 
                                     const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
@@ -2450,7 +933,7 @@ const Customer = () => {
                                                         <Bookmark size={15} weight="fill" /> {orderCount}
                                                     </span>
                                                     <span>{name}</span>
-                                                    <Info weight="bold" size={17} className='ms-auto opacity-75 ptr clickDown' onClick={() => { setSelectedProperty(property); setShowSelectedPropertyInfo(true) }} />
+                                                    <CaretDoubleRight weight="bold" size={17} className='ms-auto me-2 opacity-75 ptr clickDown' onClick={() => goToProperty(property.id)} title="View property" />
                                                 </div>
                                                 <p className='px-2 text-gray-600 smaller'>
                                                     <span style={{ color: mainColor }}>{type} {category}</span> <CaretRight /> {location}
@@ -2458,24 +941,38 @@ const Customer = () => {
                                                 <div className='mt-auto px-2'>
                                                     <div className='p-2 border-start border-end border-3'>
                                                         <div className="h6 grid-center text-gray-600 border-bottom pb-1">
-                                                            <span>RESERVED BY</span>
-                                                            <CaretDown />
-                                                        </div>
-                                                        <div className='d-grid'>
-                                                            {orderEmails.map((email, index) => (
-                                                                <div key={index} className='flex-align-center overflow-hidden smaller'>
-                                                                    <User className='opacity-50 me-1' />
-                                                                    <span className='text-gray-600 fw-bold text-truncate'>{email}</span>
-                                                                </div>
-                                                            ))}
+                                                            <span>RWF {price.toLocaleString()}  / {payment}</span>
                                                         </div>
                                                     </div>
                                                     {/* <div> */}
-                                                    <button className="w-100 btn btn-sm btn-outline-success mt-3 py-2 rounded-0 fw-light"
-                                                        onClick={() => { setSelectedProperty(property); setShowClosePropertyForm(true) }}
-                                                    >
-                                                        (1) close request
-                                                    </button>
+                                                    {(!closeRequests || !closeRequestsEmails.includes('hirwawilly9@gmail.com')) ? (
+
+                                                        <button className="w-100 btn btn-sm btn-outline-success mt-3 py-2 rounded-0 fw-light"
+                                                            onClick={() => {
+                                                                customConfirmDialog({
+                                                                    message: (
+                                                                        <>
+                                                                            <h5 className="h6 border-bottom border-light border-opacity-25 mb-3 pb-2"><SealCheck size={22} weight="fill" className='opacity-75' /> Close deal request</h5>
+                                                                            <div className='h5 flex-align-center flex-wrap gap-2 p-2 small border-start border-3 bg-gray-600'>
+                                                                                <span>{name}</span>
+                                                                            </div>
+                                                                            <p>
+                                                                                By requesting to close this deal, you confirm that all specified requirements have been met. You'll be notified once the deal is validated and accepted by the admin or property listing agent.
+                                                                            </p>
+                                                                        </>
+                                                                    ),
+                                                                    type: 'gray-800',
+                                                                    action: () => requestPropertyClosure(property.id),
+                                                                });
+                                                            }}
+                                                        >
+                                                            Request closing this deal
+                                                        </button>
+                                                    ) : (closeRequests && closeRequestsEmails.includes('hirwawilly9@gmail.com')) ? (
+                                                        <div className="w-100 mt-3 py-2 fw-light flex-center text-bg-secondary smaller">
+                                                            <HourglassHigh weight='fill' className='me-1 opacity-50' /> Deal closure request under review
+                                                        </div>
+                                                    ) : ''}
                                                     {/* </div> */}
                                                 </div>
                                             </div>
@@ -2486,6 +983,141 @@ const Customer = () => {
                         </div>
                     </>
                 }
+            </div>
+        </section>
+    );
+
+    const Reports = () => (
+        <section>
+            {/* Section about */}
+            <div className='pt-5 pb-3 d-lg-flex section-about'>
+                <div>
+                    <h1 className='text-center mb-4 fw-bold text-secondary'>Reports</h1>
+                    <div className="d-lg-flex px-4 fs-5 text-gray-600">
+                        Review key insights on property performance and analyze closed deals to inform business decisions.
+                    </div>
+                </div>
+                <ChartBar size={200} className='d-none d-lg-block px-4 col-lg-4 text-gray-400 mask-bottom section-icon' />
+            </div>
+
+            {/* Section Content : Reports */}
+            <div className="container my-5 px-0 py-4 section-content">
+                {/* Loading */}
+                {loadingProperties && <LoadingBubbles icon={<ChartBar size={50} className='loading-skeleton' />} />}
+                {/* Error */}
+                {!loadingProperties && errorLoadingProperties && (
+                    <FetchError
+                        errorMessage="Failed to load properties. Click the button to try again"
+                        refreshFunction={() => fetchProperties()}
+                        className="mb-5 mt-4"
+                    />
+                )}
+                {/* Zero content */}
+                {!loadingProperties && !errorLoadingProperties && closedPropertiesNum === 0 &&
+                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
+                        <SealCheck size={80} className="text-center w-100 mb-3 opacity-50" />
+                        <p className="text-muted text-center small">
+                            View your successfully closed deals and completed transactions.
+                        </p>
+                    </div>
+                }
+                {/* Available content */}
+                {!loadingProperties && !errorLoadingProperties && closedPropertiesNum > 0 && (
+                    <>
+                        <div className='container mb-4 py-3 border border-2'>
+                            <h4 className='text-info-emphasis mb-4 fs-4 text-uppercase'>Closed properties ( {closedPropertiesNum} )</h4>
+                            <div className='alert alert-info small'>
+                                <div className='grid-center'>
+                                    <p>
+                                        <Info size={20} className='me-1' /> These properties represent successful transactions or agreements that you have finalized with the involved parties, marking them as officially closed and no longer available for inquiries or reservations unless if put back on the market in the future.
+                                    </p>
+                                    <CaretDown />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* View and search toggler */}
+                        <ul className='d-flex justify-content-center gap-2 mb-2 list-unstyled'>
+                            <li className={`flex-align-center p-2 ${!showClosedPropertiesReport ? 'border-bottom border-3 border-primary fw-bold text-primary' : 'text-gray-600'} ptr clickDown`}
+                                onClick={() => setShowClosedPropertiesReport(false)}>
+                                <ListDashes weight='fill' className='me-1' /> List
+                            </li>
+                            <li className={`flex-align-center p-2 ${showClosedPropertiesReport ? 'border-bottom border-3 border-primary fw-bold text-primary' : 'text-gray-600'} ptr clickDown`}
+                                onClick={() => setShowClosedPropertiesReport(true)}>
+                                <Calendar weight='fill' className='me-1' /> Report
+                            </li>
+                        </ul>
+                        {!showClosedPropertiesReport ? (
+                            <div className='row align-items-stretch'>
+                                {closedProperties.map((property, index) => {
+                                    const { name, type, category, location, bookedBy, closedBy, closedOn } = property;
+                                    const orderEmails = JSON.parse(bookedBy);
+                                    const orderCount = orderEmails.length;
+
+                                    const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
+
+                                    return (
+                                        <div key={index} className='col-12 col-lg-6 col-xxl-4 mb-3'>
+                                            <div className='h-100 d-flex flex-column py-3 text-gray-700 border'>
+                                                <div className='h5 flex-align-center flex-wrap gap-2 p-2 small border-start border-3 border-dark bg-gray-300'>
+                                                    <SealCheck weight="fill" className='opacity-75' />
+                                                    <span>{name}</span>
+                                                    <Info weight="bold" size={17} className='ms-auto opacity-75 ptr clickDown' title="Preview" onClick={() => { setSelectedProperty(property); setShowSelectedPropertyInfo(true) }} />
+                                                </div>
+                                                <p className='px-2 text-gray-600 smaller'>
+                                                    <span style={{ color: mainColor }}>{type} {category}</span> <CaretRight /> {location}
+                                                </p>
+                                                <div className='mt-auto px-2'>
+                                                    {orderCount > 1 && (
+                                                        <div className='p-2 border-start border-end border-3'>
+                                                            <div className="h6 grid-center text-gray-600 border-bottom pb-1">
+                                                                <span>BOOKED BY ( {orderCount} )</span>
+                                                                <CaretDown />
+                                                            </div>
+                                                            <div className='d-grid'>
+                                                                {orderEmails.map((email, index) => (
+                                                                    <div key={index} className='flex-align-center overflow-hidden smaller'>
+                                                                        <User className='opacity-50 me-1' />
+                                                                        <span className='text-gray-600 fw-bold text-truncate'>{email}</span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    <div className='p-2 border-start border-end border-3'>
+                                                        <div className="h6 grid-center text-gray-600 border-bottom pb-1">
+                                                            <span>CLOSED BY</span>
+                                                            <CaretDown />
+                                                        </div>
+                                                        <div className='d-grid'>
+                                                            <div className='flex-align-center overflow-hidden smaller'>
+                                                                <User className='opacity-50 me-1' />
+                                                                <span className='text-gray-600 fw-bold text-truncate'>{closedBy}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='px-2 border-start border-end border-3 smaller text-success'>
+                                                        <Check className='me-1' /> Closed on <span className="fw-bold">{formatDate(closedOn, { todayKeyword: true })}</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        ) : (
+                            <ClosedPropertiesReport />
+                        )}
+
+
+                    </>
+                )}
+                {/* <p>
+                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odio aut in, soluta ducimus tempora dicta odit recusandae omnis impedit quas delectus a quaerat ea accusantium necessitatibus molestias, porro sequi maxime!
+                </p>
+                <p>
+                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odio aut in, soluta ducimus tempora dicta odit recusandae omnis impedit quas delectus a quaerat ea accusantium necessitatibus molestias, porro sequi maxime!
+                </p> */}
             </div>
         </section>
     );
@@ -2994,6 +1626,8 @@ const Customer = () => {
                 return <Dashboard />;
             case "orders":
                 return <Orders />;
+            case "reports":
+                return <Reports />;
             case "settings":
                 return <Settings />;
             default:
@@ -3038,9 +1672,6 @@ const Customer = () => {
                     </div>
                 </div>
                 <div className='d-flex align-items-center gap-2 d-md-none'>
-                    <button className="rounded-0 border-0 box-shadow-none clickDown" type="button" onClick={() => setShowCreatePropertyForm(true)}>
-                        <Plus weight='bold' fill='var(--bs-primary)' />
-                    </button>
                     <button ref={sideNavbarTogglerRef} className="rounded-0 border-0 navbar-toggler" type="button" aria-controls="sidebarMenu" aria-label="Toggle navigation" onClick={() => setSideNavbarIsFloated(!sideNavbarIsFloated)}>
                         <List />
                     </button>
@@ -3065,13 +1696,13 @@ const Customer = () => {
                                     <button className="nav-link w-100">
                                         <ShoppingCart size={20} weight='fill' className="me-2" /> Orders
                                     </button>
-                                    {openDealsNum > 0 &&
-                                        <span
-                                            className='r-middle-m h-1rem flex-center me-3 px-2 bg-gray-300 text-gray-900 fs-60 fw-medium rounded-pill'
-                                            style={{ lineHeight: 1 }}>
-                                            {openDealsNum}
-                                        </span>
-                                    }
+                                </li>
+                                <li className={`nav-item ${activeSection === 'reports' ? 'active' : ''} mb-3`}
+                                    onClick={() => { setActiveSection("reports"); hideSideNavbar() }}
+                                >
+                                    <button className="nav-link w-100">
+                                        <ChartBar size={20} weight='fill' className="me-2" /> Reports
+                                    </button>
                                 </li>
                                 <li className={`nav-item ${activeSection === 'settings' ? 'active' : ''} mb-3`}
                                     onClick={() => { setActiveSection("settings"); hideSideNavbar() }}
@@ -3224,23 +1855,6 @@ const Customer = () => {
 
                 {/* Fixed components */}
 
-                {/* Property preview card */}
-                <BottomFixedCard
-                    show={showSelectedPropertyInfo}
-                    content={[
-                        <PropertyPreview
-                            setDontCloseCard={setDontCloseCard}
-                            setRefreshProperties={setRefreshProperties}
-                        />
-                    ]}
-                    blurBg
-                    // closeButton={<X size={35} weight='bold' className='p-2' />}
-                    closeButton
-                    onClose={() => setShowSelectedPropertyInfo(false)}
-                    className="pb-3"
-                    avoidCloseReasons={dontCloseCard}
-                />
-
                 {/* Subscriber preview card */}
                 <BottomFixedCard
                     show={showSelectedSubscriberInfo}
@@ -3254,276 +1868,6 @@ const Customer = () => {
                     className="pb-3"
                 />
 
-                {/* Add Property Form */}
-                {showCreatePropertyForm &&
-                    <>
-                        <div className='position-fixed fixed-top inset-0 bg-black2 py-3 inx-high add-property-form'>
-                            <div className="container col-md-8 col-lg-7 col-xl-6 peak-borders-b overflow-auto" style={{ animation: "zoomInBack .2s 1", maxHeight: '100%' }}>
-                                <div className="container h-100 bg-light text-gray-700 px-3">
-                                    <h6 className="sticky-top flex-align-center justify-content-between mb-0 pt-3 pb-2 bg-light text-gray-600 border-bottom text-uppercase">
-                                        <div className='flex-align-center'>
-                                            <RowsPlusBottom weight='fill' className="me-1" />
-                                            <span style={{ lineHeight: 1 }}>Add a new property</span>
-                                        </div>
-                                        <div title="Cancel" onClick={() => { setShowCreatePropertyForm(false) }}>
-                                            <X size={25} className='ptr' />
-                                        </div>
-                                    </h6>
-
-                                    {/* Type selection */}
-                                    <div className="my-2 text-primary smaller grid-center">
-                                        <p className='mb-0 text-center fw-bold smaller'>Select property type</p>
-                                        <CaretDown />
-                                    </div>
-                                    <ul className='d-flex flex-wrap justify-content-lg-center gap-1 mb-4 p-2 bg-primary-subtle border-start border-end border-2 border-primary fw-bold text-center text-balance'>
-                                        {aboutProperties.allTypes
-                                            .sort((a, b) =>
-                                                a.localeCompare(b)
-                                            )
-                                            .map((val, index) => (
-                                                <li key={index} className={`btn btn-sm ${newPropertyType === val ? 'btn-primary' : ''} px-3 py-1 rounded-pill smaller ptr clickDown`}
-                                                    onClick={() => setNewPropertyType(val)}>
-                                                    {val}
-                                                </li>
-                                            ))
-                                        }
-                                    </ul>
-                                    <div className="my-2 text-primary smaller grid-center">
-                                        <p className='mb-0 text-center fw-bold smaller'>Add details</p>
-                                        <CaretDown />
-                                    </div>
-
-                                    {/* The form */}
-                                    <form onSubmit={(e) => handleCreateProperty(e)} className="px-sm-2 pb-3">
-                                        <div className="mb-4 form-text text-gray-600">
-                                            Add the main details for the <span className='text-lowercase'>{newPropertyType}</span> property. <b>Feel free to skip</b> fields that are not required or unavailable.
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="name" className="form-label" required>Property Name</label>
-                                            <input type="text" id="name" name="name" className="form-control" required placeholder="Enter name" />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="location" className="form-label" required>Location</label>
-                                            <input type="text" id="location" name="location" className="form-control" placeholder="Eg: Kiyovu - Kigali, or KG Ave 23 Kicukiro" />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="category" className="form-label">Category</label>
-                                            <select id="category" name="category" className="form-select"
-                                                defaultValue={aboutProperties.allCategories[0]}
-                                                required>
-                                                {aboutProperties.allCategories
-                                                    .map((val, index) => (
-                                                        <option key={index} value={val} className='p-2 px-3 small'>
-                                                            {val}
-                                                        </option>
-                                                    ))
-                                                }
-                                            </select>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="about" className="form-label" required>About the Property</label>
-                                            <textarea rows={5} id="about" name="about" className="form-control" placeholder="Provide a brief description"></textarea>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="price" className="form-label" required>Price (RWF)</label>
-                                            <input type="number" id="price" name="price" className="form-control" required placeholder="Enter the price" />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="payment" className="form-label">Payment method</label>
-                                            <select id="payment" name="payment" className="form-select"
-                                                defaultValue=""
-                                                required>
-                                                <option value="" disabled className='p-2 px-3 small text-gray-500'>Select method</option>
-                                                {aboutProperties.paymentMethods
-                                                    .map((val, index) => (
-                                                        <option key={index} value={val} className='p-2 px-3 small'>
-                                                            {val}
-                                                        </option>
-                                                    ))
-                                                }
-                                            </select>
-                                        </div>
-                                        {(newPropertyType === "House" || newPropertyType === "Apartment") && (
-                                            <>
-                                                <div className="row">
-                                                    <div className="col-md-4 mb-3">
-                                                        <label htmlFor="bedrooms" className="form-label">Bedrooms</label>
-                                                        <input type="number" id="bedrooms" name="bedrooms" className="form-control" placeholder="N° of bedrooms" />
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <label htmlFor="bathrooms" className="form-label">Bathrooms</label>
-                                                        <input type="number" id="bathrooms" name="bathrooms" className="form-control" placeholder="N° of bathrooms" />
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <label htmlFor="kitchens" className="form-label">Kitchens</label>
-                                                        <input type="number" id="kitchens" name="kitchens" className="form-control" placeholder="N° of kitchens" />
-                                                    </div>
-                                                </div>
-                                                <div className="mb-3">
-                                                    <label htmlFor="garages" className="form-label">Garages</label>
-                                                    <input type="number" id="garages" name="garages" className="form-control" placeholder="N° of garages" />
-                                                </div>
-                                            </>
-                                        )}
-                                        <div className="mb-3">
-                                            <label htmlFor="area" className="form-label">Area (sq. meters)</label>
-                                            <input type="text" id="area" name="area" className="form-control" placeholder="Enter the area" />
-                                        </div>
-                                        {newPropertyType !== "Land Plot" && (
-                                            <>
-                                                <div className="mb-3">
-                                                    <label htmlFor="furnished" className="form-label">Furnished</label>
-                                                    <select id="furnished" name="furnished" className="form-select">
-                                                        <option value="1" className='small'>Furnished</option>
-                                                        <option value="0" className='small'>Not Furnished</option>
-                                                    </select>
-                                                </div>
-                                            </>
-                                        )}
-                                        <div className="mb-3">
-                                            <label htmlFor="featured" className="form-label">Featured/Pinned</label>
-                                            <select id="featured" name="featured" className="form-select" defaultValue={0}>
-                                                <option value="0" className='small'>Not Featured</option>
-                                                <option value="1" className='small'>Featured</option>
-                                            </select>
-                                        </div>
-
-                                        {/* Add record */}
-                                        <div className='mb-3 p-3 bg-primary-subtle border-start border-end border-2 border-primary'>
-                                            <div className="my-2 text-primary smaller grid-center">
-                                                <p className='mb-0 text-center fw-bold smaller'>Next steps</p>
-                                                <CaretDown />
-                                            </div>
-                                            <div className="mb-4 form-text text-gray-700">
-                                                Add the property now and complete the details later (e.g., images). <b>Note: At least 5 images are required for listing visibility</b>.
-                                            </div>
-                                            <button type="submit" className="btn btn-sm btn-primary flex-center w-100 mt-3 py-2 px-4 rounded-pill clickDown" id="addPropertyBtn"
-                                            >
-                                                {!isWaitingAdminEditAction ?
-                                                    <>Add Property <Plus size={18} className='ms-2' /></>
-                                                    : <>Working <span className="spinner-grow spinner-grow-sm ms-2"></span></>
-                                                }
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                }
-
-                {/* Close Property Form */}
-                {showClosePropertyForm &&
-                    <>
-                        <div className='position-fixed fixed-top inset-0 bg-black2 py-5 inx-high close-property-form'>
-                            <div className="container col-md-8 col-lg-7 col-xl-6 peak-borders-b overflow-auto" style={{ animation: "zoomInBack .2s 1", maxHeight: '100%' }}>
-                                <div className="container h-100 bg-light text-gray-700 px-3">
-                                    <h6 className="sticky-top flex-align-center justify-content-between mb-0 pt-3 pb-2 bg-light text-gray-600 border-bottom text-uppercase">
-                                        <div className='flex-align-center'>
-                                            <SealCheck weight="fill" className="me-1" />
-                                            <span style={{ lineHeight: 1 }}>Close a property</span>
-                                        </div>
-                                        <div title="Cancel" onClick={() => { activeSection === 'properties' && setShowSelectedPropertyInfo(true); setShowClosePropertyForm(false) }}>
-                                            <X size={25} className='ptr' />
-                                        </div>
-                                    </h6>
-                                    <div className='h6 my-4 px-2 border-start border-end border-2 border-secondary fw-bold text-center text-balance'>{selectedProperty.name}</div>
-                                    <p className="smaller text-gray-700">
-                                        Marking this property as <strong>closed</strong> will restrict all future activities related to it, including reservations and inquiries from clients and site visitors.
-                                        <strong className="text-danger"> This action is permanent and cannot be undone.</strong>
-                                    </p>
-                                    {/* Toggle between email selection modes */}
-                                    <div className="d-flex justify-content-center my-4">
-                                        {selectedProperty.booked && (
-                                            <button
-                                                type="button"
-                                                className={`btn btn-sm ${closeBookedProperty ? 'btn-secondary' : 'btn-outline-secondary'} col-6 flex-center px-3 rounded-0`}
-                                                onClick={() => setCloseBookedProperty(true)}
-                                            >
-                                                Reserved email
-                                            </button>
-                                        )}
-                                        <button
-                                            type="button"
-                                            className={`btn btn-sm ${!closeBookedProperty ? 'btn-secondary' : 'btn-outline-secondary'} col-6 flex-center px-3 rounded-0`}
-                                            onClick={() => setCloseBookedProperty(false)}
-                                        >
-                                            Type email
-                                        </button>
-                                    </div>
-                                    {/* Conditional Rendering Based on Email Selection Mode */}
-                                    {closeBookedProperty ? (
-                                        <>
-                                            {/* Select Dropdown for Reserved Emails */}
-                                            <label htmlFor="reservedEmail" className="form-label small">
-                                                Select closer email
-                                            </label>
-                                            <select
-                                                id="reservedEmail"
-                                                className="form-select mb-3"
-                                                value={closePropertyEmail}
-                                                onChange={(e) => setClosePropertyEmail(e.target.value)}
-                                            >
-                                                <option value="" disabled>
-                                                    Select email...
-                                                </option>
-                                                {JSON.parse(selectedProperty.bookedBy).map((email) => (
-                                                    <option key={email} value={email}>
-                                                        {email}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </>
-                                    ) : (
-                                        <>
-                                            {/* Manual Email Input */}
-                                            <label htmlFor="manualEmail" className="form-label small">
-                                                Enter closer email
-                                            </label>
-                                            <input
-                                                id="manualEmail"
-                                                type="email"
-                                                className="form-control mb-3"
-                                                placeholder="Enter email address"
-                                                value={closePropertyEmail}
-                                                onChange={(e) => setClosePropertyEmail(e.target.value)}
-                                            />
-                                        </>
-                                    )}
-                                    {/* Property cover */}
-                                    <img src={selectedProperty.cover} alt="Property cover" className='h-15vh object-fit-cover my-3 peak-borders-t' />
-                                    {/* Form Action Buttons */}
-                                    <div className="modal-footer justify-content-around px-2 px-sm-3" style={{ translate: '0 -75%' }}>
-                                        <button
-                                            type="button"
-                                            className={`col-sm-5 btn btn-light text-secondary rounded-0 border-0 ${isWaitingAdminEditAction ? 'opacity-25' : 'opacity-75'} clickDown`}
-                                            disabled={isWaitingAdminEditAction}
-                                            onClick={() => setShowClosePropertyForm(false)}
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`col-sm-5 btn btn-dark flex-center ms-auto px-3 rounded-0 clickDown`}
-                                            onClick={() => closeProperty(closePropertyEmail)}
-                                            disabled={isWaitingAdminEditAction || !closePropertyEmail}
-                                        >
-                                            {!isWaitingAdminEditAction ? (
-                                                <>
-                                                    Close property <SealCheck size={18} className="ms-2" />
-                                                </>
-                                            ) : (
-                                                <>
-                                                    Working <span className="spinner-grow spinner-grow-sm ms-2"></span>
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                }
             </main>
         </>
     )
