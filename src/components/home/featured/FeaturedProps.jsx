@@ -9,7 +9,7 @@ const FeaturedProps = () => {
                 <div className="container">
                     <Heading
                         title="Our Featured Listing"
-                        subtitle="Discover our top-tier featured properties. Stay ahead with the most desirable listings and receive expert support to make well-informed decisions, all backed by comprehensive details. Keep an eye on these prime opportunities before they’re gone"
+                        subtitle="Discover our top-tier featured properties. Stay ahead with the most desirable listings and receive expert support to make well-informed decisions, all backed by comprehensive details. Keep an eye on these prime opportunities before they're gone"
                         hType="h2"
                     />
                     <PropertyCard filterOption="featured" />
