@@ -4,7 +4,7 @@ import {
     Link,
     useLocation,
 } from "react-router-dom";
-import { AuthenticationContext } from "../../../App";
+import { AuthContext } from "../../AuthProvider";
 import { developerWebsiteLink, nav } from "../../data/Data";
 import logo from "../../../components/images/logo.jpg";
 import SocialMediaIcons from '../SocialMediaIcons';
@@ -17,10 +17,11 @@ import { useSettings } from "../../SettingsProvider";
 
 const Header = () => {
     // Auth check
-    const { isLoggedIn, checkAuthentication } = useContext(AuthenticationContext);
+    // console.log(AuthProvider.isAuthenticated);
+    const { isAuthenticated, checkAuthentication } = useContext(AuthContext);
     useEffect(() => {
-        !isLoggedIn && checkAuthentication();
-    }, [isLoggedIn, checkAuthentication]);
+        !isAuthenticated && checkAuthentication();
+    }, [isAuthenticated, checkAuthentication]);
 
     // Site common setting
     const {
@@ -158,7 +159,7 @@ const Header = () => {
                             <li ref={reviewAdderTogglerRef} className={`nav-item px-2 py-1 text-gray-700 ptr clickDown`} title="Submit a review" onClick={() => { setClientAddReview(true) }}>
                                 <ListStar size={23} />
                             </li>
-                            {isLoggedIn ? (
+                            {isAuthenticated ? (
                                 <h6 className="m-0">
                                     <span className="mb-1 small" style={{ fontSize: "70%" }}>My List</span>
                                     <span className="badge w-fit ms-2 p-1 border border-opacity-50 border-success text-success">2</span>
