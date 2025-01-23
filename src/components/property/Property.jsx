@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import './property.css';
-import { AuthenticationContext } from '../../App';
+import { AuthContext } from '../AuthProvider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { formatBigCountNumbers, formatDate, shareProperty } from '../../scripts/myScripts';
 import { ArrowBendDoubleUpRight, ArrowClockwise, Bed, Building, Car, CaretRight, ChatText, Clock, CookingPot, DeviceMobileCamera, HashStraight, Heart, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo } from '@phosphor-icons/react';
@@ -43,10 +43,10 @@ const Property = () => {
     } = useCustomDialogs();
 
     // Auth check
-    const { isLoggedIn, checkAuthentication } = useContext(AuthenticationContext);
+    const { isAuthenticated, checkAuthentication } = useContext(AuthContext);
     useEffect(() => {
-        !isLoggedIn && checkAuthentication();
-    }, [isLoggedIn, checkAuthentication]);
+        !isAuthenticated && checkAuthentication();
+    }, [isAuthenticated, checkAuthentication]);
 
     const sendMessage = () => {
         window.open(`https://wa.me/${companyPhoneNumber1.phone}?text=Hello%2C%20I%27m%20interested%20in%20your%20services.%20Especially%20with%20this%20property_*${name}*_%20${window.location}`, '_blank');
@@ -128,10 +128,10 @@ const Property = () => {
 
     // Destructure safely using optional chaining
     const {
-        id, cover, category, type, name, location, about, price, payment,
-        area, volume, bedrooms, bathrooms, kitchens,
-        garages, furnished, videoUrl, mapUrl, booked, bookedBy, closed,
-        media, likes, createdAt } = matchProperty || {};
+        id, cover, category, type, name, location, about, price, currency,
+        payment, area, volume, bedrooms, bathrooms, kitchens, garages,
+        videoUrl, mapUrl, booked, bookedBy, closed, media, likes, createdAt
+    } = matchProperty || {};
 
     const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
     const mainLightColor = category === "For Sale" ? "#25b5791a" : "#ff98001a";
@@ -143,7 +143,7 @@ const Property = () => {
     const reservePropertyRef = useRef();
 
     const handleReserveProperty = async () => {
-        if (!isLoggedIn) return setShowLogin(true); // Auth
+        if (!isAuthenticated) return setShowLogin(true); // Auth
         try {
             const response = await fetch(`http://localhost:5000/property/${propertyId}/reserve`, {
                 method: 'POST',
@@ -299,7 +299,7 @@ const Property = () => {
                                             <ShareFat size={28} className='ptr trans-p3s bounceClick' title="Share property"
                                                 onClick={() => shareProperty(id, name, category)}
                                             />
-                                            <span className='d-grid' style={{ justifyItems: "center" }}>
+                                            {/* <span className='d-grid' style={{ justifyItems: "center" }}>
                                                 {likedProperties.includes(id) ? (
                                                     <Heart size={28} weight='fill' className='ptr trans-p3s bounceClick like-icon liked'
                                                         onClick={() => handleUnlike(id)} />
@@ -310,7 +310,7 @@ const Property = () => {
                                                 <span className='text-danger fw-bold' style={{ fontSize: "40%" }}>
                                                     {Number(matchPropertyLikes) !== 0 && matchPropertyLikes}
                                                 </span>
-                                            </span>
+                                            </span> */}
                                         </span>
                                     </h1>
                                     <div className='mb-0 text-muted'>
@@ -428,7 +428,7 @@ const Property = () => {
                             <div className="d-flex flex-wrap py-3 property-subproperties">
                                 <div className="mb-3 px-4 fw-bold" style={{ color: mainColor }}>
                                     <h6 className='mb-0 fw-light'><MoneyWavy size={23} weight='fill' className='me-2' />Price</h6>
-                                    <p className={`${closed ? 'text-decoration-line-through' : ''}`}>RwF {price.toLocaleString()} {payment === 'annually' && "/year"}
+                                    <p className={`${closed ? 'text-decoration-line-through' : ''}`}>{currency} {price.toLocaleString()} {payment === 'annually' && "/year"}
                                         {payment === 'monthly' && "/month"}
                                         {payment === 'weekly' && "/week"}
                                         {payment === 'daily' && "/day"}
