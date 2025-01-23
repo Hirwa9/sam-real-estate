@@ -1,20 +1,20 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import './admin.css';
-import logo from "../../components/images/logo.jpg";
 import { Link, useNavigate } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
-import { cError, cLog, deepEqual, formatBigCountNumbers, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
+import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, CurrencyDollarSimple, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
+import { cError, cLog, deepEqual, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
 import DividerText from '../common/DividerText';
 import ActionPrompt from '../common/actionPrompt/ActionPrompt';
 import ConfirmDialog from '../common/confirmDialog/ConfirmDialog';
-import { aboutProperties, companyAddress, companyEmail, companyMotto, companyName, companyPhoneNumber1, companyPhoneNumber2 } from '../data/Data';
+import { aboutProperties, currencySupported, companyAddress, companyEmail, companyMotto, companyName, companyPhoneNumber1, companyPhoneNumber2 } from '../data/Data';
 import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
+import { AuthContext } from '../AuthProvider';
 
 const Admin = () => {
     // Custom hooks
@@ -55,6 +55,7 @@ const Admin = () => {
     } = useCustomDialogs();
 
     const BASE_URL = 'http://localhost:5000';
+    const { isAuthenticated, checkAuthentication, accessToken, logout } = useContext(AuthContext);
 
     /**
      * Sidebar
@@ -691,6 +692,32 @@ const Admin = () => {
         }
     };
 
+    // Change prop's currency
+    const changePropertyCurrency = async () => {
+        try {
+            setIsWaitingAdminEditAction(true);
+            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/changeCurrency`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currency: promptInputValue.current }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error changing currency');
+            }
+            const data = await response.json();
+            resetPrompt();
+            fetchProperties();
+            toast({ message: data.message, type: 'dark' });
+        } catch (error) {
+            cError('Error:', error.message);
+            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
+        } finally {
+            setIsWaitingAdminEditAction(false);
+            setPromptActionWaiting(false);
+        }
+    };
+
     // Change prop's payment
     const changePropertyPayment = async () => {
         try {
@@ -1089,7 +1116,7 @@ const Admin = () => {
 
     // Property preview
     const PropertyPreview = ({ setDontCloseCard, setRefreshProperties }) => {
-        const { id, listed, cover, category, type, name, location, about, price, payment,
+        const { id, listed, cover, category, type, name, location, about, price, currency, payment,
             bedrooms, bathrooms, garages, videoUrl, mapUrl, booked, bookedBy, closed,
             media, likes, featured } = selectedProperty;
 
@@ -1171,12 +1198,12 @@ const Admin = () => {
                                     <span className="catgType" style={{ background: mainLightColor, color: mainColor }}>
                                         {category}
                                     </span>
-                                    <span className="flex-align-center">
+                                    {/* <span className="flex-align-center">
                                         <span className="fs-70 fw-bold text-black2">
                                             {likes !== null && formatBigCountNumbers(Array(likes).length)}
                                         </span>
                                         <Heart className="text ms-1 fs-4 ptr me-1" />
-                                    </span>
+                                    </span> */}
                                 </div>
                                 <h4 className="m-0 fs-6 text-gray-700">{name}</h4>
                                 <p className="mb-2"><MapPinArea size={20} weight="fill" /> {location}</p>
@@ -1187,7 +1214,7 @@ const Admin = () => {
                                     <button className={`btn btn-sm flex-align-center px-3 py-1 border-2 bg-warning bg-opacity-25 text-success clickDown rounded-pill small ${closed ? 'text-decoration-line-through' : ''}`}
                                         title="View property" onClick={() => goToProperty(id)} >
                                         {/* <CurrencyDollar weight="bold" className="me-1" /> {price.toLocaleString()} */}
-                                        RWF {price.toLocaleString()}
+                                        {currency} {price.toLocaleString()}
                                         {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 fs-75">/year</span>}
                                         {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 fs-75">/month</span>}
                                         {payment === 'weekly' && <span className="opacity-50 fw-normal ms-1 fs-75">/week</span>}
@@ -1461,7 +1488,7 @@ const Admin = () => {
                                                             message: (
                                                                 <>
                                                                     <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <strong>Current price: "{price.toLocaleString()} RWF"</strong>
+                                                                    <strong>Current price: "{price.toLocaleString()} {currency}"</strong>
                                                                     <p>
                                                                         Enter new price for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''}
                                                                     </p>
@@ -1476,6 +1503,34 @@ const Admin = () => {
                                             }
                                         >
                                             <MoneyWavy size={16} weight='fill' className='me-2 opacity-75' /> EDIT PRICE
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
+                                            onClick={
+                                                () => {
+                                                    setShowSelectedPropertyInfo(false);
+                                                    customPrompt(
+                                                        {
+                                                            message: (
+                                                                <>
+                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
+                                                                    <strong>Current currency: "{currency}"</strong>
+                                                                    <p>
+                                                                        Change price currency for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''}
+                                                                    </p>
+                                                                </>
+                                                            ),
+                                                            inputType: 'select',
+                                                            selectOptions: [...aboutProperties.currencySupported, { default: currency }],
+                                                            action: changePropertyCurrency,
+                                                        }
+                                                    )
+                                                }
+                                            }
+                                        >
+                                            <CurrencyDollarSimple size={16} weight='fill' className='me-2 opacity-75' /> EDIT CURRENCY
                                         </button>
 
                                         <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
@@ -1494,7 +1549,7 @@ const Admin = () => {
                                                                 </>
                                                             ),
                                                             inputType: 'select',
-                                                            selectOptions: ['once', 'annually', 'monthly', 'weekly', 'daily', 'hourly', { default: payment }],
+                                                            selectOptions: [...aboutProperties.paymentMethods, { default: payment }],
                                                             action: changePropertyPayment,
                                                         }
                                                     )
@@ -1520,7 +1575,7 @@ const Admin = () => {
                                                                 </>
                                                             ),
                                                             inputType: 'select',
-                                                            selectOptions: ['Apartment', 'House', 'Office', 'Commercial', 'Land Plot', { default: type }],
+                                                            selectOptions: [...aboutProperties.allTypes, { default: type }],
                                                             action: changePropertyType,
                                                         }
                                                     )
@@ -1546,7 +1601,7 @@ const Admin = () => {
                                                                 </>
                                                             ),
                                                             inputType: 'select',
-                                                            selectOptions: ['For Sale', 'For Rent', { default: category }],
+                                                            selectOptions: [...aboutProperties.allCategories, { default: category }],
                                                             action: changePropertyCategory,
                                                         }
                                                     )
@@ -1902,7 +1957,7 @@ const Admin = () => {
                                 {openGroups[key] && (
                                     <ul className="list-group list-group-flush px-1" style={{ borderBottom: '3px double var(--bs-success)' }}>
                                         {properties.map((property, index) => {
-                                            const { name, price, payment, closedOn, closedBy } = property;
+                                            const { name, price, currency, payment, closedOn, closedBy } = property;
 
                                             return (
                                                 <li
@@ -1915,7 +1970,7 @@ const Admin = () => {
                                                             <div className="flex-align-center fw-semibold">{name} <Info weight="bold" size={17} className='ms-2 opacity-75 ptr clickDown' title="Preview" onClick={() => { setSelectedProperty(property); setShowSelectedPropertyInfo(true) }} /></div>
                                                             <small className='d-flex flex-wrap column-gap-1'>
                                                                 <span>
-                                                                    Price:{" "}<span>RWF {price.toLocaleString()}</span>
+                                                                    Price:{" "}<span>{currency} {price.toLocaleString()}</span>
                                                                 </span>
                                                                 <span> | {payment}</span>
                                                             </small>
@@ -1964,7 +2019,11 @@ const Admin = () => {
     const fetchCustomers = async () => {
         try {
             setLoadingCustomers(true);
-            const response = await fetch(`${BASE_URL}/users`);
+            const response = await fetch(`${BASE_URL}/users`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -2582,7 +2641,7 @@ const Admin = () => {
                                     .map((property, index) => {
                                         const {
                                             listed, category, type, name, location, price,
-                                            payment, booked, closed, createdAt
+                                            currency, payment, booked, closed, createdAt
                                         } = property;
 
                                         const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
@@ -2614,7 +2673,7 @@ const Admin = () => {
                                                             <span style={{ color: mainColor }}>
                                                                 {category}
                                                             </span> - <span className='text-nowrap'>
-                                                                RWF {price.toLocaleString()}
+                                                                {currency} {price.toLocaleString()}
                                                                 {payment === 'once' && <span className="opacity-50 fw-normal ms-1 smaller">/once</span>}
                                                                 {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 smaller">/year</span>}
                                                                 {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 smaller">/month</span>}
@@ -2644,7 +2703,7 @@ const Admin = () => {
                                             <th className='ps-sm-3 py-3 text-nowrap text-gray-700'>N</th>
                                             <th className='py-3 text-nowrap text-gray-700' style={{ minWidth: '10rem' }}>Name</th>
                                             <th className='py-3 text-nowrap text-gray-700'>Type</th>
-                                            <th className='py-3 text-nowrap text-gray-700'>Price <sub className='fs-60'>/RwF</sub></th>
+                                            <th className='py-3 text-nowrap text-gray-700'>Price</th>
                                             <th className='py-3 text-nowrap text-gray-700'>Category</th>
                                             <th className='py-3 text-nowrap text-gray-700'>Location</th>
                                             <th className='py-3 text-nowrap text-gray-700'>Date</th>
@@ -2659,8 +2718,8 @@ const Admin = () => {
                                             )
                                             .map((property, index) => {
                                                 const {
-                                                    listed, category, type, name, location, about,
-                                                    price, payment, booked, bookedBy, closed, createdAt
+                                                    listed, category, type, name, location, about, price, 
+                                                    currency, payment, booked, bookedBy, closed, createdAt
                                                 } = property;
 
                                                 let bookedByArray = [];
@@ -2695,7 +2754,7 @@ const Admin = () => {
                                                             {type}
                                                         </td>
                                                         <td title={`Paid ${payment}`} >
-                                                            {price.toLocaleString()}
+                                                            {price.toLocaleString()} <span className="fs-70">{currency}</span>
                                                         </td>
                                                         <td style={{ color: category === "For Sale" ? "#25b579" : "#ff9800" }}>
                                                             {category}
@@ -3831,8 +3890,23 @@ const Admin = () => {
                 </div>
                 {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
                 <div className="ms-auto me-3 navbar-nav">
-                    <div className="nav-item text-nowrap d-none d-md-block">
+                    {/* <div className="nav-item text-nowrap d-none d-md-block">
                         <button className="nav-link px-3" >Sign out</button>
+                    </div> */}
+                    <div className="nav-item text-nowrap d-none d-md-flex align-items-center py-md-2">
+                        <div className="d-flex align-items-center me-3 border-light border-opacity-25">
+                            <div className='ms-auto d-grid pb-1'>
+                                <span className='ms-auto smaller'>Sam</span>
+                                <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>Admin</span>
+                            </div>
+                            <img src="/images/user_placeholder_image.jpg" alt="User" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                        </div>
+
+                        <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'
+                            onClick={() => logout()}
+                        >
+                            <SignOut size={20} />
+                        </button>
                     </div>
                 </div>
                 <div className='d-flex align-items-center gap-2 d-md-none text-gray-700'>
@@ -4167,8 +4241,22 @@ const Admin = () => {
                                             <textarea rows={5} id="about" name="about" className="form-control" placeholder="Provide a brief description"></textarea>
                                         </div>
                                         <div className="mb-3">
-                                            <label htmlFor="price" className="form-label" required>Price (RWF)</label>
+                                            <label htmlFor="price" className="form-label" required>Price</label>
                                             <input type="number" id="price" name="price" className="form-control" required placeholder="Enter the price" />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="currency" className="form-label" required>Currency</label>
+                                            <select id="currency" name="currency" className="form-select"
+                                                defaultValue={aboutProperties.currencySupported[0]}
+                                                required>
+                                                {aboutProperties.currencySupported
+                                                    .map((val, index) => (
+                                                        <option key={index} value={val} className='p-2 px-3 small'>
+                                                            {val}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
                                         </div>
                                         <div className="mb-3">
                                             <label htmlFor="payment" className="form-label">Payment method</label>
@@ -4228,6 +4316,10 @@ const Admin = () => {
                                                 <option value="0" className='small'>Not Featured</option>
                                                 <option value="1" className='small'>Featured</option>
                                             </select>
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="privateInfo" className="form-label">Private info</label>
+                                            <textarea rows={5} id="privateInfo" name="privateInfo" className="form-control" placeholder="Enter information to be seen only by you"></textarea>
                                         </div>
 
                                         {/* Add record */}
