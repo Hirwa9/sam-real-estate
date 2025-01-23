@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import './customer.css';
 import logo from "../../components/images/logo.jpg";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
 import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HourglassHigh, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatBigCountNumbers, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
@@ -16,10 +16,17 @@ import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
 import axios from 'axios';
+import { AuthContext } from '../AuthProvider';
 // import userPlaceholderImg from '/images/user_placeholder_image.jpg';
 // import userPlaceholderImg from '/images/user_placeholder_image.jpg';
 
 const Customer = () => {
+
+    // Get user data
+    const { userId } = useParams();
+    const [signedUser, setSignedUser] = useState([]);
+    console.log(signedUser);
+
     // Custom hooks
     const {
         // Toast
@@ -58,6 +65,7 @@ const Customer = () => {
     } = useCustomDialogs();
 
     const BASE_URL = 'http://localhost:5000';
+    const { isAuthenticated, checkAuthentication, accessToken, logout } = useContext(AuthContext);
 
     /**
      * Sidebar
@@ -122,12 +130,12 @@ const Customer = () => {
     const bookedProperties = useMemo(() => {
         return allProperties.filter(
             property => (
-                JSON.parse(property.bookedBy)?.includes('hirwawilly9@gmail.com')
+                JSON.parse(property.bookedBy)?.includes(signedUser.email)
                 && property.booked
                 && !property.closed
             )
         );
-    }, [allProperties]);
+    }, [allProperties, signedUser]);
     const bookedPropertiesNum = bookedProperties.length;
 
     // Count closed properties
@@ -136,10 +144,10 @@ const Customer = () => {
             .filter(
                 property => (
                     property.closed
-                    && property.closedBy === 'hirwawilly9@gmail.com'
+                    && property.closedBy === signedUser.email
                 )
             );
-    }, [allProperties]);
+    }, [allProperties, signedUser]);
     const closedPropertiesNum = closedProperties.length;
 
 
@@ -177,7 +185,7 @@ const Customer = () => {
     // Handle request property closure
     const requestPropertyClosure = async (propertyId) => {
         try {
-            const response = await axios.post(`${BASE_URL}/property/${propertyId}/close-request`, { customerEmail: 'hirwawilly9@gmail.com' });
+            const response = await axios.post(`${BASE_URL}/property/${propertyId}/close-request`, { customerEmail: signedUser.email });
             resetConfirmDialog();
             toast({
                 message: <><SealCheck size={22} weight='fill' className='me-1 opacity-50' /> {response.data.message}</>,
@@ -347,7 +355,7 @@ const Customer = () => {
                                 {openGroups[key] && (
                                     <ul className="list-group list-group-flush px-1" style={{ borderBottom: '3px double var(--bs-success)' }}>
                                         {properties.map((property, index) => {
-                                            const { name, price, payment, closedOn, closedBy } = property;
+                                            const { name, price, currency, payment, closedOn, closedBy } = property;
 
                                             return (
                                                 <li
@@ -360,7 +368,7 @@ const Customer = () => {
                                                             <div className="flex-align-center fw-semibold">{name} <Info weight="bold" size={17} className='ms-2 opacity-75 ptr clickDown' title="Preview" onClick={() => { setSelectedProperty(property); setShowSelectedPropertyInfo(true) }} /></div>
                                                             <small className='d-flex flex-wrap column-gap-1'>
                                                                 <span>
-                                                                    Price:{" "}<span>RWF {price.toLocaleString()}</span>
+                                                                    Price:{" "}<span>{currency} {price.toLocaleString()}</span>
                                                                 </span>
                                                                 <span> | {payment}</span>
                                                             </small>
@@ -409,13 +417,18 @@ const Customer = () => {
     const fetchCustomers = async () => {
         try {
             setLoadingCustomers(true);
-            const response = await fetch(`${BASE_URL}/users`);
+            const response = await fetch(`${BASE_URL}/users`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
             setCustomers(data);
             setCustomersToShow(data);
+            setSignedUser(data.filter(u => u.id === Number(userId))[0]);
             setErrorLoadingCustomers(null);
         } catch (error) {
             setErrorLoadingCustomers("Failed to load customers. Click the button to try again.");
@@ -424,6 +437,8 @@ const Customer = () => {
             setLoadingCustomers(false);
         }
     };
+
+    // console.log(customers);
 
     useEffect(() => {
         fetchCustomers();
@@ -731,7 +746,7 @@ const Customer = () => {
                 <div className="d-xl-flex pt-xl-4">
                     <div className="p-4 small col-xl-8 clip-text-gradient">
                         <p className="mb-3 text-justify">
-                            <span className='fs-3'>Welcome [User Name]</span> <br />
+                            <span className='fs-3'>Welcome {signedUser.name}</span> <br />
                             With your dashboard, you can manage your activities and interactions on the platform effortlessly. Here's what you can do:
                         </p>
                         <ul className="mb-0 list-unstyled">
@@ -875,7 +890,7 @@ const Customer = () => {
                         <div className='row align-items-stretch'>
                             {bookedProperties
                                 .map((property, index) => {
-                                    const { name, type, category, price, payment, location, bookedBy, closeRequests } = property;
+                                    const { name, type, category, price, currency, payment, location, bookedBy, closeRequests } = property;
                                     const orderEmails = JSON.parse(bookedBy);
                                     let closeRequestsEmails = [];
                                     if (closeRequests) {
@@ -901,11 +916,11 @@ const Customer = () => {
                                                 <div className='mt-auto px-2'>
                                                     <div className='p-2 border-start border-end border-3'>
                                                         <div className="h6 grid-center text-gray-600 border-bottom pb-1">
-                                                            <span>RWF {price.toLocaleString()}  / {payment}</span>
+                                                            <span>{currency} {price.toLocaleString()}  / {payment}</span>
                                                         </div>
                                                     </div>
                                                     {/* <div> */}
-                                                    {(!closeRequests || !closeRequestsEmails.includes('hirwawilly9@gmail.com')) ? (
+                                                    {(!closeRequests || !closeRequestsEmails.includes(signedUser.email)) ? (
 
                                                         <button className="w-100 btn btn-sm btn-outline-success mt-3 py-2 rounded-0 fw-light"
                                                             onClick={() => {
@@ -928,7 +943,7 @@ const Customer = () => {
                                                         >
                                                             Request closing this deal
                                                         </button>
-                                                    ) : (closeRequests && closeRequestsEmails.includes('hirwawilly9@gmail.com')) ? (
+                                                    ) : (closeRequests && closeRequestsEmails.includes(signedUser.email)) ? (
                                                         <div className="w-100 mt-3 py-2 fw-light flex-center text-bg-secondary smaller">
                                                             <HourglassHigh weight='fill' className='me-1 opacity-50' /> Deal closure request under review
                                                         </div>
@@ -1614,19 +1629,15 @@ const Customer = () => {
                     <div className="nav-item text-nowrap d-none d-md-flex align-items-center py-md-2">
                         <div className="d-flex align-items-center me-3 border-light border-opacity-25">
                             <div className='ms-auto d-grid pb-1'>
-                                <span className='ms-auto smaller'>Hirwa</span>
-                                <span className='ms-auto fs-70 opacity-75' style={{ lineHeight: 1 }}>User</span>
+                                <span className='ms-auto smaller'>{signedUser.name}</span>
+                                <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>{signedUser.type}</span>
                             </div>
                             <img src="/images/user_placeholder_image.jpg" alt="User" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
                         </div>
 
-                        {/* <div className="me-2 logo">
-                            <Link to="/">
-                                <img src='/images/user_placeholder_image.jpg' alt="logo" className="rounded-circle logo"></img>
-                            </Link>
-                        </div> */}
-
-                        <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out' >
+                        <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'
+                            onClick={() => logout()}
+                        >
                             <SignOut size={20} />
                         </button>
                     </div>
@@ -1674,7 +1685,9 @@ const Customer = () => {
 
                                 <hr className={`d-md-none`} />
 
-                                <li className={`nav-item mb-3 d-md-none`}>
+                                <li className={`nav-item mb-3 d-md-none`}
+                                    onClick={() => logout()}
+                                >
                                     <button className="nav-link w-100">
                                         <SignOut size={20} weight='fill' className="me-2" /> Sign out
                                     </button>
