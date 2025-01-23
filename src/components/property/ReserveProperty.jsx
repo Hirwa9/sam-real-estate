@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const ReserveProperty = ({ propertyId }) => {
     // Auth checks
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isAuthenticated, setIsLoggedIn] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
     const [error, setError] = useState('');const navigate = useNavigate();
     
@@ -28,7 +28,7 @@ const ReserveProperty = ({ propertyId }) => {
     }, []);
 
     const handleReserveProperty = async () => {
-        if (!isLoggedIn) return setShowLogin(true); // Auth
+        if (!isAuthenticated) return setShowLogin(true); // Auth
 
         try {
             const response = await fetch(`http://localhost:5000/property/${propertyId}/reserve`, {
