@@ -20,6 +20,7 @@ import Faqs from "../faqs/Faqs";
 import Terms from "../terms/Terms";
 import Admin from "../admin/Admin";
 import Customer from "../user/Customer";
+import ProtectedRoute from "../ProtectedRoute";
 
 const Pages = () => {
     // Get the current path
@@ -47,8 +48,18 @@ const Pages = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/terms" element={<Terms />} />
                 {/* Admin/user routes */}
+                {/* <Route path="/admin" element={
+                    <ProtectedRoute>
+                        <Admin />
+                    </ProtectedRoute>
+                } /> */}
+                <Route path="/user/:userId" element={
+                    <ProtectedRoute>
+                        <Customer />
+                    </ProtectedRoute>
+                } />
                 <Route path="/admin" element={<Admin />} />
-                <Route path="/user/:userId" element={<Customer />} />
+                {/* <Route path="/user/:userId" element={<Customer />} /> */}
 
             </Routes>
             {/* Conditionally render the Footer */}
