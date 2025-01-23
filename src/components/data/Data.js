@@ -115,6 +115,7 @@ export const aboutProperties = {
         { min: "100,000,000", max: "500,000,000" },
         { min: "500,000,000", max: "1,000,000,000" },
     ],
+    currencySupported: ["RWF", "USD"],
 }
 
 // Awards
