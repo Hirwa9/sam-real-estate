@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useId } from 'react';
+import React, { useState, useEffect, useId, useContext } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import './login.css'
-import { CaretRight, CheckCircle, SignIn, UserCirclePlus, UserPlus, XCircle } from '@phosphor-icons/react';
+import { CheckCircle, SignIn, UserCirclePlus, UserPlus, WarningCircle, XCircle } from '@phosphor-icons/react';
 import MyToast from '../common/Toast';
 import CtaTextButton from '../common/ctaTextButton/CtaTextButton';
 import { isValidEmail, isValidName } from '../../scripts/myScripts';
 import ContentListing from '../common/contentListing/ContentListing';
 import { companyEmail } from '../data/Data';
+import { AuthContext } from '../AuthProvider';
 /* globals $ */
 
 const Login = () => {
@@ -22,8 +23,17 @@ const Login = () => {
 		toast,
 	} = useCustomDialogs();
 
-	const navigate = useNavigate();
+	// Auth check
+	const { isAuthenticated, checkAuthentication, login, setIsAuthenticated } = useContext(AuthContext);
+	useEffect(() => {
+		!isAuthenticated && checkAuthentication();
+	}, [isAuthenticated, checkAuthentication]);
 
+
+	const [isWaitingFetchAction, setIsWaitingFetchAction] = useState(false);
+	const [errorWithFetchAction, setErrorWithFetchAction] = useState(null);
+
+	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	// const [responseMessage, setResponseMessage] = useState('');
@@ -33,20 +43,13 @@ const Login = () => {
 	const [signingIn, setSigningIn] = useState(true);
 	const toggleSigninSignup = () => setSigningIn(!signingIn);
 
+	const [accessToken, setAccessToken] = useState(null);
+	const [refreshToken, setRefreshToken] = useState(null);
+
+
 	/**
 	 * Login
 	*/
-
-	// Submit sign in form
-	// const handleSignIn = (e) => {
-	//   e.preventDefault();
-	//   axios.post('http://localhost:5000/login', { email, password })
-	//     .then(res => {
-	//       console.log(res);
-	//     }).catch(err => {
-	//       console.error(err)
-	//     });
-	// }
 
 	const handleSignIn = async (e) => {
 		e.preventDefault();
@@ -54,17 +57,12 @@ const Login = () => {
 			return alert('Enter a valid email address.');
 		}
 		try {
-			await axios.post('http://localhost:5000/login', { email, password });
-			if (email === companyEmail) {
-				navigate("/admin");
-			} else {
-				navigate("/user/0");
-			}
+			setIsWaitingFetchAction(true);
+			login(email, password);
 		} catch (error) {
-			if (error.response) {
-				console.error(error.response.data.message);
-				toast(error.response.data.message, 'warning');
-			}
+			console.error('Error signing in:', error);
+		} finally {
+			setIsWaitingFetchAction(false);
 		}
 	}
 
@@ -126,7 +124,7 @@ const Login = () => {
 	}
 
 	// Submit sign up form
-	const handleSignUp = (e) => {
+	const handleSignUp = async (e) => {
 		e.preventDefault();
 
 		if (!isValidName(newUserName)) {
@@ -139,26 +137,35 @@ const Login = () => {
 			return alert("Set a valid password to continue");
 
 		// Sending data with the expected keys
-		axios
-			.post('http://localhost:5000/register', {
-				name: newUserName,
-				email: newUserEmail,
-				password: newUserPassword,
-				confPassword: confirmNewUserPassword
-			})
+		await axios.post('http://localhost:5000/register', {
+			name: newUserName,
+			email: newUserEmail,
+			password: newUserPassword,
+			confPassword: confirmNewUserPassword
+		})
 			.then(response => {
-				toast({ message: response.data.message, type: 'success' });
-				resetRegisterForm();
-				const userId = response.data.userId;
+				const data = response.data;
+				setIsAuthenticated(true);
+				toast({
+					message: <><UserCirclePlus size={22} weight='fill' className='me-1 opacity-50' /> {data.message}.</>,
+					type: 'success'
+				});
 				setTimeout(() => {
-					navigate(`/user/${userId}`); // Navigate to user's dashboard
+					resetRegisterForm();
+					navigate(`/user/${data.userId}`); // Navigate to user's dashboard
 				}, 2000);
 			})
 			.catch(err => {
 				if (err.response && err.response.data && err.response.data.message) {
-					toast({ message: err.response.data.message, type: 'warning' });
+					toast({
+						message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> {err.response.data.message}.</>,
+						type: 'warning'
+					});
 				} else {
-					toast({ message: 'Something went wrong. You can try again', type: 'warning' });
+					toast({
+						message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Something went wrong. You can try again.</>,
+						type: 'warning'
+					});
 				}
 				console.error(err);
 			});
@@ -223,7 +230,8 @@ const Login = () => {
 								<li className="nav-item col-6" role="presentation">
 									<button className={`nav-link ${signingIn ? 'active' : ''} w-100 text-nowrap border-opacity-25`} id="signIn-tab" type="button" role="tab" aria-controls="signIn" aria-selected="true"
 										onClick={() => setSigningIn(true)}
-									>SIGN IN</button>
+									>
+										SIGN IN</button>
 								</li>
 								<li className="nav-item col-6" role="presentation">
 									<button className={`nav-link ${!signingIn ? 'active' : ''} w-100 text-nowrap border-opacity-25`} id="signUp-tab" type="button" role="tab" aria-controls="signUp" aria-selected="false"
@@ -259,7 +267,12 @@ const Login = () => {
 											<label htmlFor={signInId + "Password"} className="form-label">Password</label>
 										</div>
 										<div className="pt-1 my-4">
-											<button type="submit" className="btn btn-sm btn-dark flex-center px-3 rounded-pill w-100 clickDown" style={{ fontSize: "75%", paddingBlock: ".8rem" }}>SIGN IN <SignIn size={15} className='ms-2' /></button>
+											<button type="submit" className="btn btn-sm btn-dark flex-center px-3 rounded-pill w-100 clickDown" style={{ fontSize: "75%", paddingBlock: ".8rem" }}>
+												SIGN IN {!isWaitingFetchAction ? <SignIn size={15} className='ms-2' />
+													: <span className="spinner-grow spinner-grow-sm ms-2"></span>
+												}
+
+											</button>
 										</div>
 										<div className='d-grid gap-3 place-items-center'>
 											<a className="d-grid w-fit mx-auto small text-primary text-decoration-none" href="#!">Forgot password?</a>

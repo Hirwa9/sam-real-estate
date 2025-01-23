@@ -1,7 +1,7 @@
 import React, { useState, useId, useRef, useEffect, useContext } from 'react';
 import useCustomDialogs from '../../hooks/useCustomDialogs';
 import './loginForm.css';
-import { AuthenticationContext } from '../../../App';
+import { AuthContext } from "../../AuthProvider";
 import { Link } from "react-router-dom";
 import { CaretRight, SignIn, UserCirclePlus, XCircle } from '@phosphor-icons/react';
 import DividerText from '../DividerText';
@@ -22,10 +22,10 @@ const LoginForm = ({ setShowLogin }) => {
     } = useCustomDialogs();
 
     // Auth check
-    const { isLoggedIn, checkAuthentication } = useContext(AuthenticationContext);
+    const { isAuthenticated, checkAuthentication, login } = useContext(AuthContext);
     useEffect(() => {
-        !isLoggedIn && checkAuthentication();
-    }, [isLoggedIn, checkAuthentication]);
+        !isAuthenticated && checkAuthentication();
+    }, [isAuthenticated, checkAuthentication]);
 
     /**
      * Authentication
@@ -61,29 +61,7 @@ const LoginForm = ({ setShowLogin }) => {
             return alert('Enter a valid email address.');
         }
 
-        try {
-            setLoading(true);
-
-            const response = await fetch('http://localhost:5000/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const result = await response.json();
-            if (response.ok) {
-                localStorage.setItem('token', result.token); // Store token after successful login
-                checkAuthentication();
-                setShowLogin(false); // Close the login modal
-                // window.location.reload(); // Refresh to apply login state
-                // Do things
-            } else {
-                setError(result.message || 'Login failed');
-            }
-        } catch (err) {
-            setLoading(false);
-            setError('Login failed');
-            console.error(err);
-        }
+        login(email, password);
     };
 
     // Reset form
