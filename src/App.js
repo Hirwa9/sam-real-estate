@@ -1,12 +1,11 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import './App.css';
 import Pages from './components/pages/Pages';
-import axios from 'axios';
 import { SettingsProvider } from './components/SettingsProvider';
+import { AuthProvider } from './components/AuthProvider';
 
-// Define and export PropertiesContext and AuthenticationContext
+// Define and export PropertiesContext
 export const PropertiesContext = createContext();
-export const AuthenticationContext = createContext();
 
 function App() {
     // Properties state and functions
@@ -22,7 +21,6 @@ function App() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            // setPropertiesContext(data.filter(property => property.listed));
             setPropertiesContext(
                 data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             );
@@ -35,51 +33,18 @@ function App() {
         }
     };
 
+    // Fetch properties
     useEffect(() => {
         fetchProperties();
     }, []);
 
-    // Authentication state and functions
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const checkAuthentication = async () => {
-        try {
-            // Retrieve token from cookies if stored
-            const token = document.cookie.split('; ').find(row => row.startsWith('accessToken='))?.split('=')[1];
-            // console.log(token);
-            console.log(document.cookie);
-
-            // Add Authorization header with the Bearer token
-            const response = await axios.get('http://localhost:5000/verifyToken', {
-                withCredentials: true,
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            console.log(response.data);
-            setIsLoggedIn(true); // If verifyToken succeeds, user is logged in
-        } catch (error) {
-            if (error.response && error.response.status === 403) {
-                console.log("Token expired, consider refreshing here if needed.");
-                setIsLoggedIn(false);
-            } else {
-                setIsLoggedIn(false);
-            }
-        }
-    };
-
-
-    useEffect(() => {
-        checkAuthentication();
-    }, []);
-
     return (
         <PropertiesContext.Provider value={{ propertiesContext, loadingProperties, errorLoadingProperties, fetchProperties }}>
-            <AuthenticationContext.Provider value={{ isLoggedIn, checkAuthentication }}>
                 <SettingsProvider>
-                    <Pages />
+                    <AuthProvider>
+                        <Pages />
+                    </AuthProvider>
                 </SettingsProvider>
-            </AuthenticationContext.Provider>
         </PropertiesContext.Provider>
     );
 }
