@@ -321,7 +321,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                         {propertiesToShow
                             .slice(0, limit)
                             .map((val, index) => {
-                                const { id, cover, category, type, name, location, about, price, payment,
+                                const { id, cover, category, type, name, location, about, price, currency, payment,
                                     bedrooms, bathrooms, garages, booked, bookedBy, closed,
                                     likes } = val;
                                 const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
@@ -390,12 +390,12 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                                         <span className="catgType" style={{ background: mainLightColor, color: mainColor }}>
                                                             {category}
                                                         </span>
-                                                        <span className="flex-align-center">
+                                                        {/* <span className="flex-align-center">
                                                             <span className="fs-70 fw-bold text-black2">
                                                                 {likes && formatBigCountNumbers(JSON.parse(likes).length)}
                                                             </span>
                                                             <Heart className="text ms-1 fs-4 ptr me-1 bounceClick" />
-                                                        </span>
+                                                        </span> */}
                                                     </div>
                                                     <h4 className="m-0 fs-6 text-gray-700">{name}</h4>
                                                     <p className="mb-2"><MapPinArea size={20} weight="fill" /> {location}</p>
@@ -411,7 +411,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                                             title="View property"
                                                             onClick={() => goToProperty(id)} >
                                                             {/* <CurrencyDollar weight="bold" className="me-1" /> {price.toLocaleString()} */}
-                                                            RWF {price.toLocaleString()}
+                                                            {currency} {price.toLocaleString()}
                                                             {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 fs-75">/year</span>}
                                                             {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 fs-75">/month</span>}
                                                             {payment === 'weekly' && <span className="opacity-50 fw-normal ms-1 fs-75">/week</span>}

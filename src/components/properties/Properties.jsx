@@ -553,7 +553,7 @@ const Properties = () => {
                                     <b>Bathrooms</b>: {filterValue}
                                 </li>
                             }
-                            {filterOption === "furnished" &&
+                            {/* {filterOption === "furnished" &&
                                 <li>
                                     <b>Furnished</b> {filterCount && (
                                         <span className='ms-1'> ({filterCount}) </span>
@@ -565,6 +565,16 @@ const Properties = () => {
                                     <b>Unfurnished</b> {filterCount && (
                                         <span className='ms-1'> ({filterCount}) </span>
                                     )}
+                                </li>
+                            } */}
+                            {filterOption === "furnished" &&
+                                <li>
+                                    <b>Furnished</b>
+                                </li>
+                            }
+                            {filterOption === "unfurnished" &&
+                                <li>
+                                    <b>Unfurnished</b>
                                 </li>
                             }
                             {filterOption !== "all" &&
