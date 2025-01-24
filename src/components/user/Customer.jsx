@@ -1,22 +1,21 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import './customer.css';
-import logo from "../../components/images/logo.jpg";
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HourglassHigh, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
-import { cError, cLog, deepEqual, formatBigCountNumbers, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
+import { ArrowLeft, BellRinging, BellSimpleSlash, Bookmark, Building, Calendar, CalendarCheck, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HourglassHigh, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
+import { cError, cLog, deepEqual, formatDate, getDateHoursMinutes, isValidEmail } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
-import DividerText from '../common/DividerText';
 import ActionPrompt from '../common/actionPrompt/ActionPrompt';
 import ConfirmDialog from '../common/confirmDialog/ConfirmDialog';
-import { aboutProperties, companyAddress, companyEmail, companyMotto, companyName, companyPhoneNumber1, companyPhoneNumber2 } from '../data/Data';
+import { companyPhoneNumber1 } from '../data/Data';
 import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
 import axios from 'axios';
-import { AuthContext } from '../AuthProvider';
+import { AuthContext } from '../AuthProvider1';
+import BusinessLogoName from '../common/BusinessLogoName';
 // import userPlaceholderImg from '/images/user_placeholder_image.jpg';
 // import userPlaceholderImg from '/images/user_placeholder_image.jpg';
 
@@ -65,7 +64,7 @@ const Customer = () => {
     } = useCustomDialogs();
 
     const BASE_URL = 'http://localhost:5000';
-    const { isAuthenticated, checkAuthentication, accessToken, logout } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount, accessToken, logout } = useContext(AuthContext);
 
     /**
      * Sidebar
@@ -744,7 +743,7 @@ const Customer = () => {
             <div className='pt-5 pb-3 section-about'>
                 <h1 className='text-center mb-4 fw-bold text-secondary'>Dashboard</h1>
                 <div className="d-xl-flex pt-xl-4">
-                    <div className="p-4 small col-xl-8 clip-text-gradient">
+                    <div className="p-4 col-xl-8 clip-text-gradient">
                         <p className="mb-3 text-justify">
                             <span className='fs-3'>Welcome {signedUser.name}</span> <br />
                             With your dashboard, you can manage your activities and interactions on the platform effortlessly. Here's what you can do:
@@ -758,7 +757,7 @@ const Customer = () => {
                             Site activity <CaretDown className='ms-2 opacity-50' />
                         </a>
                     </div>
-                    <div className='d-none d-xl-block col-xl-4 py-3 text-gray-600 clickDown peak-borders-b clip-path-heptagon'
+                    <div className='d-none d-xl-block col-xl-4 py-3 text-gray-600 clickDown wavy-borders-tb'
                         style={{ backgroundImage: 'linear-gradient(150deg, rgba(195, 133, 0, .15), rgba(39, 128, 157, .15))' }}
                     >
                         <div className='dim-100 flex-center'>
@@ -969,7 +968,7 @@ const Customer = () => {
                 <div>
                     <h1 className='text-center mb-4 fw-bold text-secondary'>Reports</h1>
                     <div className="d-lg-flex px-4 fs-5 text-gray-600">
-                        Review key insights on property performance and analyze closed deals to inform business decisions.
+                        View your successfully closed deals and completed transactions.
                     </div>
                 </div>
                 <ChartBar size={200} className='d-none d-lg-block px-4 col-lg-4 text-gray-400 mask-bottom section-icon' />
@@ -992,7 +991,7 @@ const Customer = () => {
                     <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
                         <SealCheck size={80} className="text-center w-100 mb-3 opacity-50" />
                         <p className="text-muted text-center small">
-                            View your successfully closed deals and completed transactions.
+                            Successfully closed deals will be listed here as they come in.
                         </p>
                     </div>
                 }
@@ -1614,16 +1613,7 @@ const Customer = () => {
         <>
             <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
             <header className="navbar navbar-light sticky-top flex-md-nowrap py-0 pe-3 border-bottom admin-header">
-                <div className='nav-item navbar-brand col-md-3 d-flex align-items-center px-2'>
-                    <div className="me-2 logo">
-                        <Link to="/">
-                            <img src={businessProfileSettings.logoUrl} alt="logo" className="rounded-circle logo"></img>
-                        </Link>
-                    </div>
-                    <small className='fs-70 text-uppercase'>
-                        {businessProfileSettings.businessName}
-                    </small>
-                </div>
+                <BusinessLogoName className="p-2" />
                 {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
                 <div className="ms-auto me-3 navbar-nav">
                     <div className="nav-item text-nowrap d-none d-md-flex align-items-center py-md-2">

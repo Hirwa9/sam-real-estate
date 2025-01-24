@@ -10,11 +10,12 @@ import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
 import DividerText from '../common/DividerText';
 import ActionPrompt from '../common/actionPrompt/ActionPrompt';
 import ConfirmDialog from '../common/confirmDialog/ConfirmDialog';
-import { aboutProperties, currencySupported, companyAddress, companyEmail, companyMotto, companyName, companyPhoneNumber1, companyPhoneNumber2 } from '../data/Data';
+import { aboutProperties, companyPhoneNumber1 } from '../data/Data';
 import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
-import { AuthContext } from '../AuthProvider';
+import { AuthContext } from '../AuthProvider1';
+import BusinessLogoName from '../common/BusinessLogoName';
 
 const Admin = () => {
     // Custom hooks
@@ -55,7 +56,11 @@ const Admin = () => {
     } = useCustomDialogs();
 
     const BASE_URL = 'http://localhost:5000';
-    const { isAuthenticated, checkAuthentication, accessToken, logout } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount, accessToken, refreshAccessToken, logout } = useContext(AuthContext);
+    useEffect(() => {
+        !isAuthenticated && checkAuthOnMount();
+    }, [isAuthenticated, checkAuthOnMount]);
+    console.log(isAuthenticated);
 
     /**
      * Sidebar
@@ -2345,7 +2350,7 @@ const Admin = () => {
             <div className='pt-5 pb-3 section-about'>
                 <h1 className='text-center mb-4 fw-bold text-secondary'>Dashboard</h1>
                 <div className="d-xl-flex pt-xl-4">
-                    <div className="p-4 small col-xl-8 clip-text-gradient">
+                    <div className="p-4 col-xl-8 clip-text-gradient">
                         <p className="mb-3 text-justify">
                             <span className='fs-3'>Welcome</span> <br />
                             With admin tools, you can manage and oversee various aspects of your platform efficiently. ___ You can can perform different activities:
@@ -2360,7 +2365,7 @@ const Admin = () => {
                             Site activity <CaretDown className='ms-2 opacity-50' />
                         </a>
                     </div>
-                    <div className='d-none d-xl-block col-xl-4 py-3 text-gray-600 clickDown peak-borders-b clip-path-heptagon'
+                    <div className='d-none d-xl-block col-xl-4 py-3 text-gray-600 clickDown wavy-borders-tb'
                         style={{ backgroundImage: 'linear-gradient(150deg, rgba(195, 133, 0, .15), rgba(39, 128, 157, .15))' }}
                     >
                         <div className='dim-100 flex-center'>
@@ -2718,7 +2723,7 @@ const Admin = () => {
                                             )
                                             .map((property, index) => {
                                                 const {
-                                                    listed, category, type, name, location, about, price, 
+                                                    listed, category, type, name, location, about, price,
                                                     currency, payment, booked, bookedBy, closed, createdAt
                                                 } = property;
 
@@ -3610,7 +3615,7 @@ const Admin = () => {
                                             <div className="h4 mb-0">{businessProfile.businessName}</div>
                                             <div className="small">{businessProfile.motto}</div>
                                             <div className="fs-70 text-muted"><Envelope weight='duotone' /> {businessProfile.email}</div>
-                                            <div className="fs-70 text-muted"><Phone weight='duotone' /> <WhatsappLogo weight='duotone' fill='var(--bs-success)' /> {companyPhoneNumber1.text}</div>
+                                            <div className="fs-70 text-muted"><Phone weight='duotone' /> <WhatsappLogo weight='duotone' fill='var(--bs-success)' /> {businessProfile.phone1}</div>
                                         </div>
                                     </div>
 
@@ -3878,16 +3883,7 @@ const Admin = () => {
         <>
             <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
             <header className="navbar navbar-light sticky-top flex-md-nowrap py-0 pe-3 border-bottom admin-header">
-                <div className='nav-item navbar-brand col-md-3 d-flex align-items-center px-2'>
-                    <div className="me-2 logo">
-                        <Link to="/">
-                            <img src={businessProfileSettings.logoUrl} alt="logo" className="rounded-circle logo"></img>
-                        </Link>
-                    </div>
-                    <small className='fs-70 text-uppercase'>
-                        {businessProfileSettings.businessName}
-                    </small>
-                </div>
+                <BusinessLogoName className="p-2" />
                 {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
                 <div className="ms-auto me-3 navbar-nav">
                     {/* <div className="nav-item text-nowrap d-none d-md-block">
@@ -4240,23 +4236,25 @@ const Admin = () => {
                                             <label htmlFor="about" className="form-label" required>About the Property</label>
                                             <textarea rows={5} id="about" name="about" className="form-control" placeholder="Provide a brief description"></textarea>
                                         </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="price" className="form-label" required>Price</label>
-                                            <input type="number" id="price" name="price" className="form-control" required placeholder="Enter the price" />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="currency" className="form-label" required>Currency</label>
-                                            <select id="currency" name="currency" className="form-select"
-                                                defaultValue={aboutProperties.currencySupported[0]}
-                                                required>
-                                                {aboutProperties.currencySupported
-                                                    .map((val, index) => (
-                                                        <option key={index} value={val} className='p-2 px-3 small'>
-                                                            {val}
-                                                        </option>
-                                                    ))
-                                                }
-                                            </select>
+                                        <div className="d-flex justify-content-between gap-3">
+                                            <div className="col-7 col-sm mb-3">
+                                                <label htmlFor="price" className="form-label" required>Price</label>
+                                                <input type="number" id="price" name="price" className="form-control" required placeholder="Enter the price" />
+                                            </div>
+                                            <div className="col-4 col-sm mb-3">
+                                                <label htmlFor="currency" className="form-label" required>Currency</label>
+                                                <select id="currency" name="currency" className="form-select"
+                                                    defaultValue={aboutProperties.currencySupported[0]}
+                                                    required>
+                                                    {aboutProperties.currencySupported
+                                                        .map((val, index) => (
+                                                            <option key={index} value={val} className='p-2 px-3 small'>
+                                                                {val}
+                                                            </option>
+                                                        ))
+                                                    }
+                                                </select>
+                                            </div>
                                         </div>
                                         <div className="mb-3">
                                             <label htmlFor="payment" className="form-label">Payment method</label>
@@ -4318,7 +4316,7 @@ const Admin = () => {
                                             </select>
                                         </div>
                                         <div className="mb-3">
-                                            <label htmlFor="privateInfo" className="form-label">Private info</label>
+                                            <label htmlFor="privateInfo" className="form-label">Private info (optional)</label>
                                             <textarea rows={5} id="privateInfo" name="privateInfo" className="form-control" placeholder="Enter information to be seen only by you"></textarea>
                                         </div>
 
