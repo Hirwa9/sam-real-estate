@@ -100,7 +100,7 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
                         onClick={scrollRight} />
                 </div>
                 {/* Scrollable Divs */}
-                <div className="h-100 d-grid scroll-smooth slides-container images-container" ref={containerRef}>
+                <div className="h-100 w-100 d-grid scroll-smooth slides-container images-container" ref={containerRef}>
                     {/* Render images */}
                     <div className="imgages-grid imgages-grid-main">
                         <img src={primaryImage} alt="" className="main-image" onClick={() => { setScrollTo(images[0].url); setOpenImageViewer(true); }} />
