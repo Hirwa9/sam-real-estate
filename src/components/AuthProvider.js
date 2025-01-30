@@ -1,168 +1,134 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { Building, CaretDown, WarningCircle } from "@phosphor-icons/react";
-import LoadingBubbles from "./common/LoadingBubbles";
-import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
-import useCustomDialogs from "./hooks/useCustomDialogs";
-import MyToast from "./common/Toast";
+import React, { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
+import { BASE_URL } from '../api/axios';
+import { useNavigate } from 'react-router-dom';
+import LoadingBubbles from './common/LoadingBubbles';
+import { Building, CaretDown } from '@phosphor-icons/react';
 
-// Create the AuthContext
 export const AuthContext = createContext();
 
-// Custom hook for consuming the AuthContext
-export const useAuth = () => {
-    return useContext(AuthContext);
-};
-
-// AuthProvider Component
 export const AuthProvider = ({ children }) => {
-    // Custom hooks
-    const {
-        // Toast
-        showToast,
-        setShowToast,
-        toastMessage,
-        toastType,
-        toast,
-    } = useCustomDialogs();
-    const BASE_URL = 'http://localhost:5000';
     const navigate = useNavigate();
-
 
     const [user, setUser] = useState(null); // User object or null
     const [loading, setLoading] = useState(true); // Loading state for auth checks
-    const [isAuthenticated, setIsAuthenticated] = useState(false); // Loading state for auth checks
+    const [isAuthenticated, setIsAuthenticated] = useState(false); // Auth state
 
-    const [accessToken, setAccessToken] = useState(null);
-    const [refreshToken, setRefreshToken] = useState(null);
+    const api = axios.create({
+        baseURL: BASE_URL,
+        withCredentials: true, // Automatically send cookies
+    });
 
+    // Check authentication
+    // const checkAuthOnMount = async () => {
+    //     try {
+    //         const response = await api.get('/verifyToken');
+    //         setUser(response.data.user);
+    //         setIsAuthenticated(true);
+    //     } catch (error) {
+    //         console.error("Authentication check failed:", error);
+    //         setUser(null);
+    //         setIsAuthenticated(false);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
-
-    // Mock a login function
-    const login = async (email, password) => {
+    const checkAuthOnMount = async () => {
         try {
-            const response = await axios.post(`${BASE_URL}/login`, { email, password });
-            const data = response.data;
-            setAccessToken(data.accessToken);
-            setRefreshToken(data.refreshToken);
+            const response = await fetch('http://localhost:5000/verifyToken', {
+                // const response = await fetch('http://localhost:3000/verifyToken', {
+                method: 'GET',
+                credentials: 'include',  // ✅ Ensure cookies are sent
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            console.log("Raw response:", response); // Debugging step
+
+            if (!response.ok) {
+                const text = await response.text();  // Read error as text
+                throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
+            }
+
+            const data = await response.json();
             setUser(data.user);
             setIsAuthenticated(true);
-
-            // Redirects
-            if (data.user.type === 'admin') {
-                // <Navigate to={`/admin`} />
-                navigate('/admin');
-            } else if (data.user.type === 'user') {
-                // <Navigate to={`/user/${data.user.id}`} />
-                navigate(`/user/${data.user.id}`);
-            }
         } catch (error) {
+            console.error("Authentication check failed:", error);
             setUser(null);
-            console.error("Login failed:", error);
-            toast({
-                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> {error.response.data.message}.</>,
-                type: 'warning'
-            });
+            setIsAuthenticated(false);
+        } finally {
+            setLoading(false);
         }
     };
 
-    console.log(isAuthenticated);
-
-    const checkAuthentication = async () => {
-        if (!accessToken) return;
-
+    // Function to handle login
+    const login = async (email, password) => {
         try {
-            const response = await axios.get(`${BASE_URL}/verifyToken`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            });
+            const response = await api.post('/login', { email, password });
+            setUser(response.data.user);
             setIsAuthenticated(true);
-        } catch (error) {
-            if (error.response && error.response.status === 403) {
-                console.log("Access token expired, refreshing...");
-                await refreshAccessToken();
-            } else {
-                setIsAuthenticated(false);
-            }
-        }
-    };
 
-    const refreshAccessToken = async () => {
-        try {
-            const response = await axios.post(`${BASE_URL}/refreshToken`, {
-                refreshToken,
-            });
-            setAccessToken(response.data.accessToken);
+            // Redirect based on user type
+            if (response.data.user.type === "admin") {
+                navigate("/admin");
+            } else if (response.data.user.type === "user") {
+                navigate(`/user/${response.data.user.id}`);
+            }
         } catch (error) {
-            console.error("Failed to refresh access token:", error);
+            console.error("Login failed:", error);
+            setUser(null);
             setIsAuthenticated(false);
         }
     };
 
-    // Mock a logout function
+    // Function to handle logout
     const logout = async () => {
         try {
-            await axios.post(`${BASE_URL}/logout`, { refreshToken });
-            setAccessToken(null);
-            setRefreshToken(null);
+            await api.post('/logout'); // Invalidate cookies on the server
+            setUser(null);
             setIsAuthenticated(false);
-            navigate('/login');
+            navigate("/login");
         } catch (error) {
             console.error("Logout failed:", error);
         }
     };
 
-    // Check authentication on mout
+    // Automatically check authentication on mount
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            checkAuthentication();
-            setLoading(false);
-        }, 400);
-
-        return () => clearTimeout(timeout);
+        checkAuthOnMount();
     }, []);
 
-    // Context value to provide to children
+    // Context value
     const value = {
         user,
         login,
         logout,
-        accessToken,
         isAuthenticated,
-        setIsAuthenticated,
-        checkAuthentication,
+        checkAuthOnMount,
     };
 
-    // Show a loading indicator until the auth check is complete
+    // Show a loading indicator while checking authentication
     if (loading) {
         return (
             <div className="h-100vh d-flex flex-column app-loading-page">
-                <LoadingBubbles className="h-80 text-gray-200" icon={<Building size={80} className='loading-skeleton' />} />
-
-                <p className="grid-center gap-3 mt-auto p-4 smaller text-gray-200 text-center fw-semibold" style={{ animation: 'zoomInBack .8s 1' }}>
+                <LoadingBubbles
+                    className="h-80 text-gray-200"
+                    icon={<Building size={80} className="loading-skeleton" />}
+                />
+                <p
+                    className="grid-center gap-3 mt-auto p-4 smaller text-gray-200 text-center fw-semibold"
+                    style={{ animation: "zoomInBack .8s 1" }}
+                >
                     <CaretDown className="opacity-75 me-2" /> Buy and rent properties across Kigali city
                 </p>
             </div>
-        )
+        );
     }
 
-    // // Define routes for authenticated and public access
-    // const AuthenticatedRoute = ({ children }) => {
-    //     return value.isAuthenticated ? children : <Navigate to="/login" />;
-    // };
-
-    // const PublicRoute = ({ children }) => {
-    //     return !value.isAuthenticated ? children : <Navigate to="/profile" />;
-    // };
-
-    // Render the AuthContext.Provider with routing logic
     return (
-        <>
-            <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
-            <AuthContext.Provider value={value}>
-                {children}
-            </AuthContext.Provider>
-        </>
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
     );
 };

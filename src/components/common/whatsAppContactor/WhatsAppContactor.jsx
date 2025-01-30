@@ -51,7 +51,7 @@ const WhatsAppContactor = ({ show, className, toggler, onClose }) => {
                                 <div className='text-gray-300 text-end'>
                                     <h3 className='fs-2 mb-0'>Let's chat</h3>
                                     <p className='ms-auto smaller'>
-                                        Connect with us and make some deals
+                                        Connect with us and place some deals
                                     </p>
                                 </div>
                             </div>

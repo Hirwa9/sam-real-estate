@@ -31,7 +31,13 @@
 
 @media screen and (max-width: 1200px) {
     #propertyCard .img {
-        aspect-ratio: 16 / 10;
+        aspect-ratio: 8 / 5;
+    }
+}
+
+@media screen and (min-width: 576px) and (max-width: 1200px) {
+    #propertyCard .img {
+        max-height: 50%;
     }
 }
 

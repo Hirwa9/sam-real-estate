@@ -4,7 +4,7 @@ import './property.css';
 import { AuthContext } from '../AuthProvider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { formatBigCountNumbers, formatDate, shareProperty } from '../../scripts/myScripts';
-import { ArrowBendDoubleUpRight, ArrowClockwise, Bed, Building, Car, CaretRight, ChatText, Clock, CookingPot, DeviceMobileCamera, HashStraight, Heart, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo } from '@phosphor-icons/react';
+import { ArrowBendDoubleUpRight, ArrowClockwise, Bed, Building, Car, CaretRight, ChatText, Clock, CookingPot, DeviceMobileCamera, HashStraight, Heart, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo, X } from '@phosphor-icons/react';
 // import Button from '@mui/material/Button';
 import PropertyMediaContainer from './PropertyMediaContainer';
 import WorkingHours from '../common/workinghours/WorkingHours';
@@ -19,6 +19,7 @@ import Heading from '../common/Heading';
 import LoadingBubbles from '../common/LoadingBubbles';
 import { companyPhoneNumber1 } from '../data/Data';
 import FetchError from '../common/FetchError';
+import ReactImageGallery from 'react-image-gallery';
 
 const Property = () => {
     // Custom hooks
@@ -43,10 +44,10 @@ const Property = () => {
     } = useCustomDialogs();
 
     // Auth check
-    const { isAuthenticated, checkAuthentication } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount } = useContext(AuthContext);
     useEffect(() => {
-        !isAuthenticated && checkAuthentication();
-    }, [isAuthenticated, checkAuthentication]);
+        !isAuthenticated && checkAuthOnMount();
+    }, [isAuthenticated, checkAuthOnMount]);
 
     const sendMessage = () => {
         window.open(`https://wa.me/${companyPhoneNumber1.phone}?text=Hello%2C%20I%27m%20interested%20in%20your%20services.%20Especially%20with%20this%20property_*${name}*_%20${window.location}`, '_blank');
@@ -55,7 +56,9 @@ const Property = () => {
     const { propertyId } = useParams();
 
     // Image viewer
-    const [openImageViewer, setOpenImageViewer] = useState();
+    const [openImageViewer, setOpenImageViewer] = useState(false);
+    const [showPropertyGallery, setShowPropertyGallery] = useState(false);
+    const [galleryStartIndex, setGalleryStartIndex] = useState(0);
     const [scrollToImage, setScrollToImage] = useState(0);
 
     const [matchProperty, setMatchProperty] = useState(undefined); // Set initial state to null
@@ -132,6 +135,27 @@ const Property = () => {
         payment, area, volume, bedrooms, bathrooms, kitchens, garages,
         videoUrl, mapUrl, booked, bookedBy, closed, media, likes, createdAt
     } = matchProperty || {};
+
+    // Construct an array for gallery images
+    const [imagesArray, setImagesArray] = useState([]);
+
+    useEffect(() => {
+        if (matchProperty) {
+            let { media } = matchProperty
+            let images = JSON.parse(JSON.parse(media)).images;
+            let arr = images.map(img => {
+                return {
+                    original: img.url,
+                    // thumbnail: img.url,
+                    // thumbnailClass: "clickDown",
+                    originalTitle: "Property features gallery",
+                    loading: true,
+                }
+            })
+            setImagesArray(arr);
+        }
+
+    }, [matchProperty]);
 
     const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
     const mainLightColor = category === "For Sale" ? "#25b5791a" : "#ff98001a";
@@ -292,14 +316,13 @@ const Property = () => {
                         {/* Property heading */}
                         <div className='px-lg-4'>
                             <div>
-                                <div>
-                                    <h1 className="d-flex justify-content-between text-gray-700">
-                                        {name}
-                                        <span className="d-flex gap-2 align-self-start p-1 property-actions">
-                                            <ShareFat size={28} className='ptr trans-p3s bounceClick' title="Share property"
-                                                onClick={() => shareProperty(id, name, category)}
-                                            />
-                                            {/* <span className='d-grid' style={{ justifyItems: "center" }}>
+                                <h1 className="d-flex justify-content-between text-gray-700">
+                                    {name}
+                                    <span className="d-flex gap-2 align-self-start p-1 property-actions">
+                                        <ShareFat size={28} className='ptr trans-p3s bounceClick' title="Share property"
+                                            onClick={() => shareProperty(id, name, category)}
+                                        />
+                                        {/* <span className='d-grid' style={{ justifyItems: "center" }}>
                                                 {likedProperties.includes(id) ? (
                                                     <Heart size={28} weight='fill' className='ptr trans-p3s bounceClick like-icon liked'
                                                         onClick={() => handleUnlike(id)} />
@@ -311,22 +334,21 @@ const Property = () => {
                                                     {Number(matchPropertyLikes) !== 0 && matchPropertyLikes}
                                                 </span>
                                             </span> */}
+                                    </span>
+                                </h1>
+                                <div className='mb-0 text-muted'>
+                                    <p className='d-flex align-items-start w-100'>
+                                        <span>
+                                            <MapPinArea size={22} weight="fill" className='text-black2 opacity-75 me-1' />{location}
                                         </span>
-                                    </h1>
-                                    <div className='mb-0 text-muted'>
-                                        <p className='d-flex align-items-start w-100'>
-                                            <span>
-                                                <MapPinArea size={22} weight="fill" className='text-black2 opacity-75 me-1' />{location}
-                                            </span>
-                                            <span className='ms-auto mx-md-4 flex-align-center text-nowrap small'>
-                                                {/* <Clock size={22} weight='bold' className='text-black2 opacity-75 me-1' />{createdAt.slice(0, createdAt.indexOf('T'))} */}
-                                                <Clock size={22} weight='fill' className='text-black2 opacity-75 me-1' />{formatDate(createdAt, { todayKeyword: true, longMonthFormat: true })}
-                                            </span>
-                                        </p>
-                                        <p className='mb-0' style={{ background: mainLightColor, color: mainColor }}>
-                                            {type} - {category}
-                                        </p>
-                                    </div>
+                                        <span className='ms-auto mx-md-4 flex-align-center text-nowrap small'>
+                                            {/* <Clock size={22} weight='bold' className='text-black2 opacity-75 me-1' />{createdAt.slice(0, createdAt.indexOf('T'))} */}
+                                            <Clock size={22} weight='fill' className='text-black2 opacity-75 me-1' />{formatDate(createdAt, { todayKeyword: true, longMonthFormat: true })}
+                                        </span>
+                                    </p>
+                                    <p className='mb-0' style={{ background: mainLightColor, color: mainColor }}>
+                                        {type} - {category}
+                                    </p>
                                 </div>
                             </div>
                             <p className='text-black2 smaller'>
@@ -427,95 +449,107 @@ const Property = () => {
                             }
                             <div className="d-flex flex-wrap py-3 property-subproperties">
                                 <div className="mb-3 px-4 fw-bold" style={{ color: mainColor }}>
-                                    <h6 className='mb-0 fw-light'><MoneyWavy size={23} weight='fill' className='me-2' />Price</h6>
-                                    <p className={`${closed ? 'text-decoration-line-through' : ''}`}>{currency} {price.toLocaleString()} {payment === 'annually' && "/year"}
-                                        {payment === 'monthly' && "/month"}
-                                        {payment === 'weekly' && "/week"}
-                                        {payment === 'daily' && "/day"}
-                                        {payment === 'hourly' && "/hour"}
-                                    </p>
+                                    <h6 className='mb-0 fw-light'><MoneyWavy size={32} weight='duotone' className='me-2' />Price</h6>
+                                    <p className={`${closed ? 'text-decoration-line-through' : ''}`}>{currency} {price.toLocaleString()} {payment === 'daily' ? '/day' : payment === 'once' ? '/once' : `/${payment.slice(0, -2)}`}</p>
                                 </div>
                                 {bedrooms !== null &&
                                     <div className="mb-3 px-4">
-                                        <h6 className='mb-0 fw-light text-muted'><Bed size={23} weight='fill' className='me-2 text-black2' /></h6>
+                                        <h6 className='mb-0 fw-light text-muted'><Bed size={32} weight='duotone' className='me-2 text-gray-500' /></h6>
                                         <p>{bedrooms} Bedroom{bedrooms > 1 && "s"}</p>
                                     </div>
                                 }
                                 {bathrooms !== null &&
                                     <div className="mb-3 px-4">
-                                        <h6 className='mb-0 fw-light text-muted'><Shower size={23} weight='fill' className='me-2 text-black2' /></h6>
+                                        <h6 className='mb-0 fw-light text-muted'><Shower size={32} weight='duotone' className='me-2 text-gray-500' /></h6>
                                         <p>{bathrooms} Bathroom{bathrooms > 1 && "s"}</p>
                                     </div>
                                 }
                                 {kitchens !== null &&
                                     <div className="mb-3 px-4">
-                                        <h6 className='mb-0 fw-light text-muted'><CookingPot size={23} weight='fill' className='me-2 text-black2' /></h6>
+                                        <h6 className='mb-0 fw-light text-muted'><CookingPot size={32} weight='duotone' className='me-2 text-gray-500' /></h6>
                                         <p>{kitchens} Kitchen{kitchens > 1 && "s"}</p>
                                     </div>
                                 }
                                 {garages !== null &&
                                     <div className="mb-3 px-4">
-                                        <h6 className='mb-0 fw-light text-muted'><Car size={23} weight='fill' className='me-2 text-black2' /></h6>
+                                        <h6 className='mb-0 fw-light text-muted'><Car size={32} weight='duotone' className='me-2 text-gray-500' /></h6>
                                         <p>{garages} Carport{garages > 1 && "s"}</p>
                                     </div>
                                 }
                                 {area !== null &&
                                     <div className="mb-3 px-4">
-                                        <h6 className='mb-0 fw-light text-muted'><VectorTwo size={23} weight='fill' className='me-2 text-black2' />Area</h6>
+                                        <h6 className='mb-0 fw-light text-muted'><VectorTwo size={32} weight='duotone' className='me-2 text-gray-500' />Area</h6>
                                         <p>{area} m<sup>2</sup></p>
                                     </div>
                                 }
                                 {volume !== null &&
                                     <div className="mb-3 px-4">
-                                        <h6 className='mb-0 fw-light text-muted'><VectorThree size={23} weight='fill' className='me-2 text-black2' />Volume</h6>
+                                        <h6 className='mb-0 fw-light text-muted'><VectorThree size={32} weight='duotone' className='me-2 text-gray-500' />Volume</h6>
                                         <p>{volume} m<sup>3</sup></p>
                                     </div>
                                 }
                             </div>
                             {/* Gallery inages */}
-                            {matchPropertyImages.length > 4 &&
-                                <div className="px-sm-2 px-md-4 py-3">
-                                    <div className='d-flex align-items-center mb-2'>
-                                        <Images size={30} className='me-2 me-md-3' />
-                                        <h6 className='m-0 fs-5 text-muted'>Property Gallery</h6>
-                                    </div>
-                                    <div>
-                                        <div className="d-flex flex-wrap">
-                                            {
-                                                matchPropertyImages.slice(0, 5).map((image, index) => (
-                                                    <img key={index} src={image.url} alt={`Image_${index + 1}`} className='col-4 col-sm-3 col-xl-2 clickDown'
-                                                        style={{ padding: ".125rem" }}
-                                                        onClick={() => { setScrollToImage(image?.url); setOpenImageViewer(true); }}
-                                                    />
-                                                ))
-                                            }
-                                            {matchPropertyImages.length > 5 &&
-                                                <div className='col-4 col-lg-3 col-xl-2 position-relative flex-grow-1 bg-black2 clickDown'
-                                                    style={{
-                                                        backgroundImage: `url(${matchPropertyImages[6]?.url})`,
-                                                        backgroundSize: "cover",
-                                                        backgroundPosition: "center",
-                                                        padding: ".125rem",
-                                                        backgroundClip: "content-box",
-                                                        userSelect: "none",
-                                                        cursor: "default"
-                                                    }}
-                                                    onClick={() => { setScrollToImage(matchPropertyImages[6]?.url); setOpenImageViewer(true); }}
-                                                >
-                                                    <div className='py-3 position-absolute inset-0 grid-center bg-black2 text-light fs-3'
-                                                        style={{ margin: ".125rem" }}>
-                                                        + {matchPropertyImages.slice(5).length}
+                            {matchPropertyImages.length > 4 && (
+                                <>
+                                    <div className="px-sm-2 px-md-4 py-3">
+                                        <div className='d-flex align-items-center mb-2'>
+                                            <Images size={30} className='me-2 me-md-3' />
+                                            <h6 className='m-0 fs-5 text-muted'>Property Gallery</h6>
+                                        </div>
+                                        <div>
+                                            <div className="d-flex flex-wrap">
+                                                {
+                                                    matchPropertyImages.slice(0, 5).map((image, index) => (
+                                                        <img key={index} src={image.url} alt={`Image_${index + 1}`} className='col-4 col-sm-3 col-xl-2 clickDown'
+                                                            style={{ padding: ".125rem" }}
+                                                            // onClick={() => { setScrollToImage(image?.url); setOpenImageViewer(true); }}
+                                                            onClick={() => { setGalleryStartIndex(index); setShowPropertyGallery(true) }}
+                                                        />
+                                                    ))
+                                                }
+                                                {matchPropertyImages.length > 5 &&
+                                                    <div className='col-4 col-lg-3 col-xl-2 position-relative flex-grow-1 bg-black2 clickDown'
+                                                        style={{
+                                                            backgroundImage: `url(${matchPropertyImages[5]?.url})`,
+                                                            backgroundSize: "cover",
+                                                            backgroundPosition: "center",
+                                                            padding: ".125rem",
+                                                            backgroundClip: "content-box",
+                                                            userSelect: "none",
+                                                            cursor: "default"
+                                                        }}
+                                                        onClick={() => { setGalleryStartIndex(5); setShowPropertyGallery(true) }}
+                                                    // onClick={() => { setScrollToImage(matchPropertyImages[6]?.url); setOpenImageViewer(true); }}
+                                                    >
+                                                        <div className='py-3 position-absolute inset-0 grid-center bg-black2 text-light fs-3'
+                                                            style={{ margin: ".125rem" }}>
+                                                            + {matchPropertyImages.slice(5).length}
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                }
+                                            </div>
+                                            {/* Property images fullscreen viewer */}
+                                            {openImageViewer &&
+                                                <MediaViewer media={matchPropertyImages} goToUrl={scrollToImage} onClose={() => setOpenImageViewer(false)} />
                                             }
                                         </div>
-                                        {/* Property images fullscreen viewer */}
-                                        {openImageViewer &&
-                                            <MediaViewer media={matchPropertyImages} goToUrl={scrollToImage} onClose={() => setOpenImageViewer(false)} />
-                                        }
                                     </div>
+                                </>
+                            )}
+
+                            {/* Gallery */}
+                            {/* {showPropertyGallery && (
+                                <div className='position-fixed fixed-top inset-0 py-md-3 px-lg-5 inx-high bg-gray-200 overflow-y-auto' style={{ animation: "zoomInBack .2s 1" }}>
+                                    <div className="d-flex align-items-center px-2 px-md-3 py-2">
+                                        <X size={30} fill='var(--bs-dark)' className='ms-auto clickDown ptr' onClick={() => setShowPropertyGallery(false)} />
+                                    </div>
+                                    <ReactImageGallery items={imagesArray} showBullets={true} startIndex={galleryStartIndex} />
                                 </div>
-                            }
+                            )} */}
+                            {showPropertyGallery && (
+                                <ReactImageGallery items={imagesArray} showBullets={true} startIndex={galleryStartIndex} />
+                            )}
                             {/* <div className="px-sm-2 px-md-4 py-3 d-flex">
                                 <HashStraight size={30} className='me-2 me-md-3 flex-shrink-0' />
                                 <div>

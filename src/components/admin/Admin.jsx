@@ -14,8 +14,9 @@ import { aboutProperties, companyPhoneNumber1 } from '../data/Data';
 import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
-import { AuthContext } from '../AuthProvider1';
+import { AuthContext } from '../AuthProvider';
 import BusinessLogoName from '../common/BusinessLogoName';
+import { BASE_URL } from '../../api/axios';
 
 const Admin = () => {
     // Custom hooks
@@ -55,12 +56,11 @@ const Admin = () => {
         resetPrompt,
     } = useCustomDialogs();
 
-    const BASE_URL = 'http://localhost:5000';
     const { isAuthenticated, checkAuthOnMount, accessToken, refreshAccessToken, logout } = useContext(AuthContext);
-    useEffect(() => {
-        !isAuthenticated && checkAuthOnMount();
-    }, [isAuthenticated, checkAuthOnMount]);
-    console.log(isAuthenticated);
+    // useEffect(() => {
+    //     !isAuthenticated && checkAuthOnMount();
+    // }, [isAuthenticated, checkAuthOnMount]);
+    // console.log(isAuthenticated);
 
     /**
      * Sidebar
@@ -1052,7 +1052,10 @@ const Admin = () => {
 
     const closeProperty = async (closePropertyEmail) => {
         if (!isValidEmail(closePropertyEmail)) {
-            return toast({ message: '📨 Enter a valid email address to close the property', type: 'info' });
+            return toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Enter a valid email address to continue</>,
+                type: 'info'
+            });
         }
         try {
             setIsWaitingAdminEditAction(true);
@@ -1220,12 +1223,9 @@ const Admin = () => {
                                         title="View property" onClick={() => goToProperty(id)} >
                                         {/* <CurrencyDollar weight="bold" className="me-1" /> {price.toLocaleString()} */}
                                         {currency} {price.toLocaleString()}
-                                        {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 fs-75">/year</span>}
-                                        {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 fs-75">/month</span>}
-                                        {payment === 'weekly' && <span className="opacity-50 fw-normal ms-1 fs-75">/week</span>}
-                                        {payment === 'daily' && <span className="opacity-50 fw-normal ms-1 fs-75">/day</span>}
-                                        {payment === 'hourly' && <span className="opacity-50 fw-normal ms-1 fs-75">/hour</span>}
-                                        <CaretDoubleRight size={16} weight="bold" className="ms-2" /></button>
+                                        <span className="opacity-50 fw-normal ms-1 fs-75">{payment === 'daily' ? '/day' : payment === 'once' ? '/once' : `/${payment.slice(0, -2)}`}</span>
+                                        <CaretDoubleRight size={16} weight="bold" className="ms-2" />
+                                    </button>
                                 </div>
                                 <span className="d-flex align-items-center ms-auto fw-bold small text-muted opacity-50">
                                     {type === "Apartment" && <BuildingApartment size={20} weight="duotone" className="me-1" />}
@@ -2581,8 +2581,7 @@ const Admin = () => {
                                 <button className="fa fa-close r-middle-m ratio-1-1 rounded-circle border-0 bg-transparent text-gray-500"
                                     onClick={() => { propSearcherRef.current = ''; showAllProperties(); setPropertiesToShow(allProperties) }}
                                 ></button>
-                            )
-                            }
+                            )}
                         </div>
 
                         {/* View and search toggler */}
@@ -2679,12 +2678,9 @@ const Admin = () => {
                                                                 {category}
                                                             </span> - <span className='text-nowrap'>
                                                                 {currency} {price.toLocaleString()}
-                                                                {payment === 'once' && <span className="opacity-50 fw-normal ms-1 smaller">/once</span>}
-                                                                {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 smaller">/year</span>}
-                                                                {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 smaller">/month</span>}
-                                                                {payment === 'weekly' && <span className="opacity-50 fw-normal ms-1 smaller">/week</span>}
-                                                                {payment === 'daily' && <span className="opacity-50 fw-normal ms-1 smaller">/day</span>}
-                                                                {payment === 'hourly' && <span className="opacity-50 fw-normal ms-1 smaller">/hour</span>}
+                                                                <span className="opacity-50 fw-normal ms-1 smaller">
+                                                                    {payment === 'daily' ? '/day' : payment === 'once' ? '/once' : `/${payment.slice(0, -2)}`}
+                                                                </span>
                                                             </span>
                                                         </div>
                                                         <div className='ms-auto ps-2 ps-sm-0 fs-75'>
@@ -3098,9 +3094,9 @@ const Admin = () => {
                                 <span className={`small d-flex align-items-center ${showOnlyUnrepliedMessages ? 'text-light' : 'text-gray-700'}`}><EnvelopeSimple className='me-1' /> Not replied</span>
                                 <span className={`badge w-fit ms-2 p-1 ${showOnlyUnrepliedMessages ? 'text-light border-light' : 'text-dark border-secondary'} border border-opacity-25 fw-normal`}>{notRepliedMessages.length}</span>
                             </div>
-                            <div className={`d-flex align-items-center w-fit text-nowrap bg-gray-300 rounded-3 px-2 py-1 small ptr`} onClick={() => fetchMessages()}
+                            <div className={`d-flex align-items-center w-fit text-nowrap bg-gray-300 rounded-3 px-2 py-1 small ptr`} onClick={() => { fetchMessages(); setShowOnlyUnrepliedMessages(false) }}
                             >
-                                <span className={`small d-flex align-items-center ${showOnlyUnrepliedMessages ? 'text-light' : 'text-gray-700'}`}><ArrowClockwise weight="bold" className="me-1" /> Refresh</span>
+                                <span className={`small d-flex align-items-center text-gray-700`}><ArrowClockwise weight="bold" className="me-1" /> Refresh</span>
                             </div>
                         </div>
                         <div className="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
@@ -3895,7 +3891,7 @@ const Admin = () => {
                                 <span className='ms-auto smaller'>Sam</span>
                                 <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>Admin</span>
                             </div>
-                            <img src="/images/user_placeholder_image.jpg" alt="User" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
                         </div>
 
                         <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'

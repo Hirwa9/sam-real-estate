@@ -410,13 +410,8 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                                         <button className={`btn btn-sm flex-align-center px-3 py-1 border-2 bg-warning bg-opacity-25 text-success clickDown rounded-pill small ${closed ? 'text-decoration-line-through' : ''}`}
                                                             title="View property"
                                                             onClick={() => goToProperty(id)} >
-                                                            {/* <CurrencyDollar weight="bold" className="me-1" /> {price.toLocaleString()} */}
                                                             {currency} {price.toLocaleString()}
-                                                            {payment === 'annually' && <span className="opacity-50 fw-normal ms-1 fs-75">/year</span>}
-                                                            {payment === 'monthly' && <span className="opacity-50 fw-normal ms-1 fs-75">/month</span>}
-                                                            {payment === 'weekly' && <span className="opacity-50 fw-normal ms-1 fs-75">/week</span>}
-                                                            {payment === 'daily' && <span className="opacity-50 fw-normal ms-1 fs-75">/day</span>}
-                                                            {payment === 'hourly' && <span className="opacity-50 fw-normal ms-1 fs-75">/hour</span>}
+                                                            <span className="opacity-50 fw-normal ms-1 fs-75">{payment === 'daily' ? '/day' : payment === 'once' ? '/once' : `/${payment.slice(0, -2)}`}</span>
                                                             <CaretDoubleRight size={16} weight="bold" className="ms-2" /></button>
                                                     </div>
                                                     <span className="d-flex align-items-center ms-auto fw-bold text-muted small opacity-50">

@@ -78,7 +78,7 @@ const MediaViewer = ({ media, onClose, goToUrl, toggleFitness }) => {
                 {/* Togglers */}
                 {/* Closer */}
                 <div className='flex-center action-toggler mediaViewer_closer' onClick={onClose}>
-                    <button className='w-1_5rem border-0 clickDown closerX closerX-black1'></button>
+                    <button className='w-1_5rem border-0 clickDown closerX text-gray-400'></button>
                 </div>
                 {/* Object fitness toggler */}
                 {toggleFitness &&

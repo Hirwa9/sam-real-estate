@@ -11,7 +11,7 @@ const ReserveProperty = ({ propertyId }) => {
     
 
     // Check login status on component mount
-    const checkAuthentication = async () => {
+    const checkAuthOnMount = async () => {
         try {
             const response = await axios.get('http://localhost:5000/token', { withCredentials: true });
             response.data.accessToken ?
@@ -24,7 +24,7 @@ const ReserveProperty = ({ propertyId }) => {
 
     // Attempt to refresh the access token if it's expired
     useEffect(() => {
-        checkAuthentication();
+        checkAuthOnMount();
     }, []);
 
     const handleReserveProperty = async () => {

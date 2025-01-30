@@ -6,22 +6,22 @@ import {
 } from "react-router-dom";
 import { AuthContext } from "../../AuthProvider";
 import { developerWebsiteLink, nav } from "../../data/Data";
-import logo from "../../../components/images/logo.jpg";
 import SocialMediaIcons from '../SocialMediaIcons';
 import { ArrowsLeftRight, CaretRight, City, Code, ListStar, User } from "@phosphor-icons/react";
 import BottomFixedCard from "../bottomFixedCard/BottomFixedCard";
 import ReviewForm from "../reviewForm/ReviewForm";
 import CompareProperties from "../compareProperties/CompareProperties";
 import { useSettings } from "../../SettingsProvider";
+import BusinessLogoName from "../BusinessLogoName";
 /* globals $ */
 
 const Header = () => {
     // Auth check
     // console.log(AuthProvider.isAuthenticated);
-    const { isAuthenticated, checkAuthentication } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount } = useContext(AuthContext);
     useEffect(() => {
-        !isAuthenticated && checkAuthentication();
-    }, [isAuthenticated, checkAuthentication]);
+        !isAuthenticated && checkAuthOnMount();
+    }, [isAuthenticated, checkAuthOnMount]);
 
     // Site common setting
     const {
@@ -126,9 +126,7 @@ const Header = () => {
 
             <header className={headerVisible === true ? "" : "dom-scrolling-down"}>
                 <nav className="navbar navbar-expand-md px-2">
-                    <div className="logo me-5">
-                        <img src={businessProfileSettings.logoUrl} alt="logo" className="rounded-circle logo"></img>
-                    </div>
+                    <BusinessLogoName className='p-0'/>
                     <div className="collapse navbar-collapse">
                         <ul className="nav navbar-nav">
                             {nav.map((list, index) => {

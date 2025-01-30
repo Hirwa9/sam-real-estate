@@ -8,8 +8,9 @@ import MyToast from '../common/Toast';
 import CtaTextButton from '../common/ctaTextButton/CtaTextButton';
 import { isValidEmail, isValidName } from '../../scripts/myScripts';
 import ContentListing from '../common/contentListing/ContentListing';
-import { companyEmail } from '../data/Data';
+// import { companyEmail } from '../data/Data';
 import { AuthContext } from '../AuthProvider';
+import { BASE_URL } from '../../api/axios';
 /* globals $ */
 
 const Login = () => {
@@ -24,10 +25,10 @@ const Login = () => {
 	} = useCustomDialogs();
 
 	// Auth check
-	const { isAuthenticated, checkAuthentication, login, setIsAuthenticated } = useContext(AuthContext);
-	useEffect(() => {
-		!isAuthenticated && checkAuthentication();
-	}, [isAuthenticated, checkAuthentication]);
+	const { isAuthenticated, checkAuthOnMount, login, setIsAuthenticated } = useContext(AuthContext);
+	// useEffect(() => {
+	// 	!isAuthenticated && checkAuthOnMount();
+	// }, [isAuthenticated, checkAuthOnMount]);
 
 
 	const [isWaitingFetchAction, setIsWaitingFetchAction] = useState(false);
@@ -51,14 +52,33 @@ const Login = () => {
 	 * Login
 	*/
 
+	const { setAuthState } = useContext(AuthContext);
+	// const [email, setEmail] = useState('');
+	// const [password, setPassword] = useState('');
+
 	const handleSignIn = async (e) => {
 		e.preventDefault();
 		if (!isValidEmail(email)) {
 			return alert('Enter a valid email address.');
 		}
+
+		// try {
+		// 	setIsWaitingFetchAction(true);
+		// 	const response = await axios.post(`${BASE_URL}/login`, { email, password });
+		// 	setAuthState({
+		// 		accessToken: response.data.accessToken,
+		// 		refreshToken: response.data.refreshToken,
+		// 	});
+		// 	setErrorWithFetchAction(null);
+		// } catch (error) {
+		// 	setIsWaitingFetchAction(false);
+		// 	setErrorWithFetchAction(error);
+		// 	console.error('Login error:', error);
+		// }
+
 		try {
 			setIsWaitingFetchAction(true);
-			login(email, password);
+			await login(email, password);
 		} catch (error) {
 			console.error('Error signing in:', error);
 		} finally {
@@ -145,7 +165,11 @@ const Login = () => {
 		})
 			.then(response => {
 				const data = response.data;
-				setIsAuthenticated(true);
+				// setIsAuthenticated(true);
+				setAuthState({
+					accessToken: response.data.accessToken,
+					refreshToken: response.data.refreshToken,
+				});
 				toast({
 					message: <><UserCirclePlus size={22} weight='fill' className='me-1 opacity-50' /> {data.message}.</>,
 					type: 'success'

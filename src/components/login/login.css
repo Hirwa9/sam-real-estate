@@ -17,7 +17,7 @@
     min-height: 70dvh;
 }
 
-@media screen and (min-width: 786px) {
+@media screen and (min-width: 768px) {
     .signin {
         background-image: linear-gradient(150deg, var(--white1), var(--white1)), url('../images/real_estate_image.webp');
 

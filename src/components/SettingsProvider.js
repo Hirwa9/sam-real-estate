@@ -31,7 +31,7 @@ const fetchSettings = async (url, setData, setError, setLoading) => {
 
 // SettingsProvider Component
 export const SettingsProvider = ({ children }) => {
-    const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5000";
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
 
     const [businessProfileSettings, setBusinessProfileSettings] = useState([]);
     const [loadingBusinessProfileSettings, setLoadingBusinessProfileSettings] = useState(false);

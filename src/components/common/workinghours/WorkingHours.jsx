@@ -17,7 +17,7 @@ const WorkingHours = ({ className, isStatic }) => {
         <>
             <div className={`container px-2 px-md-4 ${!isStatic ? 'stick' : ''} ${className !== undefined ? className : ''} working-hours`}>
                 <h2 className='font-variant-small-caps my-4 text-muted text-center'>Working Hours</h2>
-                <div className='connection-line connection-line-horizontal mb-4 mx-5 mx-sm-auto col-sm-6' style={{ "--_measure": "1.2rem" }}></div>
+                <div className='connection-line connection-line-horizontal mx-5 mx-sm-auto mb-4 col-sm-6' style={{ "--_measure": "1.2rem" }}></div>
                 <div className='d-lg-flex justify-content-around'>
                     <div className="d-flex d-lg-grid flex-wrap align-items-center border-bottom pt-2 pb-3">
                         <div className="col-12 col-sm-6 col-xl-12 mb-2 px-3">

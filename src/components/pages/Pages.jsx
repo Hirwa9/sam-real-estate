@@ -48,18 +48,18 @@ const Pages = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/terms" element={<Terms />} />
                 {/* Admin/user routes */}
-                {/* <Route path="/admin" element={
+                <Route path="/admin" element={
                     <ProtectedRoute>
                         <Admin />
                     </ProtectedRoute>
-                } /> */}
+                } />
                 <Route path="/user/:userId" element={
                     <ProtectedRoute>
                         <Customer />
                     </ProtectedRoute>
                 } />
                 <Route path="/admin" element={<Admin />} />
-                {/* <Route path="/user/:userId" element={<Customer />} /> */}
+                <Route path="/user/:userId" element={<Customer />} />
 
             </Routes>
             {/* Conditionally render the Footer */}

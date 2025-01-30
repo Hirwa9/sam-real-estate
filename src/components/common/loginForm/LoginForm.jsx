@@ -22,10 +22,10 @@ const LoginForm = ({ setShowLogin }) => {
     } = useCustomDialogs();
 
     // Auth check
-    const { isAuthenticated, checkAuthentication, login } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount, login } = useContext(AuthContext);
     useEffect(() => {
-        !isAuthenticated && checkAuthentication();
-    }, [isAuthenticated, checkAuthentication]);
+        !isAuthenticated && checkAuthOnMount();
+    }, [isAuthenticated, checkAuthOnMount]);
 
     /**
      * Authentication

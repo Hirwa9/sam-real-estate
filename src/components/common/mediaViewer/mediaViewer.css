@@ -36,7 +36,7 @@
     position: absolute;
     width: 2.5rem;
     height: 2.5rem;
-    background-color: var(--bs-light);
+    /* background-color: var(--bs-light); */
     /* z-index: inherit; */
     isolation: isolate;
     overflow: visible;
@@ -54,34 +54,10 @@
 
 /* Closer */
 .mediaViewerWrapper .action-toggler.mediaViewer_closer {
-    top: 0;
+    top: .35rem;
     right: .35rem;
-    border-radius: 0 0 50% 50%;
+    border-radius: 50%;
     transition: var(--trans);
-}
-
-@media screen and (min-width: 768px) {
-    .mediaViewerWrapper .action-toggler.mediaViewer_closer {
-        top: -.3rem;
-    }
-
-    .mediaViewerWrapper .action-toggler.mediaViewer_closer:hover {
-        top: 0;
-    }
-}
-
-.mediaViewerWrapper .action-toggler.mediaViewer_closer::before {
-    top: -1px;
-    left: -50%;
-    border-radius: 0 50% 0 0;
-    box-shadow: .5rem -.5rem 0 .5rem var(--bs-light);
-}
-
-.mediaViewerWrapper .action-toggler.mediaViewer_closer::after {
-    top: -1px;
-    right: -50%;
-    border-radius: 50% 0 0 0;
-    box-shadow: -.5rem -.5rem 0 0 var(--bs-light);
 }
 
 /* Object fit toggler */

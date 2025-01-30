@@ -30,7 +30,6 @@ const Properties = () => {
     let { filterParameter } = useParams(); // Destructure parameter
     const [filterOption, setFilterOption] = useState("all");
     const [filterValue, setFilterValue] = useState("all");
-    const [filterCount, setFilterCount] = useState(0);
 
     const navigate = useNavigate();
 
@@ -691,7 +690,6 @@ const Properties = () => {
                     filterOption={filterOption}
                     filterValue={filterValue}
                     resetFilters={refreshProperties}
-                    setFilterCount={setFilterCount}
                     sortStatus={
                         {
                             sorted: listIsSorted,

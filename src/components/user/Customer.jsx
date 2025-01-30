@@ -3,7 +3,7 @@ import useCustomDialogs from '../hooks/useCustomDialogs';
 import './customer.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowLeft, BellRinging, BellSimpleSlash, Bookmark, Building, Calendar, CalendarCheck, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HourglassHigh, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
+import { ArrowLeft, BellRinging, BellSimpleSlash, Bookmark, Building, Calendar, CalendarCheck, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, ChatsTeardrop, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HourglassHigh, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatDate, getDateHoursMinutes, isValidEmail } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
@@ -13,8 +13,8 @@ import { companyPhoneNumber1 } from '../data/Data';
 import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
-import axios from 'axios';
-import { AuthContext } from '../AuthProvider1';
+import axios, { BASE_URL } from '../../api/axios';
+import { AuthContext } from '../AuthProvider';
 import BusinessLogoName from '../common/BusinessLogoName';
 // import userPlaceholderImg from '/images/user_placeholder_image.jpg';
 // import userPlaceholderImg from '/images/user_placeholder_image.jpg';
@@ -63,7 +63,6 @@ const Customer = () => {
         resetPrompt,
     } = useCustomDialogs();
 
-    const BASE_URL = 'http://localhost:5000';
     const { isAuthenticated, checkAuthOnMount, accessToken, logout } = useContext(AuthContext);
 
     /**
@@ -184,7 +183,7 @@ const Customer = () => {
     // Handle request property closure
     const requestPropertyClosure = async (propertyId) => {
         try {
-            const response = await axios.post(`${BASE_URL}/property/${propertyId}/close-request`, { customerEmail: signedUser.email });
+            const response = await axios.post(`/property/${propertyId}/close-request`, { customerEmail: signedUser.email });
             resetConfirmDialog();
             toast({
                 message: <><SealCheck size={22} weight='fill' className='me-1 opacity-50' /> {response.data.message}</>,
@@ -1096,6 +1095,141 @@ const Customer = () => {
         </section>
     );
 
+    const Feedback = () => (
+        <section>
+            {/* Section about */}
+            <div className='pt-5 pb-3 d-lg-flex section-about'>
+                <div>
+                    <h1 className='text-center mb-4 fw-bold text-secondary'>Feedback</h1>
+                    <div className="d-lg-flex px-4 fs-5 text-gray-600">
+                        Create a support ticket or just give us a testimonial regarding our services.
+                    </div>
+                </div>
+                <ChatsTeardrop size={200} className='d-none d-lg-block px-4 col-lg-4 text-gray-400 mask-bottom section-icon' />
+            </div>
+
+            {/* Section Content : Feedback */}
+            <div className="container my-5 px-0 py-4 section-content">
+                {/* Loading */}
+                {loadingProperties && <LoadingBubbles icon={<ChartBar size={50} className='loading-skeleton' />} />}
+                {/* Error */}
+                {!loadingProperties && errorLoadingProperties && (
+                    <FetchError
+                        errorMessage="Failed to load properties. Click the button to try again"
+                        refreshFunction={() => fetchProperties()}
+                        className="mb-5 mt-4"
+                    />
+                )}
+                {/* Zero content */}
+                {!loadingProperties && !errorLoadingProperties && closedPropertiesNum === 0 &&
+                    <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
+                        <SealCheck size={80} className="text-center w-100 mb-3 opacity-50" />
+                        <p className="text-muted text-center small">
+                            Successfully closed deals will be listed here as they come in.
+                        </p>
+                    </div>
+                }
+                {/* Available content */}
+                {!loadingProperties && !errorLoadingProperties && closedPropertiesNum > 0 && (
+                    <>
+                        <div className='container mb-4 py-3 border border-2'>
+                            <h4 className='text-info-emphasis mb-4 fs-4 text-uppercase'>Closed properties ( {closedPropertiesNum} )</h4>
+                            <div className='alert alert-info small'>
+                                <div className='grid-center'>
+                                    <p>
+                                        <Info size={20} className='me-1' /> These properties represent successful transactions or agreements that you have finalized with the involved parties, marking them as officially closed and no longer available for inquiries or reservations unless if put back on the market in the future.
+                                    </p>
+                                    <CaretDown />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* View and search toggler */}
+                        <ul className='d-flex justify-content-center gap-2 mb-2 list-unstyled'>
+                            <li className={`flex-align-center p-2 ${!showClosedPropertiesReport ? 'border-bottom border-3 border-primary fw-bold text-primary' : 'text-gray-600'} ptr clickDown`}
+                                onClick={() => setShowClosedPropertiesReport(false)}>
+                                <ListDashes weight='fill' className='me-1' /> List
+                            </li>
+                            <li className={`flex-align-center p-2 ${showClosedPropertiesReport ? 'border-bottom border-3 border-primary fw-bold text-primary' : 'text-gray-600'} ptr clickDown`}
+                                onClick={() => setShowClosedPropertiesReport(true)}>
+                                <Calendar weight='fill' className='me-1' /> Report
+                            </li>
+                        </ul>
+                        {!showClosedPropertiesReport ? (
+                            <div className='row align-items-stretch'>
+                                {closedProperties.map((property, index) => {
+                                    const { name, type, category, location, bookedBy, closedBy, closedOn } = property;
+                                    const orderEmails = JSON.parse(bookedBy);
+                                    const orderCount = orderEmails.length;
+
+                                    const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
+
+                                    return (
+                                        <div key={index} className='col-12 col-lg-6 col-xxl-4 mb-3'>
+                                            <div className='h-100 d-flex flex-column py-3 text-gray-700 border'>
+                                                <div className='h5 flex-align-center flex-wrap gap-2 p-2 small border-start border-3 border-dark bg-gray-300'>
+                                                    <SealCheck weight="fill" className='opacity-75' />
+                                                    <span>{name}</span>
+                                                    <Info weight="bold" size={17} className='ms-auto opacity-75 ptr clickDown' title="Preview" onClick={() => { setSelectedProperty(property); setShowSelectedPropertyInfo(true) }} />
+                                                </div>
+                                                <p className='px-2 text-gray-600 smaller'>
+                                                    <span style={{ color: mainColor }}>{type} {category}</span> <CaretRight /> {location}
+                                                </p>
+                                                <div className='mt-auto px-2'>
+                                                    {orderCount > 1 && (
+                                                        <div className='p-2 border-start border-end border-3'>
+                                                            <div className="h6 grid-center text-gray-600 border-bottom pb-1">
+                                                                <span>BOOKED BY ( {orderCount} )</span>
+                                                                <CaretDown />
+                                                            </div>
+                                                            <div className='d-grid'>
+                                                                {orderEmails.map((email, index) => (
+                                                                    <div key={index} className='flex-align-center overflow-hidden smaller'>
+                                                                        <User className='opacity-50 me-1' />
+                                                                        <span className='text-gray-600 fw-bold text-truncate'>{email}</span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    <div className='p-2 border-start border-end border-3'>
+                                                        <div className="h6 grid-center text-gray-600 border-bottom pb-1">
+                                                            <span>CLOSED BY</span>
+                                                            <CaretDown />
+                                                        </div>
+                                                        <div className='d-grid'>
+                                                            <div className='flex-align-center overflow-hidden smaller'>
+                                                                <User className='opacity-50 me-1' />
+                                                                <span className='text-gray-600 fw-bold text-truncate'>{closedBy}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='px-2 border-start border-end border-3 smaller text-success'>
+                                                        <Check className='me-1' /> Closed on <span className="fw-bold">{formatDate(closedOn, { todayKeyword: true })}</span></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        ) : (
+                            <ClosedPropertiesReport />
+                        )}
+
+
+                    </>
+                )}
+                {/* <p>
+                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odio aut in, soluta ducimus tempora dicta odit recusandae omnis impedit quas delectus a quaerat ea accusantium necessitatibus molestias, porro sequi maxime!
+                </p>
+                <p>
+                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odio aut in, soluta ducimus tempora dicta odit recusandae omnis impedit quas delectus a quaerat ea accusantium necessitatibus molestias, porro sequi maxime!
+                </p> */}
+            </div>
+        </section>
+    );
+
     const Settings = () => {
         const [propertySettings, setPropertySettings] = useState({
             maxImages: 25,
@@ -1602,6 +1736,8 @@ const Customer = () => {
                 return <Orders />;
             case "reports":
                 return <Reports />;
+            case "feedback":
+                return <Feedback />;
             case "settings":
                 return <Settings />;
             default:
@@ -1622,7 +1758,7 @@ const Customer = () => {
                                 <span className='ms-auto smaller'>{signedUser.name}</span>
                                 <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>{signedUser.type}</span>
                             </div>
-                            <img src="/images/user_placeholder_image.jpg" alt="User" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
                         </div>
 
                         <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'
@@ -1663,6 +1799,13 @@ const Customer = () => {
                                 >
                                     <button className="nav-link w-100">
                                         <ChartBar size={20} weight='fill' className="me-2" /> Reports
+                                    </button>
+                                </li>
+                                <li className={`nav-item ${activeSection === 'feedback' ? 'active' : ''} mb-3`}
+                                    onClick={() => { setActiveSection("feedback"); hideSideNavbar() }}
+                                >
+                                    <button className="nav-link w-100">
+                                        <ChatsTeardrop size={20} weight='fill' className="me-2" /> Feedback
                                     </button>
                                 </li>
                                 <li className={`nav-item ${activeSection === 'settings' ? 'active' : ''} mb-3`}

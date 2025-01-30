@@ -162,7 +162,7 @@ const CompareProperties = ({ show, onClose, ids }) => {
                                                                                 <li key={detail} className={`h-2_5rem text-nowrap ${detail === 'type' ? 'fw-bold' : ''} small`}>
                                                                                     {property[detail] !== null && property[detail] !== undefined
                                                                                         ? detail === 'price'
-                                                                                            ? `${property[detail].toLocaleString()} RWF`
+                                                                                            ? `${property[detail].toLocaleString()} ${property.currency}`
                                                                                             : detail === 'area'
                                                                                                 ? `${property[detail]} m²`
                                                                                                 : property[detail]

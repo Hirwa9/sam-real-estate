@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import './footer.css';
 import { developerWebsiteLink, footer } from '../../data/Data';
 import SocialMediaIcons from '../SocialMediaIcons';
-import { Code } from '@phosphor-icons/react';
+import { Code, WarningCircle } from '@phosphor-icons/react';
 import BottomFixedCard from '../bottomFixedCard/BottomFixedCard';
 import SubscriptionForm from '../subscriptionForm/SubscriptionForm';
 import MyToast from "../Toast";
@@ -33,7 +33,10 @@ function Footer() {
     const [email, setEmail] = useState('');
     const toggleSubscriptionForm = () => {
         if (!isValidEmail(email)) {
-            return toast({ message: '📨 Enter a valid email address to continue', type: 'gray-700' });
+            return toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Enter a valid email address to continue</>,
+                type: 'gray-700'
+            });
         }
         subscInputRef.current.blur();
         setSubscFormVisible(true);
