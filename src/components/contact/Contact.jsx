@@ -10,6 +10,7 @@ import WorkingHours from '../common/workinghours/WorkingHours';
 import { companyAddress, companyEmail, companyPhoneNumber1, companyPhoneNumber2 } from '../data/Data';
 import MyToast from '../common/Toast';
 import { EnvelopeSimple, Globe, MapPinSimpleArea, Numpad, PaperPlaneRight, Phone, Trash, WhatsappLogo, } from '@phosphor-icons/react';
+import { BASE_URL } from '../../api/api';
 /* globals $ */
 
 const Contact = () => {
@@ -62,7 +63,7 @@ const Contact = () => {
         startTransition(async () => {
             try {
                 setIsWaiting(true);
-                const response = await fetch('http://localhost:5000/message', {
+                const response = await fetch(`${BASE_URL}/message`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

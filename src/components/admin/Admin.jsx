@@ -16,7 +16,7 @@ import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
 import { AuthContext } from '../AuthProvider';
 import BusinessLogoName from '../common/BusinessLogoName';
-import { BASE_URL } from '../../api/axios';
+import { BASE_URL } from '../../api/api';
 
 const Admin = () => {
     // Custom hooks

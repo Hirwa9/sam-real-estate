@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../common/loginForm/LoginForm';
-import axios from 'axios';
+import { Axios, BASE_URL } from '../../api/api';
 
 const ReserveProperty = ({ propertyId }) => {
     // Auth checks
@@ -13,7 +13,7 @@ const ReserveProperty = ({ propertyId }) => {
     // Check login status on component mount
     const checkAuthOnMount = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/token', { withCredentials: true });
+            const response = await Axios.get(`${BASE_URL}/token`, { withCredentials: true });
             response.data.accessToken ?
                 setIsLoggedIn(true)
                 : setIsLoggedIn(false);
@@ -31,7 +31,7 @@ const ReserveProperty = ({ propertyId }) => {
         if (!isAuthenticated) return setShowLogin(true); // Auth
 
         try {
-            const response = await fetch(`http://localhost:5000/property/${propertyId}/reserve`, {
+            const response = await fetch(`${BASE_URL}/property/${propertyId}/reserve`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

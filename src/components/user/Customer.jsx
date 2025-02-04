@@ -13,7 +13,7 @@ import { companyPhoneNumber1 } from '../data/Data';
 import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
-import axios, { BASE_URL } from '../../api/axios';
+import { Axios, BASE_URL } from '../../api/api';
 import { AuthContext } from '../AuthProvider';
 import BusinessLogoName from '../common/BusinessLogoName';
 // import userPlaceholderImg from '/images/user_placeholder_image.jpg';
@@ -183,7 +183,7 @@ const Customer = () => {
     // Handle request property closure
     const requestPropertyClosure = async (propertyId) => {
         try {
-            const response = await axios.post(`/property/${propertyId}/close-request`, { customerEmail: signedUser.email });
+            const response = await Axios.post(`/property/${propertyId}/close-request`, { customerEmail: signedUser.email });
             resetConfirmDialog();
             toast({
                 message: <><SealCheck size={22} weight='fill' className='me-1 opacity-50' /> {response.data.message}</>,

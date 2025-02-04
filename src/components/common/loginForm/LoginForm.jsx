@@ -8,6 +8,7 @@ import DividerText from '../DividerText';
 import { isValidEmail } from '../../../scripts/myScripts';
 import MyToast from '../Toast';
 import CtaTextButton from '../ctaTextButton/CtaTextButton';
+import { BASE_URL } from '../../../api/api';
 /* globals $ */
 
 const LoginForm = ({ setShowLogin }) => {
@@ -132,7 +133,7 @@ const LoginForm = ({ setShowLogin }) => {
             setLoading(true);
 
             const email = resetEmail;
-            const response = await fetch(`http://localhost:5000/user/${resetEmail}/requestPasswordReset`, {
+            const response = await fetch(`${BASE_URL}/user/${resetEmail}/requestPasswordReset`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -215,7 +216,7 @@ const LoginForm = ({ setShowLogin }) => {
         try {
             setLoading(true);
 
-            const response = await fetch(`http://localhost:5000/user/${resetEmail}/verifyOTP`, {
+            const response = await fetch(`${BASE_URL}/user/${resetEmail}/verifyOTP`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -251,7 +252,7 @@ const LoginForm = ({ setShowLogin }) => {
         try {
             setLoading(true);
 
-            const response = await fetch(`http://localhost:5000/user/${resetEmail}/resetPassword`, {
+            const response = await fetch(`${BASE_URL}/user/${resetEmail}/resetPassword`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

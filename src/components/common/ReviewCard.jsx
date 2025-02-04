@@ -3,6 +3,7 @@ import { ArrowClockwise, CaretDown, HandWaving, ListStar, Plus, Star, UserCircle
 import BottomFixedCard from './bottomFixedCard/BottomFixedCard';
 import ReviewForm from './reviewForm/ReviewForm';
 import FetchError from './FetchError';
+import { BASE_URL } from '../../api/api';
 
 const ReviewCard = () => {
     const [reviews, setReviews] = useState([]);
@@ -17,7 +18,7 @@ const ReviewCard = () => {
     const fetchReviews = async () => {
         try {
             setLoadingReviews(true);
-            const response = await fetch('http://localhost:5000/reviews');
+            const response = await fetch(`${BASE_URL}/reviews`);
             if (!response.ok) {
                 throw new Error('Failed to fetch reviews');
             }

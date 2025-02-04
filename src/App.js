@@ -3,6 +3,7 @@ import './App.css';
 import Pages from './components/pages/Pages';
 import { SettingsProvider } from './components/SettingsProvider';
 import { AuthProvider } from './components/AuthProvider';
+import { BASE_URL } from './api/api';
 
 // Define and export PropertiesContext
 export const PropertiesContext = createContext();
@@ -16,7 +17,7 @@ function App() {
     const fetchProperties = async () => {
         try {
             setLoadingProperties(true);
-            const response = await fetch(`http://localhost:5000/properties`);
+            const response = await fetch(`http://${BASE_URL}/properties`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

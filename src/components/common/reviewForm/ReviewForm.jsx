@@ -4,6 +4,7 @@ import MyToast from '../Toast';
 import { Smiley, SmileyMeh, SmileyMelting, SmileySad, SmileySticker, Star } from '@phosphor-icons/react';
 import ConfirmDialog from '../confirmDialog/ConfirmDialog';
 import useCustomDialogs from '../../hooks/useCustomDialogs';
+import { BASE_URL } from '../../../api/api';
 /* globals $ */
 
 const ReviewForm = ({ onClose, setDontCloseCard, setRefreshReviews }) => {
@@ -71,14 +72,14 @@ const ReviewForm = ({ onClose, setDontCloseCard, setRefreshReviews }) => {
 
     // Check if a review exists
     const checkIfReviewExists = async (email) => {
-        const response = await fetch(`http://localhost:5000/review/check?email=${encodeURIComponent(email)}`);
+        const response = await fetch(`${BASE_URL}/review/check?email=${encodeURIComponent(email)}`);
         if (!response.ok) throw new Error('Error checking review existence');
         return response.json();
     };
 
     // Create a new review
     const createReview = async (review) => {
-        const response = await fetch('http://localhost:5000/review', {
+        const response = await fetch(`${BASE_URL}/review`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(review),

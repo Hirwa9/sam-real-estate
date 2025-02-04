@@ -20,6 +20,7 @@ import LoadingBubbles from '../common/LoadingBubbles';
 import { companyPhoneNumber1 } from '../data/Data';
 import FetchError from '../common/FetchError';
 import ReactImageGallery from 'react-image-gallery';
+import { BASE_URL } from '../../api/api';
 
 const Property = () => {
     // Custom hooks
@@ -86,7 +87,7 @@ const Property = () => {
     const fetchProperties = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:5000/properties`);
+            const response = await fetch(`${BASE_URL}/properties`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -169,7 +170,7 @@ const Property = () => {
     const handleReserveProperty = async () => {
         if (!isAuthenticated) return setShowLogin(true); // Auth
         try {
-            const response = await fetch(`http://localhost:5000/property/${propertyId}/reserve`, {
+            const response = await fetch(`${BASE_URL}/property/${propertyId}/reserve`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -232,7 +233,7 @@ const Property = () => {
         const updatedLikes = [...likedProperties, propertyId];
         updateLikedProperties(updatedLikes);
 
-        fetch(`http://localhost:5000/property/${propertyId}/like`, {
+        fetch(`${BASE_URL}/property/${propertyId}/like`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
         }).then(response => {
@@ -255,7 +256,7 @@ const Property = () => {
         const updatedLikes = likedProperties.filter(id => id !== propertyId);
         updateLikedProperties(updatedLikes);
 
-        fetch(`http://localhost:5000/property/${propertyId}/unlike`, {
+        fetch(`${BASE_URL}/property/${propertyId}/unlike`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
         }).then(response => {

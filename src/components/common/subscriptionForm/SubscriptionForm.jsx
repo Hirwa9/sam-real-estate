@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useCustomDialogs from "../../hooks/useCustomDialogs";
 import './subscriptionForm.css';
 import MyToast from "../Toast";
+import { BASE_URL } from "../../../api/api";
 
 const SubscriptionForm = ({ email, onClose, setDontCloseCard }) => {
     // Custom hooks
@@ -81,7 +82,7 @@ const SubscriptionForm = ({ email, onClose, setDontCloseCard }) => {
 
         try {
             setIsWaitingSubscription(true);
-            const response = await fetch('http://localhost:5000/subscription', {
+            const response = await fetch(`${BASE_URL}/subscription`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

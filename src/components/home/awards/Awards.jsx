@@ -7,6 +7,7 @@ import { ArrowClockwise } from "@phosphor-icons/react";
 import LoadingBubbles from "../../common/LoadingBubbles";
 import FetchError from "../../common/FetchError";
 import CountUp from 'react-countup';
+import { BASE_URL } from "../../../api/api";
 // import Heading from "../../common/Heading";
 
 const Awards = () => {
@@ -19,7 +20,7 @@ const Awards = () => {
     const fetchReviews = async () => {
         try {
             setLoadingReviews(true);
-            const response = await fetch('http://localhost:5000/reviews');
+            const response = await fetch(`${BASE_URL}/reviews`);
             if (!response.ok) {
                 throw new Error('Failed to fetch reviews');
             }

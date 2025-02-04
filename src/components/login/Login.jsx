@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useId, useContext } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import { Link, useNavigate } from "react-router-dom";
-import axios from 'axios';
 import './login.css'
 import { CheckCircle, SignIn, UserCirclePlus, UserPlus, WarningCircle, XCircle } from '@phosphor-icons/react';
 import MyToast from '../common/Toast';
@@ -10,7 +9,7 @@ import { isValidEmail, isValidName } from '../../scripts/myScripts';
 import ContentListing from '../common/contentListing/ContentListing';
 // import { companyEmail } from '../data/Data';
 import { AuthContext } from '../AuthProvider';
-import { BASE_URL } from '../../api/axios';
+import { Axios, BASE_URL } from '../../api/api';
 /* globals $ */
 
 const Login = () => {
@@ -64,7 +63,7 @@ const Login = () => {
 
 		// try {
 		// 	setIsWaitingFetchAction(true);
-		// 	const response = await axios.post(`${BASE_URL}/login`, { email, password });
+		// 	const response = await Axios.post(`${BASE_URL}/login`, { email, password });
 		// 	setAuthState({
 		// 		accessToken: response.data.accessToken,
 		// 		refreshToken: response.data.refreshToken,
@@ -157,7 +156,7 @@ const Login = () => {
 			return alert("Set a valid password to continue");
 
 		// Sending data with the expected keys
-		await axios.post('http://localhost:5000/register', {
+		await Axios.post(`${BASE_URL}/register`, {
 			name: newUserName,
 			email: newUserEmail,
 			password: newUserPassword,

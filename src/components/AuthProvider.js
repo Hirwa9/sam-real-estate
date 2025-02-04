@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { BASE_URL } from '../api/axios';
+import { Axios, BASE_URL } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import LoadingBubbles from './common/LoadingBubbles';
 import { Building, CaretDown } from '@phosphor-icons/react';
@@ -14,15 +13,10 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true); // Loading state for auth checks
     const [isAuthenticated, setIsAuthenticated] = useState(false); // Auth state
 
-    const api = axios.create({
-        baseURL: BASE_URL,
-        withCredentials: true, // Automatically send cookies
-    });
-
     // Check authentication
     // const checkAuthOnMount = async () => {
     //     try {
-    //         const response = await api.get('/verifyToken');
+    //         const response = await Axios.get('/verifyToken');
     //         setUser(response.data.user);
     //         setIsAuthenticated(true);
     //     } catch (error) {
@@ -36,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuthOnMount = async () => {
         try {
-            const response = await fetch('http://localhost:5000/verifyToken', {
+            const response = await fetch(`${BASE_URL}/verifyToken`, {
                 // const response = await fetch('http://localhost:3000/verifyToken', {
                 method: 'GET',
                 credentials: 'include',  // ✅ Ensure cookies are sent
@@ -65,7 +59,7 @@ export const AuthProvider = ({ children }) => {
     // Function to handle login
     const login = async (email, password) => {
         try {
-            const response = await api.post('/login', { email, password });
+            const response = await Axios.post('/login', { email, password });
             setUser(response.data.user);
             setIsAuthenticated(true);
 
@@ -85,7 +79,7 @@ export const AuthProvider = ({ children }) => {
     // Function to handle logout
     const logout = async () => {
         try {
-            await api.post('/logout'); // Invalidate cookies on the server
+            await Axios.post('/logout'); // Invalidate cookies on the server
             setUser(null);
             setIsAuthenticated(false);
             navigate("/login");
