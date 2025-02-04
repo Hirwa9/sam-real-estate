@@ -17,7 +17,7 @@ function App() {
     const fetchProperties = async () => {
         try {
             setLoadingProperties(true);
-            const response = await fetch(`http://${BASE_URL}/properties`);
+            const response = await fetch(`${BASE_URL}/properties`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
