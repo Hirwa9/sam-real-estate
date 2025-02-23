@@ -1125,7 +1125,7 @@ const Customer = () => {
                     <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
                         <SealCheck size={80} className="text-center w-100 mb-3 opacity-50" />
                         <p className="text-muted text-center small">
-                            Successfully closed deals will be listed here as they come in.
+                            All open and recent tickets will be listed here as they come in.
                         </p>
                     </div>
                 }
