@@ -7,7 +7,7 @@ import {
 import { AuthContext } from "../../AuthProvider";
 import { developerWebsiteLink, nav } from "../../data/Data";
 import SocialMediaIcons from '../SocialMediaIcons';
-import { ArrowsLeftRight, CaretRight, City, Code, ListStar, User } from "@phosphor-icons/react";
+import { ArrowsLeftRight, CaretRight, City, Code, ListStar, SignOut, User } from "@phosphor-icons/react";
 import BottomFixedCard from "../bottomFixedCard/BottomFixedCard";
 import ReviewForm from "../reviewForm/ReviewForm";
 import CompareProperties from "../compareProperties/CompareProperties";
@@ -17,8 +17,7 @@ import BusinessLogoName from "../BusinessLogoName";
 
 const Header = () => {
     // Auth check
-    // console.log(AuthProvider.isAuthenticated);
-    const { isAuthenticated, checkAuthOnMount } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount, user, logout } = useContext(AuthContext);
     useEffect(() => {
         !isAuthenticated && checkAuthOnMount();
     }, [isAuthenticated, checkAuthOnMount]);
@@ -126,7 +125,7 @@ const Header = () => {
 
             <header className={headerVisible === true ? "" : "dom-scrolling-down"}>
                 <nav className="navbar navbar-expand-md px-2">
-                    <BusinessLogoName className='p-0'/>
+                    <BusinessLogoName className='p-0' />
                     <div className="collapse navbar-collapse">
                         <ul className="nav navbar-nav">
                             {nav.map((list, index) => {
@@ -158,12 +157,15 @@ const Header = () => {
                                 <ListStar size={23} />
                             </li>
                             {isAuthenticated ? (
-                                <h6 className="m-0">
-                                    <span className="mb-1 small" style={{ fontSize: "70%" }}>My List</span>
-                                    <span className="badge w-fit ms-2 p-1 border border-opacity-50 border-success text-success">2</span>
-                                </h6>
+                                <div className="d-flex align-items-center ms-3 me-3 border-light border-opacity-25">
+                                    <div className='ms-auto d-grid pb-1'>
+                                        <span className='ms-auto smaller'>{user.name}</span>
+                                        <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>{user.type}</span>
+                                    </div>
+                                    <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                                </div>
                             ) : (
-                                <li className={`nav-item px-2 py-1 ${activeHeaderLink === '/login' ? "active" : ""} text-uppercase small`} >
+                                <li className={`nav-item me-lg-3 px-2 py-1 ${activeHeaderLink === '/login' ? "active" : ""} text-uppercase small`} >
                                     <Link to="/login">Sign in</Link>
                                 </li>
                             )}
@@ -186,9 +188,25 @@ const Header = () => {
                         {/* Nav */}
                         <div className="d-flex flex-column h-100 w-100 pb-2 inx-inherit" id='smNavbar'>
                             <div className="inx-inherit d-flex align-items-center mb-4 p-3 pb-4 peak-borders-b bg-primaryColor smNavbar-header">
-                                <div className="logo me-auto">
-                                    <img src={businessProfileSettings.logoUrl} alt="logo" className="rounded-circle logo"></img>
-                                </div>
+
+                                {isAuthenticated ? (
+                                    <div className="d-flex gap-3">
+                                        <div className="logo me-auto">
+                                            <img src={businessProfileSettings.logoUrl} alt="logo" className="rounded-circle logo"></img>
+                                        </div>
+                                        <div className="d-flex align-items-center me-3 border-light border-opacity-25">
+                                            <div className='ms-auto d-grid pb-1'>
+                                                <span className='ms-auto smaller'>{user.name}</span>
+                                                <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>{user.type}</span>
+                                            </div>
+                                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="logo me-auto">
+                                        <img src={businessProfileSettings.logoUrl} alt="logo" className="rounded-circle logo"></img>
+                                    </div>
+                                )}
                                 <a href="/login" className="flex-center w-2rem ratio-1-1 border border-dark border-opacity-50 text-dark rounded-circle"> <User size={20} /></a>
                                 <button className="btn d-block ms-auto ratio-1-1 bounceClick w-2_5rem border-0 clickDown closerX closerX-black2" onClick={() => hideSmNavbar()} style={{ scale: "0.8" }}>
                                 </button>
@@ -211,9 +229,15 @@ const Header = () => {
                                 <li className={`nav-item ${activeHeaderLink === '/terms' ? "active" : ""} px-3 h-2_5rem text-uppercase`} onClick={() => { window.scrollTo({ top: 0, behavior: 'auto' }); hideSmNavbar() }}>
                                     <Link to={'/terms'}>Terms</Link>
                                 </li>
-                                <li className={`nav-item ${activeHeaderLink === '/login' ? "active" : ""} px-3 h-2_5rem text-uppercase mt-4 clickDown`} onClick={() => { window.scrollTo({ top: 0, behavior: 'auto' }); hideSmNavbar() }}>
-                                    <Link to={'/login'} className="btn btn-sm bg-gray-700 text-gray-400 bg-opacity-25 border-0 flex-center py-3 clip-path-tl-br-corner">Login</Link>
-                                </li>
+                                {isAuthenticated ? (
+                                    <li className={`nav-item mt-3 px-3 h-2_5rem text-uppercase`} onClick={() => { logout(); hideSmNavbar() }}>
+                                        <Link to={'/login'}><SignOut size={22} className="me-2 text-danger" /> Sign out</Link>
+                                    </li>
+                                ) : (
+                                    <li className={`nav-item ${activeHeaderLink === '/login' ? "active" : ""} mt-3 px-3 h-2_5rem text-uppercase mt-4 clickDown`} onClick={() => { window.scrollTo({ top: 0, behavior: 'auto' }); hideSmNavbar() }}>
+                                        <Link to={'/login'} className="btn btn-sm bg-gray-700 text-gray-400 bg-opacity-25 border-0 flex-center py-3 clip-path-tl-br-corner">Login</Link>
+                                    </li>
+                                )}
                             </ul>
 
                             <div className="mt-auto ">
