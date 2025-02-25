@@ -24,7 +24,6 @@ const Customer = () => {
     // Get user data
     const { userId } = useParams();
     const [signedUser, setSignedUser] = useState([]);
-    console.log(signedUser);
 
     // Custom hooks
     const {
@@ -426,7 +425,7 @@ const Customer = () => {
             const data = await response.json();
             setCustomers(data);
             setCustomersToShow(data);
-            setSignedUser(data.filter(u => u.id === Number(userId))[0]);
+            setSignedUser(data.find(u => u.id === Number(userId)));
             setErrorLoadingCustomers(null);
         } catch (error) {
             setErrorLoadingCustomers("Failed to load customers. Click the button to try again.");
