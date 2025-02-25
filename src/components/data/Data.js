@@ -1,4 +1,4 @@
-import { Building, Check, Heart, Lightbulb, ListStar, X } from "@phosphor-icons/react";
+import { Building, Check, Lightbulb, ListStar, User, X } from "@phosphor-icons/react";
 
 // Company's info
 export const companyName = "Sam Real Estate";
@@ -121,23 +121,15 @@ export const aboutProperties = {
 // Awards
 export const awards = [
     {
-        name: "Properties",
-        num: "317",
+        name: "properties",
         icon: <Building size={40} />,
     },
     {
-        name: "Property insights",
-        num: "30 M",
+        name: "insights",
         icon: <Lightbulb size={40} />,
     },
     {
-        name: "Property likes",
-        num: "15 M",
-        icon: <Heart size={40} />,
-    },
-    {
-        name: "Reviews",
-        num: "5",
+        name: "reviews",
         icon: <ListStar size={40} />,
     },
 ];
