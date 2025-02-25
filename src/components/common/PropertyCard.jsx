@@ -60,7 +60,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
 
     const compareProperty = async (id) => {
         const result = await addToCompareList(id);
-        if (result.type === 'success') {
+        if (result.type === 'success' && result.ids.length < 2) {
             toast({ message: result.message, type: 'info' });
         } else if (result.type === 'exists' && result.ids.length < 2) {
             return toast({ message: result.message, type: 'gray-700' });
