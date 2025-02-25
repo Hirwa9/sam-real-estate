@@ -3,10 +3,22 @@ import { Axios, BASE_URL } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import LoadingBubbles from './common/LoadingBubbles';
 import { Building, CaretDown } from '@phosphor-icons/react';
+import useCustomDialogs from './hooks/useCustomDialogs';
+import MyToast from './common/Toast';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    // Custom hooks
+    const {
+        // Toast
+        showToast,
+        setShowToast,
+        toastMessage,
+        toastType,
+        toast,
+    } = useCustomDialogs();
+
     const navigate = useNavigate();
 
     const [user, setUser] = useState(null); // User object or null
@@ -30,25 +42,23 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuthOnMount = async () => {
         try {
-            const response = await fetch(`${BASE_URL}/verifyToken`, {
-                // const response = await fetch('http://localhost:3000/verifyToken', {
-                method: 'GET',
-                credentials: 'include',  // ✅ Ensure cookies are sent
+            const response = await Axios.get(`/verifyToken`, {
+                withCredentials: true,  // ✅ Ensure cookies are sent
                 headers: { 'Content-Type': 'application/json' }
             });
 
-            console.log("Raw response:", response); // Debugging step
+            // console.log("Raw response:", response); // Debugging step
 
-            if (!response.ok) {
-                const text = await response.text();  // Read error as text
+            if (response.status !== 200) {
+                const text = response.data;  // Read error as text
                 throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
             }
 
-            const data = await response.json();
+            const data = response.data;
             setUser(data.user);
             setIsAuthenticated(true);
         } catch (error) {
-            console.error("Authentication check failed:", error);
+            // console.error("Authentication check failed:", error);
             setUser(null);
             setIsAuthenticated(false);
         } finally {
@@ -56,30 +66,33 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Function to handle login
+    // Login function
     const login = async (email, password) => {
         try {
-            const response = await Axios.post('/login', { email, password });
+            const response = await Axios.post('/login', { email, password }, { withCredentials: true });
             setUser(response.data.user);
             setIsAuthenticated(true);
 
             // Redirect based on user type
-            if (response.data.user.type === "admin") {
+            const user = response.data.user;
+            if (user.type === "admin") {
                 navigate("/admin");
-            } else if (response.data.user.type === "user") {
-                navigate(`/user/${response.data.user.id}`);
+            } else if (user.type === "user") {
+                navigate(`/user/${user.id}`);
             }
         } catch (error) {
-            console.error("Login failed:", error);
+            const errorMessage = error.response?.data?.error || error.response?.data?.message || "Login failed";
+            toast({ message: errorMessage, type: 'warning' });
+            // console.error("Login failed:", error);
             setUser(null);
             setIsAuthenticated(false);
         }
     };
 
-    // Function to handle logout
+    // Logout function
     const logout = async () => {
         try {
-            await Axios.post('/logout'); // Invalidate cookies on the server
+            await Axios.post('/logout', {}, { withCredentials: true }); // Ensures cookies are cleared
             setUser(null);
             setIsAuthenticated(false);
             navigate("/login");
@@ -88,7 +101,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Automatically check authentication on mount
+
+    // Check authentication on mount
     useEffect(() => {
         checkAuthOnMount();
     }, []);
@@ -102,7 +116,7 @@ export const AuthProvider = ({ children }) => {
         checkAuthOnMount,
     };
 
-    // Show a loading indicator while checking authentication
+    // Loading indicator while checking authentication
     if (loading) {
         return (
             <div className="h-100vh d-flex flex-column app-loading-page">
@@ -121,8 +135,11 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={value}>
-            {children}
-        </AuthContext.Provider>
+        <>
+            <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
+            <AuthContext.Provider value={value}>
+                {children}
+            </AuthContext.Provider>
+        </>
     );
 };
