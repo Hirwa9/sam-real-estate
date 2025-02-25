@@ -60,6 +60,7 @@ const Awards = () => {
 
     const [propertiesCount, setPropertiesCount] = useState(0);
     const [propertiesLikes, setPropertiesLikes] = useState(0);
+    const [registeredUsers, setRegisteredUsers] = useState(0);
 
     // Update PropertiesCount when propertiesContext or errorLoadingProperties changes
     useEffect(() => {
@@ -72,13 +73,6 @@ const Awards = () => {
                 .filter(like => like !== null);
 
             let totalLikes = 0;
-            // likes.forEach(like => {
-            //     console.log(typeof (Array(JSON.parse(JSON.parse(like)))));
-
-            //     console.log(JSON.parse(like));
-            //     console.log(Array(JSON.parse(JSON.parse(like))).length);
-            // });
-
             try {
                 totalLikes = likes.reduce((sum, like) => {
                     let parsedLike = JSON.parse(like);  // First parse
@@ -93,10 +87,6 @@ const Awards = () => {
             }
 
             setPropertiesLikes(totalLikes);
-
-            // console.log(likes);
-            console.log(propertiesLikes);
-
         } else {
             setPropertiesCount(0); // Reset PropertiesCount if there's an error
         }
@@ -110,7 +100,7 @@ const Awards = () => {
                 <div className="container">
                     <Heading
                         title={<>Over Happy Users Being With Us<br />Still They Love Our Services</>}
-                        subtitle="Our awards"
+                        subtitle="Proud users"
                         hType="h6"
                         className="mb-0"
                     />
@@ -132,13 +122,12 @@ const Awards = () => {
                                     return (
                                         <div key={index} className="d-flex flex-column p-3 p-md-5 box">
                                             <div className="d-inline-block mx-auto icon">
-                                                {/* <span className={val.icon}></span> */}
                                                 {val.icon}
                                             </div>
-                                            {val.name === "Properties" &&
+                                            {val.name === "properties" &&
                                                 <div className="h1 fw-bold text-center my-4"><CountUp start={propertiesCount - 10} end={propertiesCount} /></div>
                                             }
-                                            {val.name === "Reviews" && (
+                                            {val.name === "reviews" && (
                                                 <>
                                                     {
                                                         loadingReviews ?
@@ -155,9 +144,14 @@ const Awards = () => {
                                                                 )
                                                     }
                                                 </>
-                                            )
+                                            )}
+                                            {val.name === "insights" &&
+                                                <div className="h1 fw-bold text-center my-4"><CountUp start={propertiesLikes - 10} end={propertiesLikes} /></div>
                                             }
-                                            <p className="text-center small">{val.name}</p>
+                                            {val.name === "users" &&
+                                                <div className="h1 fw-bold text-center my-4"><CountUp start={propertiesLikes - 10} end={propertiesLikes} /></div>
+                                            }
+                                            <p className="text-center small text-capitalize">{val.name}</p>
                                         </div>
                                     );
                                 })}
