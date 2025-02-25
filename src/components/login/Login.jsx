@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useId, useContext } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import './login.css'
 import { CheckCircle, SignIn, UserCirclePlus, UserPlus, WarningCircle, XCircle } from '@phosphor-icons/react';
 import MyToast from '../common/Toast';
@@ -13,6 +13,7 @@ import { Axios, BASE_URL } from '../../api/api';
 /* globals $ */
 
 const Login = () => {
+
 	// Custom hooks
 	const {
 		// Toast
@@ -24,11 +25,23 @@ const Login = () => {
 	} = useCustomDialogs();
 
 	// Auth check
-	const { isAuthenticated, checkAuthOnMount, login, setIsAuthenticated } = useContext(AuthContext);
-	// useEffect(() => {
-	// 	!isAuthenticated && checkAuthOnMount();
-	// }, [isAuthenticated, checkAuthOnMount]);
+	const { isAuthenticated, checkAuthOnMount, login } = useContext(AuthContext);
+	useEffect(() => {
+		!isAuthenticated && checkAuthOnMount();
+	}, [isAuthenticated, checkAuthOnMount]);
 
+	// Go to homepage if authenticated
+
+	const location = useLocation(),
+		currentLocation = location.pathname,
+		dashboardRoutes = ["/admin", "/user/"];
+
+	useEffect(() => {
+		if (isAuthenticated && !dashboardRoutes.includes(currentLocation)) {
+			toast({ message: 'You are logged in' });
+			navigate('/');
+		}
+	}, []);
 
 	const [isWaitingFetchAction, setIsWaitingFetchAction] = useState(false);
 	const [errorWithFetchAction, setErrorWithFetchAction] = useState(null);
@@ -79,6 +92,8 @@ const Login = () => {
 			setIsWaitingFetchAction(true);
 			await login(email, password);
 		} catch (error) {
+            const errorMessage = error.response?.data?.error || error.response?.data?.message || "Login failed";
+            toast({ message: errorMessage, type: 'warning' });
 			console.error('Error signing in:', error);
 		} finally {
 			setIsWaitingFetchAction(false);
@@ -194,7 +209,7 @@ const Login = () => {
 			});
 	};
 
-	// Handle input changes
+	// Handle input's UI
 	const handleChange = (e) => {
 		const target = e.target;
 		if (target.value !== undefined && target.value !== '') {
