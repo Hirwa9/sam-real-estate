@@ -110,7 +110,7 @@ const Admin = () => {
     // const [activeSection, setActiveSection] = useState("orders");
     // const [activeSection, setActiveSection] = useState("reports");
     // const [activeSection, setActiveSection] = useState("messages");
-    // const [activeSection, setActiveSection] = useState("usersList");
+    // const [activeSection, setActiveSection] = useState("users");
     // const [activeSection, setActiveSection] = useState("settings");
 
     // __Properties
@@ -2425,7 +2425,7 @@ const Admin = () => {
                     </div>
                     <div className="col-6 col-lg-4 col-xl-3 position-relative mb-3 mx-0 px-2">
                         <div className="position-relative isolate d-grid justify-content-center mx-0 p-3 rad-10 overflow-hidden bg-gray-200 text-gray-600 shadow-sm ptr clickDown"
-                            onClick={() => setActiveSection("usersList")}
+                            onClick={() => setActiveSection("users")}
                         >
                             <span className="fs-6 mb-3 mb-xl-4 fw-bold">Customers</span>
                             <span className="display-5 mx-auto">29</span>
@@ -2434,7 +2434,7 @@ const Admin = () => {
                     </div>
                     <div className="col-6 col-lg-4 col-xl-3 position-relative mb-3 mx-0 px-2">
                         <div className="position-relative isolate d-grid justify-content-center mx-0 p-3 rad-10 overflow-hidden bg-gray-200 text-gray-600 shadow-sm ptr clickDown"
-                            onClick={() => setActiveSection("usersList")}
+                            onClick={() => setActiveSection("users")}
                         >
                             <span className="fs-6 mb-3 mb-xl-4 fw-bold">Subscribers</span>
                             <span className="display-5 mx-auto">{totalSubscribers}</span>
@@ -3138,12 +3138,12 @@ const Admin = () => {
         </section>
     );
 
-    const UsersList = () => (
+    const Users = () => (
         <section>
             {/* Section about */}
             <div className='pt-5 pb-3 d-lg-flex section-about'>
                 <div>
-                    <h1 className='text-center mb-4 fw-bold text-secondary'>Users List</h1>
+                    <h1 className='text-center mb-4 fw-bold text-secondary'>Users</h1>
                     <div className="d-lg-flex px-4 fs-5 text-gray-600">
                         View and manage customer accounts and subscriber information to keep your audience engaged and informed.
                     </div>
@@ -3866,8 +3866,8 @@ const Admin = () => {
                 return <Reports />;
             case "messages":
                 return <Messages />;
-            case "usersList":
-                return <UsersList />;
+            case "users":
+                return <Users />;
             case "settings":
                 return <Settings />;
             default:
@@ -3974,11 +3974,11 @@ const Admin = () => {
                                         </span>
                                     }
                                 </li>
-                                <li className={`nav-item ${activeSection === 'usersList' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("usersList"); hideSideNavbar() }}
+                                <li className={`nav-item ${activeSection === 'users' ? 'active' : ''} mb-3`}
+                                    onClick={() => { setActiveSection("users"); hideSideNavbar() }}
                                 >
                                     <button className="nav-link w-100">
-                                        <User size={20} weight='fill' className="me-2" /> Users List
+                                        <User size={20} weight='fill' className="me-2" /> Users
                                     </button>
                                 </li>
                                 <li className={`nav-item ${activeSection === 'settings' ? 'active' : ''} mb-3`}
