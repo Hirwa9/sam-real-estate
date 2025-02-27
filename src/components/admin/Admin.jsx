@@ -3,7 +3,7 @@ import useCustomDialogs from '../hooks/useCustomDialogs';
 import './admin.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, CurrencyDollarSimple, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
+import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, CurrencyDollarSimple, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, House, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
@@ -17,8 +17,12 @@ import { useSettings } from '../SettingsProvider';
 import { AuthContext } from '../AuthProvider';
 import BusinessLogoName from '../common/BusinessLogoName';
 import { BASE_URL } from '../../api/api';
+import '@szhsin/react-menu/dist/index.css';
+import '@szhsin/react-menu/dist/transitions/zoom.css';
+import { Menu, MenuItem, MenuButton, MenuDivider } from '@szhsin/react-menu';
 
 const Admin = () => {
+
     // Custom hooks
     const {
         // Toast
@@ -56,11 +60,7 @@ const Admin = () => {
         resetPrompt,
     } = useCustomDialogs();
 
-    const { isAuthenticated, checkAuthOnMount, accessToken, refreshAccessToken, logout } = useContext(AuthContext);
-    // useEffect(() => {
-    //     !isAuthenticated && checkAuthOnMount();
-    // }, [isAuthenticated, checkAuthOnMount]);
-    // console.log(isAuthenticated);
+    const { accessToken, logout } = useContext(AuthContext);
 
     /**
      * Sidebar
@@ -3891,7 +3891,22 @@ const Admin = () => {
                                 <span className='ms-auto smaller'>Sam</span>
                                 <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>Admin</span>
                             </div>
-                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                            <Menu menuButton={
+                                <MenuButton className="border-0 p-0">
+                                    <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                                </MenuButton>
+                            } transition>
+                                <MenuItem className="small" onClick={() => { navigate('/') }}>
+                                    <House className="me-2 opacity-50" /> Home
+                                </MenuItem>
+                                <MenuItem className="small" onClick={() => { navigate('/properties/all') }}>
+                                    <Building className="me-2 opacity-50" /> Properties
+                                </MenuItem>
+                                <MenuDivider />
+                                <MenuItem className="small" onClick={() => { logout() }}>
+                                    <SignOut className="me-2 opacity-50" /> Sign out
+                                </MenuItem>
+                            </Menu>
                         </div>
 
                         <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'

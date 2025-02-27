@@ -3,7 +3,7 @@ import useCustomDialogs from '../hooks/useCustomDialogs';
 import './customer.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowLeft, BellRinging, BellSimpleSlash, Bookmark, Building, Calendar, CalendarCheck, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, ChatsTeardrop, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HourglassHigh, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
+import { ArrowLeft, BellRinging, BellSimpleSlash, Bookmark, Building, Calendar, CalendarCheck, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, ChatsTeardrop, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HourglassHigh, House, HouseLine, HouseSimple, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatDate, getDateHoursMinutes, isValidEmail } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
@@ -16,8 +16,9 @@ import { useSettings } from '../SettingsProvider';
 import { Axios, BASE_URL } from '../../api/api';
 import { AuthContext } from '../AuthProvider';
 import BusinessLogoName from '../common/BusinessLogoName';
-// import userPlaceholderImg from '/images/user_placeholder_image.jpg';
-// import userPlaceholderImg from '/images/user_placeholder_image.jpg';
+import '@szhsin/react-menu/dist/index.css';
+import '@szhsin/react-menu/dist/transitions/zoom.css';
+import { Menu, MenuItem, MenuButton, MenuDivider } from '@szhsin/react-menu';
 
 const Customer = () => {
 
@@ -62,7 +63,7 @@ const Customer = () => {
         resetPrompt,
     } = useCustomDialogs();
 
-    const { isAuthenticated, checkAuthOnMount, accessToken, logout } = useContext(AuthContext);
+    const { accessToken, logout } = useContext(AuthContext);
 
     /**
      * Sidebar
@@ -107,10 +108,10 @@ const Customer = () => {
      * Data
     */
 
-    // const [activeSection, setActiveSection] = useState("dashboard");
+    const [activeSection, setActiveSection] = useState("dashboard");
     // const [activeSection, setActiveSection] = useState("properties");
     // const [activeSection, setActiveSection] = useState("orders");
-    const [activeSection, setActiveSection] = useState("reports");
+    // const [activeSection, setActiveSection] = useState("reports");
     // const [activeSection, setActiveSection] = useState("messages");
     // const [activeSection, setActiveSection] = useState("settings");
 
@@ -161,7 +162,7 @@ const Customer = () => {
     const goToProperty = (id) => {
         window.scrollTo({ top: 0, behavior: 'auto' });
         if (id) {
-            navigate(`/property/${id}`); // Navigate to the corresponding type
+            navigate(`/property/${id}`);
         }
     };
 
@@ -1757,7 +1758,22 @@ const Customer = () => {
                                 <span className='ms-auto smaller'>{signedUser.name}</span>
                                 <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>{signedUser.type}</span>
                             </div>
-                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                            <Menu menuButton={
+                                <MenuButton className="border-0 p-0">
+                                    <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                                </MenuButton>
+                            } transition>
+                                <MenuItem className="small" onClick={() => { navigate('/') }}>
+                                    <House className="me-2 opacity-50" /> Home
+                                </MenuItem>
+                                <MenuItem className="small" onClick={() => { navigate('/properties/all') }}>
+                                    <Building className="me-2 opacity-50" /> Properties
+                                </MenuItem>
+                                <MenuDivider />
+                                <MenuItem className="small" onClick={() => { logout() }}>
+                                    <SignOut className="me-2 opacity-50" /> Sign out
+                                </MenuItem>
+                            </Menu>
                         </div>
 
                         <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'

@@ -7,12 +7,16 @@ import {
 import { AuthContext } from "../../AuthProvider";
 import { developerWebsiteLink, nav } from "../../data/Data";
 import SocialMediaIcons from '../SocialMediaIcons';
-import { ArrowsLeftRight, CaretRight, City, Code, ListStar, SignOut, User } from "@phosphor-icons/react";
+import { ArrowsLeftRight, CaretRight, ChartPieSlice, City, Code, ListStar, SignOut, User } from "@phosphor-icons/react";
 import BottomFixedCard from "../bottomFixedCard/BottomFixedCard";
 import ReviewForm from "../reviewForm/ReviewForm";
 import CompareProperties from "../compareProperties/CompareProperties";
 import { useSettings } from "../../SettingsProvider";
 import BusinessLogoName from "../BusinessLogoName";
+import '@szhsin/react-menu/dist/index.css';
+import '@szhsin/react-menu/dist/transitions/zoom.css';
+import { Menu, MenuItem, MenuButton, MenuDivider } from '@szhsin/react-menu';
+
 /* globals $ */
 
 const Header = () => {
@@ -162,7 +166,19 @@ const Header = () => {
                                         <span className='ms-auto smaller'>{user.name}</span>
                                         <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>{user.type}</span>
                                     </div>
-                                    <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                                    <Menu menuButton={
+                                        <MenuButton className="border-0 p-0">
+                                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                                        </MenuButton>
+                                    } transition>
+                                        <MenuItem onClick={() => { alert('Finish up') }}>
+                                            <ChartPieSlice weight='fill' className="me-2 opacity-50" /> Dashboard
+                                        </MenuItem>
+                                        <MenuDivider />
+                                        <MenuItem onClick={() => { logout() }}>
+                                            <SignOut weight='fill' className="me-2 opacity-50" /> Sign out
+                                        </MenuItem>
+                                    </Menu>
                                 </div>
                             ) : (
                                 <li className={`nav-item me-lg-3 px-2 py-1 ${activeHeaderLink === '/login' ? "active" : ""} text-uppercase small`} >
