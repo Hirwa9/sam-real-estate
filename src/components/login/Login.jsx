@@ -74,26 +74,12 @@ const Login = () => {
 			return alert('Enter a valid email address.');
 		}
 
-		// try {
-		// 	setIsWaitingFetchAction(true);
-		// 	const response = await Axios.post(`${BASE_URL}/login`, { email, password });
-		// 	setAuthState({
-		// 		accessToken: response.data.accessToken,
-		// 		refreshToken: response.data.refreshToken,
-		// 	});
-		// 	setErrorWithFetchAction(null);
-		// } catch (error) {
-		// 	setIsWaitingFetchAction(false);
-		// 	setErrorWithFetchAction(error);
-		// 	console.error('Login error:', error);
-		// }
-
 		try {
 			setIsWaitingFetchAction(true);
 			await login(email, password);
 		} catch (error) {
-            const errorMessage = error.response?.data?.error || error.response?.data?.message || "Login failed";
-            toast({ message: errorMessage, type: 'warning' });
+			const errorMessage = error.response?.data?.error || error.response?.data?.message || "Login failed";
+			toast({ message: errorMessage, type: 'warning' });
 			console.error('Error signing in:', error);
 		} finally {
 			setIsWaitingFetchAction(false);
