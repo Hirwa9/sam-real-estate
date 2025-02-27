@@ -193,7 +193,7 @@ const CompareProperties = ({ show, onClose, ids }) => {
                                 {/* Footer */}
                                 <div className="d-flex justify-content-end align-items-center gap-2 mt-3 px-2">
                                     <button className="btn btn-sm text-secondary rounded-0 border-0 me-2 clickDown" onClick={resetComparison}>
-                                        Clear list
+                                        Clear
                                     </button>
                                     <a href="/properties/all" className="btn btn-sm btn-outline-primary border-primary border-opacity-25 ms-3 px-4 rounded-pill clickDown"
                                         onClick={onClose}>
