@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { Axios, BASE_URL } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import LoadingBubbles from './common/LoadingBubbles';
@@ -6,9 +6,17 @@ import { Building, CaretDown } from '@phosphor-icons/react';
 import useCustomDialogs from './hooks/useCustomDialogs';
 import MyToast from './common/Toast';
 
+// AuthContext
 export const AuthContext = createContext();
 
+// A custom hook for using AuthContext
+export const useAuth = () => {
+    return useContext(AuthContext);
+};
+
+// AuthProvider Component
 export const AuthProvider = ({ children }) => {
+
     // Custom hooks
     const {
         // Toast
@@ -26,31 +34,15 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false); // Auth state
 
     // Check authentication
-    // const checkAuthOnMount = async () => {
-    //     try {
-    //         const response = await Axios.get('/verifyToken');
-    //         setUser(response.data.user);
-    //         setIsAuthenticated(true);
-    //     } catch (error) {
-    //         console.error("Authentication check failed:", error);
-    //         setUser(null);
-    //         setIsAuthenticated(false);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const checkAuthOnMount = async () => {
         try {
             const response = await Axios.get(`/verifyToken`, {
-                withCredentials: true,  // ✅ Ensure cookies are sent
+                withCredentials: true,  // Send cookies and auth headers
                 headers: { 'Content-Type': 'application/json' }
             });
 
-            // console.log("Raw response:", response); // Debugging step
-
             if (response.status !== 200) {
-                const text = response.data;  // Read error as text
+                const text = response.data;
                 throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
             }
 
@@ -58,13 +50,17 @@ export const AuthProvider = ({ children }) => {
             setUser(data.user);
             setIsAuthenticated(true);
         } catch (error) {
-            // console.error("Authentication check failed:", error);
             setUser(null);
             setIsAuthenticated(false);
         } finally {
             setLoading(false);
         }
     };
+
+    // Check authentication on mount
+    useEffect(() => {
+        checkAuthOnMount();
+    }, []);
 
     // Login function
     const login = async (email, password) => {
@@ -83,9 +79,9 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.response?.data?.message || "Login failed";
             toast({ message: errorMessage, type: 'warning' });
-            // console.error("Login failed:", error);
             setUser(null);
             setIsAuthenticated(false);
+            console.error("Login failed:", error);
         }
     };
 
@@ -100,12 +96,6 @@ export const AuthProvider = ({ children }) => {
             console.error("Logout failed:", error);
         }
     };
-
-
-    // Check authentication on mount
-    useEffect(() => {
-        checkAuthOnMount();
-    }, []);
 
     // Context value
     const value = {
