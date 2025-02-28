@@ -45,13 +45,23 @@ footer .logo > img {
 }
 
 footer .subscriber {
-    height: 3.5rem;
     caret-color: var(--bs-light);
     border-radius: 1.5rem;
     overflow: hidden;
     border: 3px solid var(--primaryColor);
-    width: fit-content;
     transition: var(--trans);
+}
+
+@media screen and (max-width: 768px) {
+    footer .subscriber input#subscriberEmail {
+        height: 3rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    footer .subscriber {
+        height: 3.5rem;
+    }
 }
 
 footer .subscriber:hover {

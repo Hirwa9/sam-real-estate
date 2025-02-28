@@ -77,9 +77,9 @@ function Footer() {
                             <p className='text-white2 small'>
                                 Subscribe to receive updates, hot deals, tutorials, discounts sent straight in your inbox
                             </p>
-                            <div className='d-flex subscriber'>
+                            <div className='col-12 col-md-8 col-lg-12 d-flex flex-column flex-md-row subscriber'>
                                 <input ref={subscInputRef} type="email" name="subscriber_email" id="subscriberEmail" placeholder='Email address' className='border-0 px-3' value={email} onChange={(e) => { setEmail(e.target.value) }} onKeyUp={(e) => { (e.key === "Enter") && toggleSubscriptionForm() }} />
-                                <button type="button" className='btn bg-primaryColor text-dark fw-light rad-0 bounceClick' ref={subscTogglerRef} onClick={toggleSubscriptionForm}>Subscribe</button>
+                                <button type="button" className='btn bg-primaryColor ms-md-auto py-2 text-dark fw-light rad-0 bounceClick' ref={subscTogglerRef} onClick={toggleSubscriptionForm}>Subscribe</button>
                             </div>
                             <BottomFixedCard
                                 show={subscFormVisible}
