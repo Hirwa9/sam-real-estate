@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
             toast({ message: errorMessage, type: 'warning' });
             setUser(null);
             setIsAuthenticated(false);
-            console.error("Login failed:", error);
+            // console.error("Login failed:", error);
         }
     };
 
