@@ -3,6 +3,7 @@ import "./header.css";
 import {
     Link,
     useLocation,
+    useNavigate,
 } from "react-router-dom";
 import { AuthContext } from "../../AuthProvider";
 import { developerWebsiteLink, nav } from "../../data/Data";
@@ -15,7 +16,7 @@ import { useSettings } from "../../SettingsProvider";
 import BusinessLogoName from "../BusinessLogoName";
 import '@szhsin/react-menu/dist/index.css';
 import '@szhsin/react-menu/dist/transitions/zoom.css';
-import { Menu, MenuItem, MenuButton, MenuDivider } from '@szhsin/react-menu';
+import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu';
 
 /* globals $ */
 
@@ -25,6 +26,8 @@ const Header = () => {
     useEffect(() => {
         !isAuthenticated && checkAuthOnMount();
     }, [isAuthenticated, checkAuthOnMount]);
+
+    const navigate = useNavigate();
 
     // Site common setting
     const {
@@ -171,12 +174,17 @@ const Header = () => {
                                             <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
                                         </MenuButton>
                                     } transition>
-                                        <MenuItem onClick={() => { alert('Finish up') }}>
-                                            <ChartPieSlice weight='fill' className="me-2 opacity-50" /> Dashboard
+                                        <MenuItem className="small" onClick={() => {
+                                            if (user.type === 'admin') {
+                                                navigate('/admin');
+                                            } else if (user.type === 'user') {
+                                                navigate(`/user/${user.id}`);
+                                            }
+                                        }}>
+                                            <ChartPieSlice className="me-2 opacity-50" /> Dashboard
                                         </MenuItem>
-                                        <MenuDivider />
-                                        <MenuItem onClick={() => { logout() }}>
-                                            <SignOut weight='fill' className="me-2 opacity-50" /> Sign out
+                                        <MenuItem className="small" onClick={() => { logout() }}>
+                                            <SignOut className="me-2 opacity-50" /> Sign out
                                         </MenuItem>
                                     </Menu>
                                 </div>
