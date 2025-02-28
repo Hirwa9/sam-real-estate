@@ -58,9 +58,6 @@ const Pages = () => {
                         <Customer />
                     </ProtectedRoute>
                 } />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/user/:userId" element={<Customer />} />
-
             </Routes>
             {/* Conditionally render the Footer */}
             {!isExcludedRoute && <Footer />}
