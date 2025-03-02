@@ -27,6 +27,8 @@ const Customer = () => {
     const paramId = Number(userId);
     const [signedUser, setSignedUser] = useState([]);
 
+    console.log(paramId)
+
     // Custom hooks
     const {
         // Toast
@@ -1749,14 +1751,16 @@ const Customer = () => {
     return (
         <>
             <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
-            {(paramId === 0 || user.type !== 'user' || !customers.some(member => member.id === paramId) || paramId !== user.id) ? (
+            {(!user || user.type !== 'user' || !customers?.some(member => member.id === paramId) || paramId !== user.id) ? (
                 <div className="container my-5">
                     <h1 className="text-center text-secondary mb-5">Access forbidden</h1>
                     <div className='text-center'>
                         <p>
-                            The page you are trying to access does not exist or you do not have permission on its content.
+                            The page you are trying to reach either does not exist or you have limited access on its content.
                         </p>
-                        <button className="btn text-primary rounded-0 col-12 col-sm-8 col-md-6" onClick={() => { navigate('/') }}>Homepage <CaretRight /></button>
+                        <button className="btn text-primary rounded-0 col-12 col-sm-8 col-md-6" onClick={() => { navigate('/') }}>
+                            Homepage <CaretRight />
+                        </button>
                     </div>
                 </div>
             ) : (
