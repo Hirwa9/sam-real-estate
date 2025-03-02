@@ -3,7 +3,7 @@ import useCustomDialogs from '../hooks/useCustomDialogs';
 import './customer.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowLeft, BellRinging, BellSimpleSlash, Bookmark, Building, Calendar, CalendarCheck, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, ChatsTeardrop, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, HourglassHigh, House, HouseLine, HouseSimple, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
+import { ArrowLeft, BellRinging, BellSimpleSlash, Bookmark, Building, Calendar, CalendarCheck, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, ChatsTeardrop, Check, CheckCircle, CircleWavyCheck, Envelope, FloppyDisk, Gear, HourglassHigh, House, IdentificationBadge, Image, Info, List, ListDashes, MapPinArea, PaperPlaneRight, Pen, Phone, SealCheck, ShoppingCart, SignIn, SignOut, User, Video, WarningCircle, WhatsappLogo } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatDate, getDateHoursMinutes, isValidEmail } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
@@ -24,6 +24,7 @@ const Customer = () => {
 
     // Get user data
     const { userId } = useParams();
+    const paramId = Number(userId);
     const [signedUser, setSignedUser] = useState([]);
 
     // Custom hooks
@@ -63,7 +64,7 @@ const Customer = () => {
         resetPrompt,
     } = useCustomDialogs();
 
-    const { accessToken, logout } = useContext(AuthContext);
+    const { user, accessToken, logout } = useContext(AuthContext);
 
     /**
      * Sidebar
@@ -128,7 +129,7 @@ const Customer = () => {
     const bookedProperties = useMemo(() => {
         return allProperties.filter(
             property => (
-                JSON.parse(property.bookedBy)?.includes(signedUser.email)
+                JSON.parse(property.bookedBy)?.includes(signedUser?.email)
                 && property.booked
                 && !property.closed
             )
@@ -142,7 +143,7 @@ const Customer = () => {
             .filter(
                 property => (
                     property.closed
-                    && property.closedBy === signedUser.email
+                    && property.closedBy === signedUser?.email
                 )
             );
     }, [allProperties, signedUser]);
@@ -183,7 +184,7 @@ const Customer = () => {
     // Handle request property closure
     const requestPropertyClosure = async (propertyId) => {
         try {
-            const response = await Axios.post(`/property/${propertyId}/close-request`, { customerEmail: signedUser.email });
+            const response = await Axios.post(`/property/${propertyId}/close-request`, { customerEmail: signedUser?.email });
             resetConfirmDialog();
             toast({
                 message: <><SealCheck size={22} weight='fill' className='me-1 opacity-50' /> {response.data.message}</>,
@@ -426,7 +427,7 @@ const Customer = () => {
             const data = await response.json();
             setCustomers(data);
             setCustomersToShow(data);
-            setSignedUser(data.find(u => u.id === Number(userId)));
+            setSignedUser(data.find(u => u.id === paramId));
             setErrorLoadingCustomers(null);
         } catch (error) {
             setErrorLoadingCustomers("Failed to load customers. Click the button to try again.");
@@ -744,7 +745,7 @@ const Customer = () => {
                 <div className="d-xl-flex pt-xl-4">
                     <div className="p-4 col-xl-8 clip-text-gradient">
                         <p className="mb-3 text-justify">
-                            <span className='fs-3'>Welcome {signedUser.name}</span> <br />
+                            <span className='fs-3'>Welcome {signedUser?.name}</span> <br />
                             With your dashboard, you can manage your activities and interactions on the platform effortlessly. Here's what you can do:
                         </p>
                         <ul className="mb-0 list-unstyled">
@@ -918,7 +919,7 @@ const Customer = () => {
                                                         </div>
                                                     </div>
                                                     {/* <div> */}
-                                                    {(!closeRequests || !closeRequestsEmails.includes(signedUser.email)) ? (
+                                                    {(!closeRequests || !closeRequestsEmails.includes(signedUser?.email)) ? (
 
                                                         <button className="w-100 btn btn-sm btn-outline-success mt-3 py-2 rounded-0 fw-light"
                                                             onClick={() => {
@@ -941,7 +942,7 @@ const Customer = () => {
                                                         >
                                                             Request closing this deal
                                                         </button>
-                                                    ) : (closeRequests && closeRequestsEmails.includes(signedUser.email)) ? (
+                                                    ) : (closeRequests && closeRequestsEmails.includes(signedUser?.email)) ? (
                                                         <div className="w-100 mt-3 py-2 fw-light flex-center text-bg-secondary smaller">
                                                             <HourglassHigh weight='fill' className='me-1 opacity-50' /> Deal closure request under review
                                                         </div>
@@ -1748,248 +1749,264 @@ const Customer = () => {
     return (
         <>
             <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
-            <header className="navbar navbar-light sticky-top flex-md-nowrap py-0 pe-3 border-bottom admin-header">
-                <BusinessLogoName className="p-2" />
-                {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
-                <div className="ms-auto me-3 navbar-nav">
-                    <div className="nav-item text-nowrap d-none d-md-flex align-items-center py-md-2">
-                        <div className="d-flex align-items-center me-3 border-light border-opacity-25">
-                            <div className='ms-auto d-grid pb-1'>
-                                <span className='ms-auto smaller'>{signedUser.name}</span>
-                                <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>{signedUser.type}</span>
-                            </div>
-                            <Menu menuButton={
-                                <MenuButton className="border-0 p-0">
-                                    <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
-                                </MenuButton>
-                            } transition>
-                                <MenuItem className="small" onClick={() => { navigate('/') }}>
-                                    <House className="me-2 opacity-50" /> Home
-                                </MenuItem>
-                                <MenuItem className="small" onClick={() => { navigate('/properties/all') }}>
-                                    <Building className="me-2 opacity-50" /> Properties
-                                </MenuItem>
-                                <MenuDivider />
-                                <MenuItem className="small" onClick={() => { logout() }}>
-                                    <SignOut className="me-2 opacity-50" /> Sign out
-                                </MenuItem>
-                            </Menu>
-                        </div>
-
-                        <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'
-                            onClick={() => logout()}
-                        >
-                            <SignOut size={20} />
-                        </button>
+            {(paramId === 0 || user.type !== 'user' || !customers.some(member => member.id === paramId) || paramId !== user.id) ? (
+                <div className="container my-5">
+                    <h1 className="text-center text-secondary mb-5">Access forbidden</h1>
+                    <div className='text-center'>
+                        <p>
+                            The page you are trying to access does not exist or you do not have permission on its content.
+                        </p>
+                        <button className="btn text-primary rounded-0 col-12 col-sm-8 col-md-6" onClick={() => { navigate('/') }}>Homepage <CaretRight /></button>
                     </div>
                 </div>
-                <div className='d-flex align-items-center gap-2 d-md-none'>
-                    <button ref={sideNavbarTogglerRef} className="rounded-0 border-0 navbar-toggler" type="button" aria-controls="sidebarMenu" aria-label="Toggle navigation" onClick={() => setSideNavbarIsFloated(!sideNavbarIsFloated)}>
-                        <List />
-                    </button>
-                </div>
-            </header>
-            <main className="container-fluid">
-                <div className="row">
-                    {/* Sidebar Navigation */}
-                    <nav className={`col-12 col-md-3 col-xl-2 d-md-block border-end overflow-y-auto sidebar ${sideNavbarIsFloated ? 'floated' : ''}`} id="sidebarMenu">
-                        <div ref={sideNavbarRef} className="position-sticky top-0 h-fit col-8 col-sm-5 col-md-12 pt-3 pt-md-2 pb-3 peak-borders-tb">
-                            <ul className="nav flex-column">
-                                <li className={`nav-item ${activeSection === 'dashboard' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("dashboard"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <ChartPieSlice size={20} weight='fill' className="me-2" /> Dashboard
-                                    </button>
-                                </li>
-                                <li className={`nav-item ${activeSection === 'orders' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("orders"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <ShoppingCart size={20} weight='fill' className="me-2" /> Orders
-                                    </button>
-                                </li>
-                                <li className={`nav-item ${activeSection === 'reports' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("reports"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <ChartBar size={20} weight='fill' className="me-2" /> Reports
-                                    </button>
-                                </li>
-                                <li className={`nav-item ${activeSection === 'feedback' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("feedback"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <ChatsTeardrop size={20} weight='fill' className="me-2" /> Feedback
-                                    </button>
-                                </li>
-                                <li className={`nav-item ${activeSection === 'settings' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("settings"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <Gear size={20} weight='fill' className="me-2" /> Settings
-                                    </button>
-                                </li>
+            ) : (
+                <>
+                    <header className="navbar navbar-light sticky-top flex-md-nowrap py-0 pe-3 border-bottom admin-header">
+                        <BusinessLogoName className="p-2" />
+                        {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
+                        <div className="ms-auto me-3 navbar-nav">
+                            <div className="nav-item text-nowrap d-none d-md-flex align-items-center py-md-2">
+                                <div className="d-flex align-items-center me-3 border-light border-opacity-25">
+                                    <div className='ms-auto d-grid pb-1'>
+                                        <span className='ms-auto smaller'>{signedUser?.name}</span>
+                                        <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>{signedUser?.type}</span>
+                                    </div>
+                                    <Menu menuButton={
+                                        <MenuButton className="border-0 p-0">
+                                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                                        </MenuButton>
+                                    } transition>
+                                        <MenuItem className="small" onClick={() => { navigate('/') }}>
+                                            <House className="me-2 opacity-50" /> Home
+                                        </MenuItem>
+                                        <MenuItem className="small" onClick={() => { navigate('/properties/all') }}>
+                                            <Building className="me-2 opacity-50" /> Properties
+                                        </MenuItem>
+                                        <MenuDivider />
+                                        <MenuItem className="small" onClick={() => { logout() }}>
+                                            <SignOut className="me-2 opacity-50" /> Sign out
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
 
-                                <hr className={`d-md-none`} />
-
-                                <li className={`nav-item mb-3 d-md-none`}
+                                <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'
                                     onClick={() => logout()}
                                 >
-                                    <button className="nav-link w-100">
-                                        <SignOut size={20} weight='fill' className="me-2" /> Sign out
-                                    </button>
-                                </li>
-                            </ul>
+                                    <SignOut size={20} />
+                                </button>
+                            </div>
                         </div>
-                    </nav>
+                        <div className='d-flex align-items-center gap-2 d-md-none'>
+                            <button ref={sideNavbarTogglerRef} className="rounded-0 border-0 navbar-toggler" type="button" aria-controls="sidebarMenu" aria-label="Toggle navigation" onClick={() => setSideNavbarIsFloated(!sideNavbarIsFloated)}>
+                                <List />
+                            </button>
+                        </div>
+                    </header>
+                    <main className="container-fluid">
+                        <div className="row">
+                            {/* Sidebar Navigation */}
+                            <nav className={`col-12 col-md-3 col-xl-2 d-md-block border-end overflow-y-auto sidebar ${sideNavbarIsFloated ? 'floated' : ''}`} id="sidebarMenu">
+                                <div ref={sideNavbarRef} className="position-sticky top-0 h-fit col-8 col-sm-5 col-md-12 pt-3 pt-md-2 pb-3 peak-borders-tb">
+                                    <ul className="nav flex-column">
+                                        <li className={`nav-item ${activeSection === 'dashboard' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("dashboard"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <ChartPieSlice size={20} weight='fill' className="me-2" /> Dashboard
+                                            </button>
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'orders' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("orders"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <ShoppingCart size={20} weight='fill' className="me-2" /> Orders
+                                            </button>
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'reports' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("reports"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <ChartBar size={20} weight='fill' className="me-2" /> Reports
+                                            </button>
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'feedback' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("feedback"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <ChatsTeardrop size={20} weight='fill' className="me-2" /> Feedback
+                                            </button>
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'settings' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("settings"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <Gear size={20} weight='fill' className="me-2" /> Settings
+                                            </button>
+                                        </li>
 
-                    {/* Content Area */}
-                    <div className="col-md-9 col-xl-10 ms-sm-auto px-md-4">
-                        {renderContent()}
+                                        <hr className={`d-md-none`} />
 
-                        {/* Prompt actions */}
-                        <ActionPrompt
-                            show={showPrompt}
-                            // isStatic
-                            message={promptMessage}
-                            type={promptType}
-                            inputType={promptInputType}
-                            selectInputOptions={promptSelectInputOptions}
-                            promptInputValue={promptInputValue}
-                            inputPlaceholder={promptInputPlaceholder}
-                            action={() => { promptAction(); setPromptActionWaiting(true); }}
-                            actionIsWaiting={promptActionWaiting}
-                            onClose={resetPrompt}
-                        />
+                                        <li className={`nav-item mb-3 d-md-none`}
+                                            onClick={() => logout()}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <SignOut size={20} weight='fill' className="me-2" /> Sign out
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
 
-                        {/* Dialog actions */}
-                        <ConfirmDialog
-                            show={showConfirmDialog}
-                            message={confirmDialogMessage}
-                            type={confirmDialogType}
-                            action={() => { confirmDialogAction(); setConfirmDialogActionWaiting(true); }}
-                            actionText={confirmDialogActionText}
-                            actionIsWaiting={confirmDialogActionWaiting}
-                            closeText={confirmDialogCloseText}
-                            onClose={resetConfirmDialog}
-                            onCloseCallback={confirmDialogCloseCallback}
-                        />
+                            {/* Content Area */}
+                            <div className="col-md-9 col-xl-10 ms-sm-auto px-md-4">
+                                {
+                                    renderContent()
+                                }
 
-                        {/* Reply to messages */}
-                        {showContactUsMessage &&
-                            <div className='position-fixed fixed-top inset-0 py-md-3 px-lg-5 inx-high message-reply-comp'>
-                                <div className="d-flex flex-column col-md-9 col-lg-8 col-xl-7 h-100 overflow-auto mx-auto bg-gray-300 message-reply">
-                                    {/* Chat header */}
-                                    <div className={`position-sticky sticky-top bg-dark d-flex align-items-center p-2 px-md-3 shadow-sm`}>
-                                        <ArrowLeft size={30} className={`me-2 text-gray-500 flex-shrink-0 ${sendingReply ? 'cursor-not-allowed' : 'ptr'} clickDown`}
-                                            onClick={() => { !sendingReply && setShowContactUsMessage(false) }}
-                                        />
-                                        <div className='flex-grow-1 d-flex align-items-center justify-content-between'>
-                                            <div className='d-grid fs-80 person-info'>
-                                                <span className={`fw-bold text-gray-200 text-truncate person-info__name`}>
-                                                    {replyTo.name}
-                                                </span>
-                                                <span className='text-gray-400 small text-truncate person-info__email'>
-                                                    {replyTo.email}
-                                                </span>
-                                            </div>
-                                            <div className='d-grid ms-3 fs-80 message-cta'>
-                                                {!replyTo.replied ?
-                                                    <span className='text-end text-gray-300'>Replying</span>
-                                                    :
-                                                    <CheckCircle className='mx-auto text-gray-300' />
-                                                }
-                                                <span className={`mt-1 fw-bold text-gray-300 text-nowrap small`}>
-                                                    {formatDate(replyTo.createdAt)}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                {/* Prompt actions */}
+                                <ActionPrompt
+                                    show={showPrompt}
+                                    // isStatic
+                                    message={promptMessage}
+                                    type={promptType}
+                                    inputType={promptInputType}
+                                    selectInputOptions={promptSelectInputOptions}
+                                    promptInputValue={promptInputValue}
+                                    inputPlaceholder={promptInputPlaceholder}
+                                    action={() => { promptAction(); setPromptActionWaiting(true); }}
+                                    actionIsWaiting={promptActionWaiting}
+                                    onClose={resetPrompt}
+                                />
 
-                                    {/* Chat body */}
-                                    <div className='flex-grow-1 d-flex flex-column'>
-                                        {/* Messages space */}
-                                        <div className={`px-2 py-3 d-flex flex-column chat-space`}>
-                                            <div className='position-relative ms-2 mb-4 p-2 pb-1 small message-body message-body-sender'>
-                                                <p className='mb-1'>
-                                                    {replyTo.message}
-                                                </p>
-                                                <div className='d-flex align-items-center justify-content-end message-footer'>
-                                                    <span className='fs-80'>{getDateHoursMinutes(replyTo.createdAt)}</span>
+                                {/* Dialog actions */}
+                                <ConfirmDialog
+                                    show={showConfirmDialog}
+                                    message={confirmDialogMessage}
+                                    type={confirmDialogType}
+                                    action={() => { confirmDialogAction(); setConfirmDialogActionWaiting(true); }}
+                                    actionText={confirmDialogActionText}
+                                    actionIsWaiting={confirmDialogActionWaiting}
+                                    closeText={confirmDialogCloseText}
+                                    onClose={resetConfirmDialog}
+                                    onCloseCallback={confirmDialogCloseCallback}
+                                />
+
+                                {/* Reply to messages */}
+                                {showContactUsMessage &&
+                                    <div className='position-fixed fixed-top inset-0 py-md-3 px-lg-5 inx-high message-reply-comp'>
+                                        <div className="d-flex flex-column col-md-9 col-lg-8 col-xl-7 h-100 overflow-auto mx-auto bg-gray-300 message-reply">
+                                            {/* Chat header */}
+                                            <div className={`position-sticky sticky-top bg-dark d-flex align-items-center p-2 px-md-3 shadow-sm`}>
+                                                <ArrowLeft size={30} className={`me-2 text-gray-500 flex-shrink-0 ${sendingReply ? 'cursor-not-allowed' : 'ptr'} clickDown`}
+                                                    onClick={() => { !sendingReply && setShowContactUsMessage(false) }}
+                                                />
+                                                <div className='flex-grow-1 d-flex align-items-center justify-content-between'>
+                                                    <div className='d-grid fs-80 person-info'>
+                                                        <span className={`fw-bold text-gray-200 text-truncate person-info__name`}>
+                                                            {replyTo.name}
+                                                        </span>
+                                                        <span className='text-gray-400 small text-truncate person-info__email'>
+                                                            {replyTo.email}
+                                                        </span>
+                                                    </div>
+                                                    <div className='d-grid ms-3 fs-80 message-cta'>
+                                                        {!replyTo.replied ?
+                                                            <span className='text-end text-gray-300'>Replying</span>
+                                                            :
+                                                            <CheckCircle className='mx-auto text-gray-300' />
+                                                        }
+                                                        <span className={`mt-1 fw-bold text-gray-300 text-nowrap small`}>
+                                                            {formatDate(replyTo.createdAt)}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            {replyTo.replied && replyTo.reply &&
-                                                <>
-                                                    {
-                                                        replyTo.createdAt !== replyTo.updatedAt &&
-                                                        <div className='w-fit mx-auto mb-4 px-3 badge bg-gray-600 fw-normal fs-65 rounded-pill'>
-                                                            {formatDate(replyTo.updatedAt, { todayKeyword: true })}
-                                                        </div>
 
-                                                    }
-                                                    <div className='position-relative ms-auto me-2 mb-4 p-2 pb-1 small message-body message-body-responder'>
+                                            {/* Chat body */}
+                                            <div className='flex-grow-1 d-flex flex-column'>
+                                                {/* Messages space */}
+                                                <div className={`px-2 py-3 d-flex flex-column chat-space`}>
+                                                    <div className='position-relative ms-2 mb-4 p-2 pb-1 small message-body message-body-sender'>
                                                         <p className='mb-1'>
-                                                            {replyTo.reply}
+                                                            {replyTo.message}
                                                         </p>
-                                                        <div className='d-flex align-items-center justify-content-end gap-2 message-footer'>
-                                                            <span className='fs-80'>{getDateHoursMinutes(replyTo.updatedAt)}</span> <Check />
+                                                        <div className='d-flex align-items-center justify-content-end message-footer'>
+                                                            <span className='fs-80'>{getDateHoursMinutes(replyTo.createdAt)}</span>
                                                         </div>
                                                     </div>
+                                                    {replyTo.replied && replyTo.reply &&
+                                                        <>
+                                                            {
+                                                                replyTo.createdAt !== replyTo.updatedAt &&
+                                                                <div className='w-fit mx-auto mb-4 px-3 badge bg-gray-600 fw-normal fs-65 rounded-pill'>
+                                                                    {formatDate(replyTo.updatedAt, { todayKeyword: true })}
+                                                                </div>
 
-                                                </>
-                                            }
-                                        </div>
+                                                            }
+                                                            <div className='position-relative ms-auto me-2 mb-4 p-2 pb-1 small message-body message-body-responder'>
+                                                                <p className='mb-1'>
+                                                                    {replyTo.reply}
+                                                                </p>
+                                                                <div className='d-flex align-items-center justify-content-end gap-2 message-footer'>
+                                                                    <span className='fs-80'>{getDateHoursMinutes(replyTo.updatedAt)}</span> <Check />
+                                                                </div>
+                                                            </div>
 
-                                        {/* Reply space */}
-                                        {!replyTo.replied ?
-                                            <div className='p-2 mt-auto' style={{ bottom: 0 }}>
-                                                <textarea id="messageReplyInput" name="MessageReply" className="form-control bg-gray-400 rounded-0" cols="30" rows="5" placeholder="Enter a reply message" required value={replyMessage} onChange={e => { setReplyMessage(e.target.value) }}></textarea>
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-sm btn-secondary flex-center w-100 py-3 px-4 fw-bold rounded-0 clickDown"
-                                                    id="sendReplyBtn"
-                                                    onClick={(e) => !sendingReply && handleMessageReply(e, replyTo)}
-                                                    disabled={sendingReply} // Optionally, disable button when sending
-                                                >
-                                                    {!sendingReply ?
-                                                        <>Reply <PaperPlaneRight size={18} weight='duotone' className='ms-2' /></>
-                                                        : <>Replying <span className="spinner-grow spinner-grow-sm ms-2"></span></>
+                                                        </>
                                                     }
-                                                </button>
+                                                </div>
+
+                                                {/* Reply space */}
+                                                {!replyTo.replied ?
+                                                    <div className='p-2 mt-auto' style={{ bottom: 0 }}>
+                                                        <textarea id="messageReplyInput" name="MessageReply" className="form-control bg-gray-400 rounded-0" cols="30" rows="5" placeholder="Enter a reply message" required value={replyMessage} onChange={e => { setReplyMessage(e.target.value) }}></textarea>
+                                                        <button
+                                                            type="submit"
+                                                            className="btn btn-sm btn-secondary flex-center w-100 py-3 px-4 fw-bold rounded-0 clickDown"
+                                                            id="sendReplyBtn"
+                                                            onClick={(e) => !sendingReply && handleMessageReply(e, replyTo)}
+                                                            disabled={sendingReply} // Optionally, disable button when sending
+                                                        >
+                                                            {!sendingReply ?
+                                                                <>Reply <PaperPlaneRight size={18} weight='duotone' className='ms-2' /></>
+                                                                : <>Replying <span className="spinner-grow spinner-grow-sm ms-2"></span></>
+                                                            }
+                                                        </button>
+                                                    </div>
+                                                    :
+                                                    <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 mx-auto mt-auto mb-5 p-3 rounded">
+                                                        <CheckCircle size={40} weight='fill' className="w-4rem h-4rem d-block mx-auto mb-2 text-success" />
+                                                        <p className="text-center text-gray-800 fw-bold small">Message replied.</p>
+                                                        <button className="btn btn-sm btn-outline-dark d-block mx-auto px-3 rounded-pill" onClick={() => setShowContactUsMessage(false)}>
+                                                            OK
+                                                        </button>
+                                                    </div>
+                                                }
                                             </div>
-                                            :
-                                            <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 mx-auto mt-auto mb-5 p-3 rounded">
-                                                <CheckCircle size={40} weight='fill' className="w-4rem h-4rem d-block mx-auto mb-2 text-success" />
-                                                <p className="text-center text-gray-800 fw-bold small">Message replied.</p>
-                                                <button className="btn btn-sm btn-outline-dark d-block mx-auto px-3 rounded-pill" onClick={() => setShowContactUsMessage(false)}>
-                                                    OK
-                                                </button>
-                                            </div>
-                                        }
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             </div>
-                        }
-                    </div>
-                </div>
+                        </div>
 
-                {/* Fixed components */}
+                        {/* Fixed components */}
 
-                {/* Subscriber preview card */}
-                <BottomFixedCard
-                    show={showSelectedSubscriberInfo}
-                    content={[
-                        <SubscriberPreview
-                            setRefreshSubscribers={setRefreshSubscribers}
+                        {/* Subscriber preview card */}
+                        <BottomFixedCard
+                            show={showSelectedSubscriberInfo}
+                            content={[
+                                <SubscriberPreview
+                                    setRefreshSubscribers={setRefreshSubscribers}
+                                />
+                            ]}
+                            blurBg
+                            onClose={() => setShowSelectedSubscriberInfo(false)}
+                            className="pb-3"
                         />
-                    ]}
-                    blurBg
-                    onClose={() => setShowSelectedSubscriberInfo(false)}
-                    className="pb-3"
-                />
 
-            </main>
+                    </main>
+                </>
+            )}
         </>
     )
 }
