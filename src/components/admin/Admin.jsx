@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import './admin.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
 import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, CurrencyDollarSimple, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, House, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
@@ -60,7 +60,7 @@ const Admin = () => {
         resetPrompt,
     } = useCustomDialogs();
 
-    const { accessToken, logout } = useContext(AuthContext);
+    const { user, accessToken, logout } = useContext(AuthContext);
 
     /**
      * Sidebar
@@ -1180,19 +1180,19 @@ const Admin = () => {
                             }
                             {/* Iconic details */}
                             <div className="position-absolute bottom-0 gap-3 mb-2 mx-0 px-2 property-iconic-details">
-                                {bedrooms && bedrooms > 0 && (
+                                {bedrooms !== null && bedrooms > 0 && (
                                     <div className='flex-align-center fw-light text-muted'>
                                         <Bed size={20} weight='fill' className='me-1 text-light' />
                                         <span className="text-light fs-70">{bedrooms}</span>
                                     </div>
                                 )}
-                                {bathrooms && bathrooms > 0 && (
+                                {bathrooms !== null && bathrooms > 0 && (
                                     <div className='flex-align-center fw-light text-muted'>
                                         <Shower size={20} weight='fill' className='me-1 text-light' />
                                         <span className="text-light fs-70">{bathrooms}</span>
                                     </div>
                                 )}
-                                {garages && garages > 0 && (
+                                {garages !== null && garages > 0 && (
                                     <div className='flex-align-center fw-light text-muted'>
                                         <Car size={20} weight='fill' className='me-1 text-light' />
                                         <span className="text-light fs-70">{garages}</span>
@@ -3878,596 +3878,610 @@ const Admin = () => {
     return (
         <>
             <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
-            <header className="navbar navbar-light sticky-top flex-md-nowrap py-0 pe-3 border-bottom admin-header">
-                <BusinessLogoName className="p-2" />
-                {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
-                <div className="ms-auto me-3 navbar-nav">
-                    {/* <div className="nav-item text-nowrap d-none d-md-block">
-                        <button className="nav-link px-3" >Sign out</button>
-                    </div> */}
-                    <div className="nav-item text-nowrap d-none d-md-flex align-items-center py-md-2">
-                        <div className="d-flex align-items-center me-3 border-light border-opacity-25">
-                            <div className='ms-auto d-grid pb-1'>
-                                <span className='ms-auto smaller'>Sam</span>
-                                <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>Admin</span>
-                            </div>
-                            <Menu menuButton={
-                                <MenuButton className="border-0 p-0">
-                                    <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
-                                </MenuButton>
-                            } transition>
-                                <MenuItem className="small" onClick={() => { navigate('/') }}>
-                                    <House className="me-2 opacity-50" /> Home
-                                </MenuItem>
-                                <MenuItem className="small" onClick={() => { navigate('/properties/all') }}>
-                                    <Building className="me-2 opacity-50" /> Properties
-                                </MenuItem>
-                                <MenuDivider />
-                                <MenuItem className="small" onClick={() => { logout() }}>
-                                    <SignOut className="me-2 opacity-50" /> Sign out
-                                </MenuItem>
-                            </Menu>
-                        </div>
-
-                        <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'
-                            onClick={() => logout()}
-                        >
-                            <SignOut size={20} />
-                        </button>
+            {(!user || user.type !== 'admin') ? (
+                <div className="container my-5">
+                    <h1 className="text-center text-secondary mb-5">Access forbidden</h1>
+                    <div className='text-center'>
+                        <p>
+                            The page you are trying to access does not exist or you do not have permission on its content.
+                        </p>
+                        <button className="btn text-primary rounded-0 col-12 col-sm-8 col-md-6" onClick={() => { navigate('/') }}>Homepage <CaretRight /></button>
                     </div>
                 </div>
-                <div className='d-flex align-items-center gap-2 d-md-none text-gray-700'>
-                    <button className="rounded-0 border-0 box-shadow-none  text-inherit clickDown" type="button" onClick={() => setShowCreatePropertyForm(true)}>
-                        <Plus weight='bold' />
-                    </button>
-                    <button ref={sideNavbarTogglerRef} className="rounded-0 border-0 navbar-toggler" type="button" aria-controls="sidebarMenu" aria-label="Toggle navigation" onClick={() => setSideNavbarIsFloated(!sideNavbarIsFloated)}>
-                        <List />
-                    </button>
-                </div>
-            </header>
-            <main className="container-fluid">
-                <div className="row">
-                    {/* Sidebar Navigation */}
-                    <nav className={`col-12 col-md-3 col-xl-2 d-md-block border-end overflow-y-auto sidebar ${sideNavbarIsFloated ? 'floated' : ''}`} id="sidebarMenu">
-                        <div ref={sideNavbarRef} className="position-sticky top-0 h-fit col-8 col-sm-5 col-md-12 pt-3 pt-md-2 pb-3 peak-borders-tb">
-                            {/* <button type="button" className='btn col-11 col-md-auto flex-center mt-2 mt-md-0 mb-4 mb-md-3 mx-auto px-4 py-3 rounded-4 bg-gray-600 text-gray-300 shadow-sm clickDown'>
+            ) : (
+                <>
+                    <header className="navbar navbar-light sticky-top flex-md-nowrap py-0 pe-3 border-bottom admin-header">
+                        <BusinessLogoName className="p-2" />
+                        {/* <input className="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" /> */}
+                        <div className="ms-auto me-3 navbar-nav">
+                            {/* <div className="nav-item text-nowrap d-none d-md-block">
+                        <button className="nav-link px-3" >Sign out</button>
+                    </div> */}
+                            <div className="nav-item text-nowrap d-none d-md-flex align-items-center py-md-2">
+                                <div className="d-flex align-items-center me-3 border-light border-opacity-25">
+                                    <div className='ms-auto d-grid pb-1'>
+                                        <span className='ms-auto smaller'>Sam</span>
+                                        <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>Admin</span>
+                                    </div>
+                                    <Menu menuButton={
+                                        <MenuButton className="border-0 p-0">
+                                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                                        </MenuButton>
+                                    } transition>
+                                        <MenuItem className="small" onClick={() => { navigate('/') }}>
+                                            <House className="me-2 opacity-50" /> Home
+                                        </MenuItem>
+                                        <MenuItem className="small" onClick={() => { navigate('/properties/all') }}>
+                                            <Building className="me-2 opacity-50" /> Properties
+                                        </MenuItem>
+                                        <MenuDivider />
+                                        <MenuItem className="small" onClick={() => { logout() }}>
+                                            <SignOut className="me-2 opacity-50" /> Sign out
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+
+                                <button className="nav-link px-2 text-gray-600 rounded-pill clickDown" title='Sign out'
+                                    onClick={() => logout()}
+                                >
+                                    <SignOut size={20} />
+                                </button>
+                            </div>
+                        </div>
+                        <div className='d-flex align-items-center gap-2 d-md-none text-gray-700'>
+                            <button className="rounded-0 border-0 box-shadow-none  text-inherit clickDown" type="button" onClick={() => setShowCreatePropertyForm(true)}>
+                                <Plus weight='bold' />
+                            </button>
+                            <button ref={sideNavbarTogglerRef} className="rounded-0 border-0 navbar-toggler" type="button" aria-controls="sidebarMenu" aria-label="Toggle navigation" onClick={() => setSideNavbarIsFloated(!sideNavbarIsFloated)}>
+                                <List />
+                            </button>
+                        </div>
+                    </header>
+                    <main className="container-fluid">
+                        <div className="row">
+                            {/* Sidebar Navigation */}
+                            <nav className={`col-12 col-md-3 col-xl-2 d-md-block border-end overflow-y-auto sidebar ${sideNavbarIsFloated ? 'floated' : ''}`} id="sidebarMenu">
+                                <div ref={sideNavbarRef} className="position-sticky top-0 h-fit col-8 col-sm-5 col-md-12 pt-3 pt-md-2 pb-3 peak-borders-tb">
+                                    {/* <button type="button" className='btn col-11 col-md-auto flex-center mt-2 mt-md-0 mb-4 mb-md-3 mx-auto px-4 py-3 rounded-4 bg-gray-600 text-gray-300 shadow-sm clickDown'>
                                 <Plus className='me-2' />
                                 New property
                             </button> */}
-                            <button type="button" className='btn col-11 col-md-auto flex-center mt-2 mt-md-0 mb-4 mb-md-3 mx-auto px-4 py-3 rounded-4 border border-secondary border-opacity-25 text-gray-600 shadow-sm clickDown'
-                                onClick={() => { hideSideNavbar(); setShowCreatePropertyForm(true) }}>
-                                <Plus className='me-2' />
-                                New property
-                            </button>
-                            <ul className="nav flex-column">
-                                <li className={`nav-item ${activeSection === 'dashboard' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("dashboard"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <ChartPieSlice size={20} weight='fill' className="me-2" /> Dashboard
+                                    <button type="button" className='btn col-11 col-md-auto flex-center mt-2 mt-md-0 mb-4 mb-md-3 mx-auto px-4 py-3 rounded-4 border border-secondary border-opacity-25 text-gray-600 shadow-sm clickDown'
+                                        onClick={() => { hideSideNavbar(); setShowCreatePropertyForm(true) }}>
+                                        <Plus className='me-2' />
+                                        New property
                                     </button>
-                                </li>
-                                <li className={`nav-item ${activeSection === 'properties' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("properties"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <Building size={20} weight='fill' className="me-2" /> Properties
-                                    </button>
-                                </li>
-                                <li className={`nav-item ${activeSection === 'orders' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("orders"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <ShoppingCart size={20} weight='fill' className="me-2" /> Orders
-                                    </button>
-                                    {openDealsNum > 0 &&
-                                        <span
-                                            className='r-middle-m h-1rem flex-center me-3 px-2 bg-gray-300 text-gray-900 fs-60 fw-medium rounded-pill'
-                                            style={{ lineHeight: 1 }}>
-                                            {openDealsNum}
-                                        </span>
-                                    }
-                                </li>
-                                <li className={`nav-item ${activeSection === 'reports' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("reports"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <ChartBar size={20} weight='fill' className="me-2" /> Reports
-                                    </button>
-                                </li>
-                                <li className={`nav-item ${activeSection === 'messages' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("messages"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <ChatDots size={20} weight='fill' className="me-2" /> Messages
-                                    </button>
-                                    {notRepliedMessages.length > 0 &&
-                                        <span
-                                            className='r-middle-m h-1rem flex-center me-3 px-2 bg-gray-300 text-gray-900 fs-60 fw-medium rounded-pill'
-                                            style={{ lineHeight: 1 }}>
-                                            {notRepliedMessages.length}
-                                        </span>
-                                    }
-                                </li>
-                                <li className={`nav-item ${activeSection === 'users' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("users"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <User size={20} weight='fill' className="me-2" /> Users
-                                    </button>
-                                </li>
-                                <li className={`nav-item ${activeSection === 'settings' ? 'active' : ''} mb-3`}
-                                    onClick={() => { setActiveSection("settings"); hideSideNavbar() }}
-                                >
-                                    <button className="nav-link w-100">
-                                        <Gear size={20} weight='fill' className="me-2" /> Settings
-                                    </button>
-                                </li>
-
-                                <hr className={`d-md-none`} />
-
-                                <li className={`nav-item mb-3 d-md-none`}>
-                                    <button className="nav-link w-100">
-                                        <SignOut size={20} weight='fill' className="me-2" /> Sign out
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-
-                    {/* Content Area */}
-                    <div className="col-md-9 col-xl-10 ms-sm-auto px-md-4">
-                        {renderContent()}
-
-                        {/* Prompt actions */}
-                        <ActionPrompt
-                            show={showPrompt}
-                            // isStatic
-                            message={promptMessage}
-                            type={promptType}
-                            inputType={promptInputType}
-                            selectInputOptions={promptSelectInputOptions}
-                            promptInputValue={promptInputValue}
-                            inputPlaceholder={promptInputPlaceholder}
-                            action={() => { promptAction(); setPromptActionWaiting(true); }}
-                            actionIsWaiting={promptActionWaiting}
-                            onClose={resetPrompt}
-                        />
-
-                        {/* Dialog actions */}
-                        <ConfirmDialog
-                            show={showConfirmDialog}
-                            message={confirmDialogMessage}
-                            type={confirmDialogType}
-                            action={() => { confirmDialogAction(); setConfirmDialogActionWaiting(true); }}
-                            actionText={confirmDialogActionText}
-                            actionIsWaiting={confirmDialogActionWaiting}
-                            closeText={confirmDialogCloseText}
-                            onClose={resetConfirmDialog}
-                            onCloseCallback={confirmDialogCloseCallback}
-                        />
-
-                        {/* Reply to messages */}
-                        {showContactUsMessage &&
-                            <div className='position-fixed fixed-top inset-0 py-md-3 px-lg-5 inx-high message-reply-comp'>
-                                <div className="d-flex flex-column col-md-9 col-lg-8 col-xl-7 h-100 overflow-auto mx-auto bg-gray-300 message-reply">
-                                    {/* Chat header */}
-                                    <div className={`position-sticky sticky-top bg-dark d-flex align-items-center p-2 px-md-3 shadow-sm`}>
-                                        <ArrowLeft size={30} className={`me-2 text-gray-500 flex-shrink-0 ${sendingReply ? 'cursor-not-allowed' : 'ptr'} clickDown`}
-                                            onClick={() => { !sendingReply && setShowContactUsMessage(false) }}
-                                        />
-                                        <div className='flex-grow-1 d-flex align-items-center justify-content-between'>
-                                            <div className='d-grid fs-80 person-info'>
-                                                <span className={`fw-bold text-gray-200 text-truncate person-info__name`}>
-                                                    {replyTo.name}
+                                    <ul className="nav flex-column">
+                                        <li className={`nav-item ${activeSection === 'dashboard' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("dashboard"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <ChartPieSlice size={20} weight='fill' className="me-2" /> Dashboard
+                                            </button>
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'properties' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("properties"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <Building size={20} weight='fill' className="me-2" /> Properties
+                                            </button>
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'orders' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("orders"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <ShoppingCart size={20} weight='fill' className="me-2" /> Orders
+                                            </button>
+                                            {openDealsNum > 0 &&
+                                                <span
+                                                    className='r-middle-m h-1rem flex-center me-3 px-2 bg-gray-300 text-gray-900 fs-60 fw-medium rounded-pill'
+                                                    style={{ lineHeight: 1 }}>
+                                                    {openDealsNum}
                                                 </span>
-                                                <span className='text-gray-400 small text-truncate person-info__email'>
-                                                    {replyTo.email}
-                                                </span>
-                                            </div>
-                                            <div className='d-grid ms-3 fs-80 message-cta'>
-                                                {!replyTo.replied ?
-                                                    <span className='text-end text-gray-300'>Replying</span>
-                                                    :
-                                                    <CheckCircle className='mx-auto text-gray-300' />
-                                                }
-                                                <span className={`mt-1 fw-bold text-gray-300 text-nowrap small`}>
-                                                    {formatDate(replyTo.createdAt)}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Chat body */}
-                                    <div className='flex-grow-1 d-flex flex-column'>
-                                        {/* Messages space */}
-                                        <div className={`px-2 py-3 d-flex flex-column chat-space`}>
-                                            <div className='position-relative ms-2 mb-4 p-2 pb-1 small message-body message-body-sender'>
-                                                <p className='mb-1'>
-                                                    {replyTo.message}
-                                                </p>
-                                                <div className='d-flex align-items-center justify-content-end message-footer'>
-                                                    <span className='fs-80'>{getDateHoursMinutes(replyTo.createdAt)}</span>
-                                                </div>
-                                            </div>
-                                            {replyTo.replied && replyTo.reply &&
-                                                <>
-                                                    {
-                                                        replyTo.createdAt !== replyTo.updatedAt &&
-                                                        <div className='w-fit mx-auto mb-4 px-3 badge bg-gray-600 fw-normal fs-65 rounded-pill'>
-                                                            {formatDate(replyTo.updatedAt, { todayKeyword: true })}
-                                                        </div>
-
-                                                    }
-                                                    <div className='position-relative ms-auto me-2 mb-4 p-2 pb-1 small message-body message-body-responder'>
-                                                        <p className='mb-1'>
-                                                            {replyTo.reply}
-                                                        </p>
-                                                        <div className='d-flex align-items-center justify-content-end gap-2 message-footer'>
-                                                            <span className='fs-80'>{getDateHoursMinutes(replyTo.updatedAt)}</span> <Check />
-                                                        </div>
-                                                    </div>
-
-                                                </>
                                             }
-                                        </div>
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'reports' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("reports"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <ChartBar size={20} weight='fill' className="me-2" /> Reports
+                                            </button>
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'messages' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("messages"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <ChatDots size={20} weight='fill' className="me-2" /> Messages
+                                            </button>
+                                            {notRepliedMessages.length > 0 &&
+                                                <span
+                                                    className='r-middle-m h-1rem flex-center me-3 px-2 bg-gray-300 text-gray-900 fs-60 fw-medium rounded-pill'
+                                                    style={{ lineHeight: 1 }}>
+                                                    {notRepliedMessages.length}
+                                                </span>
+                                            }
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'users' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("users"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <User size={20} weight='fill' className="me-2" /> Users
+                                            </button>
+                                        </li>
+                                        <li className={`nav-item ${activeSection === 'settings' ? 'active' : ''} mb-3`}
+                                            onClick={() => { setActiveSection("settings"); hideSideNavbar() }}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <Gear size={20} weight='fill' className="me-2" /> Settings
+                                            </button>
+                                        </li>
 
-                                        {/* Reply space */}
-                                        {!replyTo.replied ?
-                                            <div className='p-2 mt-auto' style={{ bottom: 0 }}>
-                                                <textarea id="messageReplyInput" name="MessageReply" className="form-control bg-gray-400 rounded-0" cols="30" rows="5" placeholder="Enter a reply message" required value={replyMessage} onChange={e => { setReplyMessage(e.target.value) }}></textarea>
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-sm btn-secondary flex-center w-100 py-3 px-4 fw-bold rounded-0 clickDown"
-                                                    id="sendReplyBtn"
-                                                    onClick={(e) => !sendingReply && handleMessageReply(e, replyTo)}
-                                                    disabled={sendingReply} // Optionally, disable button when sending
-                                                >
-                                                    {!sendingReply ?
-                                                        <>Reply <PaperPlaneRight size={18} weight='duotone' className='ms-2' /></>
-                                                        : <>Replying <span className="spinner-grow spinner-grow-sm ms-2"></span></>
-                                                    }
-                                                </button>
-                                            </div>
-                                            :
-                                            <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 mx-auto mt-auto mb-5 p-3 rounded">
-                                                <CheckCircle size={40} weight='fill' className="w-4rem h-4rem d-block mx-auto mb-2 text-success" />
-                                                <p className="text-center text-gray-800 fw-bold small">Message replied.</p>
-                                                <button className="btn btn-sm btn-outline-dark d-block mx-auto px-3 rounded-pill" onClick={() => setShowContactUsMessage(false)}>
-                                                    OK
-                                                </button>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
+                                        <hr className={`d-md-none`} />
 
-                {/* Fixed components */}
-
-                {/* Property preview card */}
-                <BottomFixedCard
-                    show={showSelectedPropertyInfo}
-                    content={[
-                        <PropertyPreview
-                            setDontCloseCard={setDontCloseCard}
-                            setRefreshProperties={setRefreshProperties}
-                        />
-                    ]}
-                    blurBg
-                    // closeButton={<X size={35} weight='bold' className='p-2' />}
-                    closeButton
-                    onClose={() => setShowSelectedPropertyInfo(false)}
-                    className="pb-3"
-                    avoidCloseReasons={dontCloseCard}
-                />
-
-                {/* Subscriber preview card */}
-                <BottomFixedCard
-                    show={showSelectedSubscriberInfo}
-                    content={[
-                        <SubscriberPreview
-                            setRefreshSubscribers={setRefreshSubscribers}
-                        />
-                    ]}
-                    blurBg
-                    onClose={() => setShowSelectedSubscriberInfo(false)}
-                    className="pb-3"
-                />
-
-                {/* Add Property Form */}
-                {showCreatePropertyForm &&
-                    <>
-                        <div className='position-fixed fixed-top inset-0 bg-black2 py-3 inx-high add-property-form'>
-                            <div className="container col-md-8 col-lg-7 col-xl-6 peak-borders-b overflow-auto" style={{ animation: "zoomInBack .2s 1", maxHeight: '100%' }}>
-                                <div className="container h-100 bg-light text-gray-700 px-3">
-                                    <h6 className="sticky-top flex-align-center justify-content-between mb-0 pt-3 pb-2 bg-light text-gray-600 border-bottom text-uppercase">
-                                        <div className='flex-align-center'>
-                                            <RowsPlusBottom weight='fill' className="me-1" />
-                                            <span style={{ lineHeight: 1 }}>Add a new property</span>
-                                        </div>
-                                        <div title="Cancel" onClick={() => { setShowCreatePropertyForm(false) }}>
-                                            <X size={25} className='ptr' />
-                                        </div>
-                                    </h6>
-
-                                    {/* Type selection */}
-                                    <div className="my-2 text-primary smaller grid-center">
-                                        <p className='mb-0 text-center fw-bold smaller'>Select property type</p>
-                                        <CaretDown />
-                                    </div>
-                                    <ul className='d-flex flex-wrap justify-content-lg-center gap-1 mb-4 p-2 bg-primary-subtle border-start border-end border-2 border-primary fw-bold text-center text-balance'>
-                                        {aboutProperties.allTypes
-                                            .sort((a, b) =>
-                                                a.localeCompare(b)
-                                            )
-                                            .map((val, index) => (
-                                                <li key={index} className={`btn btn-sm ${newPropertyType === val ? 'btn-primary' : ''} px-3 py-1 rounded-pill smaller ptr clickDown`}
-                                                    onClick={() => setNewPropertyType(val)}>
-                                                    {val}
-                                                </li>
-                                            ))
-                                        }
+                                        <li className={`nav-item mb-3 d-md-none`}>
+                                            <button className="nav-link w-100">
+                                                <SignOut size={20} weight='fill' className="me-2" /> Sign out
+                                            </button>
+                                        </li>
                                     </ul>
-                                    <div className="my-2 text-primary smaller grid-center">
-                                        <p className='mb-0 text-center fw-bold smaller'>Add details</p>
-                                        <CaretDown />
-                                    </div>
+                                </div>
+                            </nav>
 
-                                    {/* The form */}
-                                    <form onSubmit={(e) => handleCreateProperty(e)} className="px-sm-2 pb-3">
-                                        <div className="mb-4 form-text text-gray-600">
-                                            Add the main details for the <span className='text-lowercase'>{newPropertyType}</span> property. <b>Feel free to skip</b> fields that are not required or unavailable.
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="name" className="form-label" required>Property Name</label>
-                                            <input type="text" id="name" name="name" className="form-control" required placeholder="Enter name" />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="location" className="form-label" required>Location</label>
-                                            <input type="text" id="location" name="location" className="form-control" placeholder="Eg: Kiyovu - Kigali, or KG Ave 23 Kicukiro" />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="category" className="form-label">Category</label>
-                                            <select id="category" name="category" className="form-select"
-                                                defaultValue={aboutProperties.allCategories[0]}
-                                                required>
-                                                {aboutProperties.allCategories
-                                                    .map((val, index) => (
-                                                        <option key={index} value={val} className='p-2 px-3 small'>
-                                                            {val}
-                                                        </option>
-                                                    ))
-                                                }
-                                            </select>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="about" className="form-label" required>About the Property</label>
-                                            <textarea rows={5} id="about" name="about" className="form-control" placeholder="Provide a brief description"></textarea>
-                                        </div>
-                                        <div className="d-flex justify-content-between gap-3">
-                                            <div className="col-7 col-sm mb-3">
-                                                <label htmlFor="price" className="form-label" required>Price</label>
-                                                <input type="number" id="price" name="price" className="form-control" required placeholder="Enter the price" />
+                            {/* Content Area */}
+                            <div className="col-md-9 col-xl-10 ms-sm-auto px-md-4">
+                                {renderContent()}
+
+                                {/* Prompt actions */}
+                                <ActionPrompt
+                                    show={showPrompt}
+                                    // isStatic
+                                    message={promptMessage}
+                                    type={promptType}
+                                    inputType={promptInputType}
+                                    selectInputOptions={promptSelectInputOptions}
+                                    promptInputValue={promptInputValue}
+                                    inputPlaceholder={promptInputPlaceholder}
+                                    action={() => { promptAction(); setPromptActionWaiting(true); }}
+                                    actionIsWaiting={promptActionWaiting}
+                                    onClose={resetPrompt}
+                                />
+
+                                {/* Dialog actions */}
+                                <ConfirmDialog
+                                    show={showConfirmDialog}
+                                    message={confirmDialogMessage}
+                                    type={confirmDialogType}
+                                    action={() => { confirmDialogAction(); setConfirmDialogActionWaiting(true); }}
+                                    actionText={confirmDialogActionText}
+                                    actionIsWaiting={confirmDialogActionWaiting}
+                                    closeText={confirmDialogCloseText}
+                                    onClose={resetConfirmDialog}
+                                    onCloseCallback={confirmDialogCloseCallback}
+                                />
+
+                                {/* Reply to messages */}
+                                {showContactUsMessage &&
+                                    <div className='position-fixed fixed-top inset-0 py-md-3 px-lg-5 inx-high message-reply-comp'>
+                                        <div className="d-flex flex-column col-md-9 col-lg-8 col-xl-7 h-100 overflow-auto mx-auto bg-gray-300 message-reply">
+                                            {/* Chat header */}
+                                            <div className={`position-sticky sticky-top bg-dark d-flex align-items-center p-2 px-md-3 shadow-sm`}>
+                                                <ArrowLeft size={30} className={`me-2 text-gray-500 flex-shrink-0 ${sendingReply ? 'cursor-not-allowed' : 'ptr'} clickDown`}
+                                                    onClick={() => { !sendingReply && setShowContactUsMessage(false) }}
+                                                />
+                                                <div className='flex-grow-1 d-flex align-items-center justify-content-between'>
+                                                    <div className='d-grid fs-80 person-info'>
+                                                        <span className={`fw-bold text-gray-200 text-truncate person-info__name`}>
+                                                            {replyTo.name}
+                                                        </span>
+                                                        <span className='text-gray-400 small text-truncate person-info__email'>
+                                                            {replyTo.email}
+                                                        </span>
+                                                    </div>
+                                                    <div className='d-grid ms-3 fs-80 message-cta'>
+                                                        {!replyTo.replied ?
+                                                            <span className='text-end text-gray-300'>Replying</span>
+                                                            :
+                                                            <CheckCircle className='mx-auto text-gray-300' />
+                                                        }
+                                                        <span className={`mt-1 fw-bold text-gray-300 text-nowrap small`}>
+                                                            {formatDate(replyTo.createdAt)}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="col-4 col-sm mb-3">
-                                                <label htmlFor="currency" className="form-label" required>Currency</label>
-                                                <select id="currency" name="currency" className="form-select"
-                                                    defaultValue={aboutProperties.currencySupported[0]}
-                                                    required>
-                                                    {aboutProperties.currencySupported
-                                                        .map((val, index) => (
-                                                            <option key={index} value={val} className='p-2 px-3 small'>
-                                                                {val}
-                                                            </option>
-                                                        ))
+
+                                            {/* Chat body */}
+                                            <div className='flex-grow-1 d-flex flex-column'>
+                                                {/* Messages space */}
+                                                <div className={`px-2 py-3 d-flex flex-column chat-space`}>
+                                                    <div className='position-relative ms-2 mb-4 p-2 pb-1 small message-body message-body-sender'>
+                                                        <p className='mb-1'>
+                                                            {replyTo.message}
+                                                        </p>
+                                                        <div className='d-flex align-items-center justify-content-end message-footer'>
+                                                            <span className='fs-80'>{getDateHoursMinutes(replyTo.createdAt)}</span>
+                                                        </div>
+                                                    </div>
+                                                    {replyTo.replied && replyTo.reply &&
+                                                        <>
+                                                            {
+                                                                replyTo.createdAt !== replyTo.updatedAt &&
+                                                                <div className='w-fit mx-auto mb-4 px-3 badge bg-gray-600 fw-normal fs-65 rounded-pill'>
+                                                                    {formatDate(replyTo.updatedAt, { todayKeyword: true })}
+                                                                </div>
+
+                                                            }
+                                                            <div className='position-relative ms-auto me-2 mb-4 p-2 pb-1 small message-body message-body-responder'>
+                                                                <p className='mb-1'>
+                                                                    {replyTo.reply}
+                                                                </p>
+                                                                <div className='d-flex align-items-center justify-content-end gap-2 message-footer'>
+                                                                    <span className='fs-80'>{getDateHoursMinutes(replyTo.updatedAt)}</span> <Check />
+                                                                </div>
+                                                            </div>
+
+                                                        </>
                                                     }
-                                                </select>
+                                                </div>
+
+                                                {/* Reply space */}
+                                                {!replyTo.replied ?
+                                                    <div className='p-2 mt-auto' style={{ bottom: 0 }}>
+                                                        <textarea id="messageReplyInput" name="MessageReply" className="form-control bg-gray-400 rounded-0" cols="30" rows="5" placeholder="Enter a reply message" required value={replyMessage} onChange={e => { setReplyMessage(e.target.value) }}></textarea>
+                                                        <button
+                                                            type="submit"
+                                                            className="btn btn-sm btn-secondary flex-center w-100 py-3 px-4 fw-bold rounded-0 clickDown"
+                                                            id="sendReplyBtn"
+                                                            onClick={(e) => !sendingReply && handleMessageReply(e, replyTo)}
+                                                            disabled={sendingReply} // Optionally, disable button when sending
+                                                        >
+                                                            {!sendingReply ?
+                                                                <>Reply <PaperPlaneRight size={18} weight='duotone' className='ms-2' /></>
+                                                                : <>Replying <span className="spinner-grow spinner-grow-sm ms-2"></span></>
+                                                            }
+                                                        </button>
+                                                    </div>
+                                                    :
+                                                    <div className="col-sm-8 col-md-6 col-lg-5 col-xl-4 mx-auto mt-auto mb-5 p-3 rounded">
+                                                        <CheckCircle size={40} weight='fill' className="w-4rem h-4rem d-block mx-auto mb-2 text-success" />
+                                                        <p className="text-center text-gray-800 fw-bold small">Message replied.</p>
+                                                        <button className="btn btn-sm btn-outline-dark d-block mx-auto px-3 rounded-pill" onClick={() => setShowContactUsMessage(false)}>
+                                                            OK
+                                                        </button>
+                                                    </div>
+                                                }
                                             </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="payment" className="form-label">Payment method</label>
-                                            <select id="payment" name="payment" className="form-select"
-                                                defaultValue=""
-                                                required>
-                                                <option value="" disabled className='p-2 px-3 small text-gray-500'>Select method</option>
-                                                {aboutProperties.paymentMethods
-                                                    .map((val, index) => (
-                                                        <option key={index} value={val} className='p-2 px-3 small'>
-                                                            {val}
-                                                        </option>
-                                                    ))
-                                                }
-                                            </select>
-                                        </div>
-                                        {(newPropertyType === "House" || newPropertyType === "Apartment") && (
-                                            <>
-                                                <div className="row">
-                                                    <div className="col-md-4 mb-3">
-                                                        <label htmlFor="bedrooms" className="form-label">Bedrooms</label>
-                                                        <input type="number" id="bedrooms" name="bedrooms" className="form-control" placeholder="N° of bedrooms" />
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <label htmlFor="bathrooms" className="form-label">Bathrooms</label>
-                                                        <input type="number" id="bathrooms" name="bathrooms" className="form-control" placeholder="N° of bathrooms" />
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <label htmlFor="kitchens" className="form-label">Kitchens</label>
-                                                        <input type="number" id="kitchens" name="kitchens" className="form-control" placeholder="N° of kitchens" />
-                                                    </div>
-                                                </div>
-                                                <div className="mb-3">
-                                                    <label htmlFor="garages" className="form-label">Garages</label>
-                                                    <input type="number" id="garages" name="garages" className="form-control" placeholder="N° of garages" />
-                                                </div>
-                                            </>
-                                        )}
-                                        <div className="mb-3">
-                                            <label htmlFor="area" className="form-label">Area (sq. meters)</label>
-                                            <input type="text" id="area" name="area" className="form-control" placeholder="Enter the area" />
-                                        </div>
-                                        {newPropertyType !== "Land Plot" && (
-                                            <>
-                                                <div className="mb-3">
-                                                    <label htmlFor="furnished" className="form-label">Furnished</label>
-                                                    <select id="furnished" name="furnished" className="form-select">
-                                                        <option value="1" className='small'>Furnished</option>
-                                                        <option value="0" className='small'>Not Furnished</option>
-                                                    </select>
-                                                </div>
-                                            </>
-                                        )}
-                                        <div className="mb-3">
-                                            <label htmlFor="featured" className="form-label">Featured/Pinned</label>
-                                            <select id="featured" name="featured" className="form-select" defaultValue={0}>
-                                                <option value="0" className='small'>Not Featured</option>
-                                                <option value="1" className='small'>Featured</option>
-                                            </select>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="privateInfo" className="form-label">Private info (optional)</label>
-                                            <textarea rows={5} id="privateInfo" name="privateInfo" className="form-control" placeholder="Enter information to be seen only by you"></textarea>
-                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
 
-                                        {/* Add record */}
-                                        <div className='mb-3 p-3 bg-primary-subtle border-start border-end border-2 border-primary'>
+                        {/* Fixed components */}
+
+                        {/* Property preview card */}
+                        <BottomFixedCard
+                            show={showSelectedPropertyInfo}
+                            content={[
+                                <PropertyPreview
+                                    setDontCloseCard={setDontCloseCard}
+                                    setRefreshProperties={setRefreshProperties}
+                                />
+                            ]}
+                            blurBg
+                            // closeButton={<X size={35} weight='bold' className='p-2' />}
+                            closeButton
+                            onClose={() => setShowSelectedPropertyInfo(false)}
+                            className="pb-3"
+                            avoidCloseReasons={dontCloseCard}
+                        />
+
+                        {/* Subscriber preview card */}
+                        <BottomFixedCard
+                            show={showSelectedSubscriberInfo}
+                            content={[
+                                <SubscriberPreview
+                                    setRefreshSubscribers={setRefreshSubscribers}
+                                />
+                            ]}
+                            blurBg
+                            onClose={() => setShowSelectedSubscriberInfo(false)}
+                            className="pb-3"
+                        />
+
+                        {/* Add Property Form */}
+                        {showCreatePropertyForm &&
+                            <>
+                                <div className='position-fixed fixed-top inset-0 bg-black2 py-3 inx-high add-property-form'>
+                                    <div className="container col-md-8 col-lg-7 col-xl-6 peak-borders-b overflow-auto" style={{ animation: "zoomInBack .2s 1", maxHeight: '100%' }}>
+                                        <div className="container h-100 bg-light text-gray-700 px-3">
+                                            <h6 className="sticky-top flex-align-center justify-content-between mb-0 pt-3 pb-2 bg-light text-gray-600 border-bottom text-uppercase">
+                                                <div className='flex-align-center'>
+                                                    <RowsPlusBottom weight='fill' className="me-1" />
+                                                    <span style={{ lineHeight: 1 }}>Add a new property</span>
+                                                </div>
+                                                <div title="Cancel" onClick={() => { setShowCreatePropertyForm(false) }}>
+                                                    <X size={25} className='ptr' />
+                                                </div>
+                                            </h6>
+
+                                            {/* Type selection */}
                                             <div className="my-2 text-primary smaller grid-center">
-                                                <p className='mb-0 text-center fw-bold smaller'>Next steps</p>
+                                                <p className='mb-0 text-center fw-bold smaller'>Select property type</p>
                                                 <CaretDown />
                                             </div>
-                                            <div className="mb-4 form-text text-gray-700">
-                                                Add the property now and complete the details later (e.g., images). <b>Note: At least 5 images are required for listing visibility</b>.
-                                            </div>
-                                            <button type="submit" className="btn btn-sm btn-primary flex-center w-100 mt-3 py-2 px-4 rounded-pill clickDown" id="addPropertyBtn"
-                                            >
-                                                {!isWaitingAdminEditAction ?
-                                                    <>Add Property <Plus size={18} className='ms-2' /></>
-                                                    : <>Working <span className="spinner-grow spinner-grow-sm ms-2"></span></>
+                                            <ul className='d-flex flex-wrap justify-content-lg-center gap-1 mb-4 p-2 bg-primary-subtle border-start border-end border-2 border-primary fw-bold text-center text-balance'>
+                                                {aboutProperties.allTypes
+                                                    .sort((a, b) =>
+                                                        a.localeCompare(b)
+                                                    )
+                                                    .map((val, index) => (
+                                                        <li key={index} className={`btn btn-sm ${newPropertyType === val ? 'btn-primary' : ''} px-3 py-1 rounded-pill smaller ptr clickDown`}
+                                                            onClick={() => setNewPropertyType(val)}>
+                                                            {val}
+                                                        </li>
+                                                    ))
                                                 }
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                }
+                                            </ul>
+                                            <div className="my-2 text-primary smaller grid-center">
+                                                <p className='mb-0 text-center fw-bold smaller'>Add details</p>
+                                                <CaretDown />
+                                            </div>
 
-                {/* Close Property Form */}
-                {showClosePropertyForm &&
-                    <>
-                        <div className='position-fixed fixed-top inset-0 bg-black2 py-5 inx-high close-property-form'>
-                            <div className="container col-md-8 col-lg-7 col-xl-6 peak-borders-b overflow-auto" style={{ animation: "zoomInBack .2s 1", maxHeight: '100%' }}>
-                                <div className="container h-100 bg-light text-gray-700 px-3">
-                                    <h6 className="sticky-top flex-align-center justify-content-between mb-0 pt-3 pb-2 bg-light text-gray-600 border-bottom text-uppercase">
-                                        <div className='flex-align-center'>
-                                            <SealCheck weight="fill" className="me-1" />
-                                            <span style={{ lineHeight: 1 }}>Close a property</span>
+                                            {/* The form */}
+                                            <form onSubmit={(e) => handleCreateProperty(e)} className="px-sm-2 pb-3">
+                                                <div className="mb-4 form-text text-gray-600">
+                                                    Add the main details for the <span className='text-lowercase'>{newPropertyType}</span> property. <b>Feel free to skip</b> fields that are not required or unavailable.
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="name" className="form-label" required>Property Name</label>
+                                                    <input type="text" id="name" name="name" className="form-control" required placeholder="Enter name" />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="location" className="form-label" required>Location</label>
+                                                    <input type="text" id="location" name="location" className="form-control" placeholder="Eg: Kiyovu - Kigali, or KG Ave 23 Kicukiro" />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="category" className="form-label">Category</label>
+                                                    <select id="category" name="category" className="form-select"
+                                                        defaultValue={aboutProperties.allCategories[0]}
+                                                        required>
+                                                        {aboutProperties.allCategories
+                                                            .map((val, index) => (
+                                                                <option key={index} value={val} className='p-2 px-3 small'>
+                                                                    {val}
+                                                                </option>
+                                                            ))
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="about" className="form-label" required>About the Property</label>
+                                                    <textarea rows={5} id="about" name="about" className="form-control" placeholder="Provide a brief description"></textarea>
+                                                </div>
+                                                <div className="d-flex justify-content-between gap-3">
+                                                    <div className="col-7 col-sm mb-3">
+                                                        <label htmlFor="price" className="form-label" required>Price</label>
+                                                        <input type="number" id="price" name="price" className="form-control" required placeholder="Enter the price" />
+                                                    </div>
+                                                    <div className="col-4 col-sm mb-3">
+                                                        <label htmlFor="currency" className="form-label" required>Currency</label>
+                                                        <select id="currency" name="currency" className="form-select"
+                                                            defaultValue={aboutProperties.currencySupported[0]}
+                                                            required>
+                                                            {aboutProperties.currencySupported
+                                                                .map((val, index) => (
+                                                                    <option key={index} value={val} className='p-2 px-3 small'>
+                                                                        {val}
+                                                                    </option>
+                                                                ))
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="payment" className="form-label">Payment method</label>
+                                                    <select id="payment" name="payment" className="form-select"
+                                                        defaultValue=""
+                                                        required>
+                                                        <option value="" disabled className='p-2 px-3 small text-gray-500'>Select method</option>
+                                                        {aboutProperties.paymentMethods
+                                                            .map((val, index) => (
+                                                                <option key={index} value={val} className='p-2 px-3 small'>
+                                                                    {val}
+                                                                </option>
+                                                            ))
+                                                        }
+                                                    </select>
+                                                </div>
+                                                {(newPropertyType === "House" || newPropertyType === "Apartment") && (
+                                                    <>
+                                                        <div className="row">
+                                                            <div className="col-md-4 mb-3">
+                                                                <label htmlFor="bedrooms" className="form-label">Bedrooms</label>
+                                                                <input type="number" id="bedrooms" name="bedrooms" className="form-control" placeholder="N° of bedrooms" />
+                                                            </div>
+                                                            <div className="col-md-4 mb-3">
+                                                                <label htmlFor="bathrooms" className="form-label">Bathrooms</label>
+                                                                <input type="number" id="bathrooms" name="bathrooms" className="form-control" placeholder="N° of bathrooms" />
+                                                            </div>
+                                                            <div className="col-md-4 mb-3">
+                                                                <label htmlFor="kitchens" className="form-label">Kitchens</label>
+                                                                <input type="number" id="kitchens" name="kitchens" className="form-control" placeholder="N° of kitchens" />
+                                                            </div>
+                                                        </div>
+                                                        <div className="mb-3">
+                                                            <label htmlFor="garages" className="form-label">Garages</label>
+                                                            <input type="number" id="garages" name="garages" className="form-control" placeholder="N° of garages" />
+                                                        </div>
+                                                    </>
+                                                )}
+                                                <div className="mb-3">
+                                                    <label htmlFor="area" className="form-label">Area (sq. meters)</label>
+                                                    <input type="text" id="area" name="area" className="form-control" placeholder="Enter the area" />
+                                                </div>
+                                                {newPropertyType !== "Land Plot" && (
+                                                    <>
+                                                        <div className="mb-3">
+                                                            <label htmlFor="furnished" className="form-label">Furnished</label>
+                                                            <select id="furnished" name="furnished" className="form-select">
+                                                                <option value="1" className='small'>Furnished</option>
+                                                                <option value="0" className='small'>Not Furnished</option>
+                                                            </select>
+                                                        </div>
+                                                    </>
+                                                )}
+                                                <div className="mb-3">
+                                                    <label htmlFor="featured" className="form-label">Featured/Pinned</label>
+                                                    <select id="featured" name="featured" className="form-select" defaultValue={0}>
+                                                        <option value="0" className='small'>Not Featured</option>
+                                                        <option value="1" className='small'>Featured</option>
+                                                    </select>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="privateInfo" className="form-label">Private info (optional)</label>
+                                                    <textarea rows={5} id="privateInfo" name="privateInfo" className="form-control" placeholder="Enter information to be seen only by you"></textarea>
+                                                </div>
+
+                                                {/* Add record */}
+                                                <div className='mb-3 p-3 bg-primary-subtle border-start border-end border-2 border-primary'>
+                                                    <div className="my-2 text-primary smaller grid-center">
+                                                        <p className='mb-0 text-center fw-bold smaller'>Next steps</p>
+                                                        <CaretDown />
+                                                    </div>
+                                                    <div className="mb-4 form-text text-gray-700">
+                                                        Add the property now and complete the details later (e.g., images). <b>Note: At least 5 images are required for listing visibility</b>.
+                                                    </div>
+                                                    <button type="submit" className="btn btn-sm btn-primary flex-center w-100 mt-3 py-2 px-4 rounded-pill clickDown" id="addPropertyBtn"
+                                                    >
+                                                        {!isWaitingAdminEditAction ?
+                                                            <>Add Property <Plus size={18} className='ms-2' /></>
+                                                            : <>Working <span className="spinner-grow spinner-grow-sm ms-2"></span></>
+                                                        }
+                                                    </button>
+                                                </div>
+                                            </form>
                                         </div>
-                                        <div title="Cancel" onClick={() => { activeSection === 'properties' && setShowSelectedPropertyInfo(true); setShowClosePropertyForm(false) }}>
-                                            <X size={25} className='ptr' />
-                                        </div>
-                                    </h6>
-                                    <div className='h6 my-4 px-2 border-start border-end border-2 border-secondary fw-bold text-center text-balance'>{selectedProperty.name}</div>
-                                    <p className="smaller text-gray-700">
-                                        Marking this property as <strong>closed</strong> will restrict all future activities related to it, including reservations and inquiries from clients and site visitors.
-                                        <strong className="text-danger"> This action is permanent and cannot be undone.</strong>
-                                    </p>
-                                    {/* Toggle between email selection modes */}
-                                    <div className="d-flex justify-content-center my-4">
-                                        {selectedProperty.booked && (
-                                            <button
-                                                type="button"
-                                                className={`btn btn-sm ${closeBookedProperty ? 'btn-secondary' : 'btn-outline-secondary'} col-6 flex-center px-3 rounded-0`}
-                                                onClick={() => setCloseBookedProperty(true)}
-                                            >
-                                                Reserved email
-                                            </button>
-                                        )}
-                                        <button
-                                            type="button"
-                                            className={`btn btn-sm ${!closeBookedProperty ? 'btn-secondary' : 'btn-outline-secondary'} col-6 flex-center px-3 rounded-0`}
-                                            onClick={() => setCloseBookedProperty(false)}
-                                        >
-                                            Type email
-                                        </button>
                                     </div>
-                                    {/* Conditional Rendering Based on Email Selection Mode */}
-                                    {closeBookedProperty ? (
-                                        <>
-                                            {/* Select Dropdown for Reserved Emails */}
-                                            <label htmlFor="reservedEmail" className="form-label small">
-                                                Select closer email
-                                            </label>
-                                            <select
-                                                id="reservedEmail"
-                                                className="form-select mb-3"
-                                                value={closePropertyEmail}
-                                                onChange={(e) => setClosePropertyEmail(e.target.value)}
-                                            >
-                                                <option value="" disabled>
-                                                    Select email...
-                                                </option>
-                                                {JSON.parse(selectedProperty.bookedBy).map((email) => (
-                                                    <option key={email} value={email}>
-                                                        {email}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </>
-                                    ) : (
-                                        <>
-                                            {/* Manual Email Input */}
-                                            <label htmlFor="manualEmail" className="form-label small">
-                                                Enter closer email
-                                            </label>
-                                            <input
-                                                id="manualEmail"
-                                                type="email"
-                                                className="form-control mb-3"
-                                                placeholder="Enter email address"
-                                                value={closePropertyEmail}
-                                                onChange={(e) => setClosePropertyEmail(e.target.value)}
-                                            />
-                                        </>
-                                    )}
-                                    {/* Property cover */}
-                                    <img src={selectedProperty.cover} alt="Property cover" className='h-15vh object-fit-cover my-3 peak-borders-t' />
-                                    {/* Form Action Buttons */}
-                                    <div className="modal-footer justify-content-around px-2 px-sm-3" style={{ translate: '0 -75%' }}>
-                                        <button
-                                            type="button"
-                                            className={`col-sm-5 btn btn-light text-secondary rounded-0 border-0 ${isWaitingAdminEditAction ? 'opacity-25' : 'opacity-75'} clickDown`}
-                                            disabled={isWaitingAdminEditAction}
-                                            onClick={() => setShowClosePropertyForm(false)}
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`col-sm-5 btn btn-dark flex-center ms-auto px-3 rounded-0 clickDown`}
-                                            onClick={() => closeProperty(closePropertyEmail)}
-                                            disabled={isWaitingAdminEditAction || !closePropertyEmail}
-                                        >
-                                            {!isWaitingAdminEditAction ? (
+                                </div>
+                            </>
+                        }
+
+                        {/* Close Property Form */}
+                        {showClosePropertyForm &&
+                            <>
+                                <div className='position-fixed fixed-top inset-0 bg-black2 py-5 inx-high close-property-form'>
+                                    <div className="container col-md-8 col-lg-7 col-xl-6 peak-borders-b overflow-auto" style={{ animation: "zoomInBack .2s 1", maxHeight: '100%' }}>
+                                        <div className="container h-100 bg-light text-gray-700 px-3">
+                                            <h6 className="sticky-top flex-align-center justify-content-between mb-0 pt-3 pb-2 bg-light text-gray-600 border-bottom text-uppercase">
+                                                <div className='flex-align-center'>
+                                                    <SealCheck weight="fill" className="me-1" />
+                                                    <span style={{ lineHeight: 1 }}>Close a property</span>
+                                                </div>
+                                                <div title="Cancel" onClick={() => { activeSection === 'properties' && setShowSelectedPropertyInfo(true); setShowClosePropertyForm(false) }}>
+                                                    <X size={25} className='ptr' />
+                                                </div>
+                                            </h6>
+                                            <div className='h6 my-4 px-2 border-start border-end border-2 border-secondary fw-bold text-center text-balance'>{selectedProperty.name}</div>
+                                            <p className="smaller text-gray-700">
+                                                Marking this property as <strong>closed</strong> will restrict all future activities related to it, including reservations and inquiries from clients and site visitors.
+                                                <strong className="text-danger"> This action is permanent and cannot be undone.</strong>
+                                            </p>
+                                            {/* Toggle between email selection modes */}
+                                            <div className="d-flex justify-content-center my-4">
+                                                {selectedProperty.booked && (
+                                                    <button
+                                                        type="button"
+                                                        className={`btn btn-sm ${closeBookedProperty ? 'btn-secondary' : 'btn-outline-secondary'} col-6 flex-center px-3 rounded-0`}
+                                                        onClick={() => setCloseBookedProperty(true)}
+                                                    >
+                                                        Reserved email
+                                                    </button>
+                                                )}
+                                                <button
+                                                    type="button"
+                                                    className={`btn btn-sm ${!closeBookedProperty ? 'btn-secondary' : 'btn-outline-secondary'} col-6 flex-center px-3 rounded-0`}
+                                                    onClick={() => setCloseBookedProperty(false)}
+                                                >
+                                                    Type email
+                                                </button>
+                                            </div>
+                                            {/* Conditional Rendering Based on Email Selection Mode */}
+                                            {closeBookedProperty ? (
                                                 <>
-                                                    Close property <SealCheck size={18} className="ms-2" />
+                                                    {/* Select Dropdown for Reserved Emails */}
+                                                    <label htmlFor="reservedEmail" className="form-label small">
+                                                        Select closer email
+                                                    </label>
+                                                    <select
+                                                        id="reservedEmail"
+                                                        className="form-select mb-3"
+                                                        value={closePropertyEmail}
+                                                        onChange={(e) => setClosePropertyEmail(e.target.value)}
+                                                    >
+                                                        <option value="" disabled>
+                                                            Select email...
+                                                        </option>
+                                                        {JSON.parse(selectedProperty.bookedBy).map((email) => (
+                                                            <option key={email} value={email}>
+                                                                {email}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                 </>
                                             ) : (
                                                 <>
-                                                    Working <span className="spinner-grow spinner-grow-sm ms-2"></span>
+                                                    {/* Manual Email Input */}
+                                                    <label htmlFor="manualEmail" className="form-label small">
+                                                        Enter closer email
+                                                    </label>
+                                                    <input
+                                                        id="manualEmail"
+                                                        type="email"
+                                                        className="form-control mb-3"
+                                                        placeholder="Enter email address"
+                                                        value={closePropertyEmail}
+                                                        onChange={(e) => setClosePropertyEmail(e.target.value)}
+                                                    />
                                                 </>
                                             )}
-                                        </button>
+                                            {/* Property cover */}
+                                            <img src={selectedProperty.cover} alt="Property cover" className='h-15vh object-fit-cover my-3 peak-borders-t' />
+                                            {/* Form Action Buttons */}
+                                            <div className="modal-footer justify-content-around px-2 px-sm-3" style={{ translate: '0 -75%' }}>
+                                                <button
+                                                    type="button"
+                                                    className={`col-sm-5 btn btn-light text-secondary rounded-0 border-0 ${isWaitingAdminEditAction ? 'opacity-25' : 'opacity-75'} clickDown`}
+                                                    disabled={isWaitingAdminEditAction}
+                                                    onClick={() => setShowClosePropertyForm(false)}
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className={`col-sm-5 btn btn-dark flex-center ms-auto px-3 rounded-0 clickDown`}
+                                                    onClick={() => closeProperty(closePropertyEmail)}
+                                                    disabled={isWaitingAdminEditAction || !closePropertyEmail}
+                                                >
+                                                    {!isWaitingAdminEditAction ? (
+                                                        <>
+                                                            Close property <SealCheck size={18} className="ms-2" />
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            Working <span className="spinner-grow spinner-grow-sm ms-2"></span>
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </>
-                }
-            </main>
+                            </>
+                        }
+                    </main>
+                </>
+            )}
         </>
     )
 }
