@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import './App.css';
 import Pages from './components/pages/Pages';
 import { SettingsProvider } from './components/SettingsProvider';
 import { AuthProvider } from './components/AuthProvider';
-import { BASE_URL } from './api/api';
+import { Axios } from './api/api';
 
 // Define and export PropertiesContext
 export const PropertiesContext = createContext();
@@ -17,13 +17,9 @@ function App() {
     const fetchProperties = async () => {
         try {
             setLoadingProperties(true);
-            const response = await fetch(`${BASE_URL}/properties`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
+            const response = await Axios.get(`/properties`);
             setPropertiesContext(
-                data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             );
             setErrorLoadingProperties(null);
         } catch (error) {
@@ -33,7 +29,7 @@ function App() {
             setLoadingProperties(false);
         }
     };
-
+    
     // Fetch properties
     useEffect(() => {
         fetchProperties();
