@@ -65,6 +65,7 @@
     ]
   },
   "devDependencies": {
-    "@types/jquery": "^3.5.30"
+    "@types/jquery": "^3.5.30",
+    "@babel/plugin-proposal-private-property-in-object": "^7.16.7"
   }
 }
