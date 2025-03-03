@@ -21,6 +21,7 @@ import Terms from "../terms/Terms";
 import Admin from "../admin/Admin";
 import Customer from "../user/Customer";
 import ProtectedRoute from "../ProtectedRoute";
+import PageNotFound from "../common/PageNotFound";
 
 const Pages = () => {
     // Get the current path
@@ -58,6 +59,8 @@ const Pages = () => {
                         <Customer />
                     </ProtectedRoute>
                 } />
+                {/* Not found redirect */}
+                <Route path="/*" element={<PageNotFound />} />
             </Routes>
             {/* Conditionally render the Footer */}
             {!isExcludedRoute && <Footer />}
