@@ -984,66 +984,6 @@ const Admin = () => {
         }
     };
 
-    // Add prop's map
-    const addPropertyMap = async () => {
-        // Check if embed link is provided
-        if (!promptInputValue.current.startsWith('<iframe ')
-            || (promptInputValue.current.startsWith('<iframe ') && !promptInputValue.current.endsWith('</iframe>'))
-        ) {
-            setTimeout(() => {
-                setPromptActionWaiting(false);
-            });
-            return toast({ message: 'Only embed link supported', type: 'gray-200' }); // Return if not
-        }
-
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/addMap`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mapUrl: promptInputValue.current })
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error adding the map');
-            }
-            const data = await response.json();
-            resetPrompt();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-            setPromptActionWaiting(false);
-        }
-    };
-
-    // Remove prop's map
-    const removePropertyMap = async () => {
-        try {
-            setIsWaitingAdminEditAction(true);
-            const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/removeMap`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Error removing the map');
-            }
-            const data = await response.json();
-            resetConfirmDialog();
-            fetchProperties();
-            toast({ message: data.message, type: 'dark' });
-        } catch (error) {
-            cError('Error:', error.message);
-            toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
-        } finally {
-            setIsWaitingAdminEditAction(false);
-        }
-    };
-
     // Close property
 
     const [showClosePropertyForm, setShowClosePropertyForm] = useState(false);
@@ -1125,7 +1065,7 @@ const Admin = () => {
     // Property preview
     const PropertyPreview = ({ setDontCloseCard, setRefreshProperties }) => {
         const { id, listed, cover, category, type, name, location, about, price, currency, payment,
-            bedrooms, bathrooms, garages, videoUrl, mapUrl, booked, bookedBy, closed,
+            bedrooms, bathrooms, garages, videoUrl, booked, bookedBy, closed,
             media, likes, featured } = selectedProperty;
 
         const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
@@ -1240,7 +1180,7 @@ const Admin = () => {
                     </div>
                     <div>
                         <div className='badge text-gray-700 flex-center d-flex fw-normal ptr'>
-                            <span>{media !== null ? propImages.length : 0} images {!isEligible ? ' (Not eligible)' : ''}</span> {videoUrl ? <span><Dot size={20} /> 1 video</span> : ''} {mapUrl ? <span><Dot size={20} /> Map</span> : ''}
+                            <span>{media !== null ? propImages.length : 0} images {!isEligible ? ' (Not eligible)' : ''}</span> {videoUrl ? <span><Dot size={20} /> 1 video</span> : ''}
                         </div>
                         {media !== null && (
                             <>
@@ -1459,40 +1399,6 @@ const Admin = () => {
                                                             message: (
                                                                 <>
                                                                     <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <strong>Current location: "{location}"</strong>
-                                                                    <p>
-                                                                        Enter new location for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''} <br />
-                                                                        {mapUrl ?
-                                                                            <small className='text-warning'>
-                                                                                You might also need to change the property's location map.
-                                                                            </small>
-                                                                            : ''
-                                                                        }
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'text',
-                                                            action: changePropertyLocation,
-                                                            placeholder: 'Enter new location',
-                                                        }
-                                                    )
-                                                }
-                                            }
-                                        >
-                                            <MapPinArea size={16} weight='fill' className='me-2 opacity-75' /> EDIT LOCATION
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                            onClick={
-                                                () => {
-                                                    setShowSelectedPropertyInfo(false);
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
                                                                     <strong>Current price: "{price.toLocaleString()} {currency}"</strong>
                                                                     <p>
                                                                         Enter new price for the property. {booked ? 'This change will be communicated to those who reserved the property.' : ''}
@@ -1650,46 +1556,6 @@ const Admin = () => {
                                             {!videoUrl ?
                                                 <>ADD VIDEO</>
                                                 : <>REMOVE VIDEO</>
-                                            }
-                                        </button>
-
-                                        <button type="button" className={`btn btn-sm btn-outline-${!mapUrl ? 'secondary' : 'danger'} border-${!mapUrl ? 'secondary' : 'danger'} border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown`}
-                                            onClick={() => {
-                                                setShowSelectedPropertyInfo(false);
-                                                if (mapUrl) {
-                                                    customConfirmDialog({
-                                                        message: (
-                                                            <>
-                                                                <h5 className="h6 border-bottom border-dark border-opacity-25 mb-3 pb-2">{name}</h5>
-                                                                <p>Remove location map from this property</p>
-                                                            </>
-                                                        ),
-                                                        type: 'warning',
-                                                        action: removePropertyMap,
-                                                    });
-                                                } else {
-                                                    customPrompt(
-                                                        {
-                                                            message: (
-                                                                <>
-                                                                    <h5 className='h6 border-bottom mb-3 pb-2'><CheckSquare size={25} weight='fill' className='opacity-50' /> {name}</h5>
-                                                                    <p>
-                                                                        Paste here a link for the property's location map.<br /><strong> Make sure to copy the embed link</strong> from Google Maps.
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            inputType: 'text',
-                                                            action: addPropertyMap,
-                                                            placeholder: 'Paste link',
-                                                        }
-                                                    )
-                                                }
-                                            }}
-                                        >
-                                            <MapTrifold size={16} weight='fill' className='me-2 opacity-75' />
-                                            {!mapUrl ?
-                                                <>ADD LOCATION MAP</>
-                                                : <>REMOVE LOCATION MAP</>
                                             }
                                         </button>
 

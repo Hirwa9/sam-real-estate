@@ -4,7 +4,7 @@ import './property.css';
 import { AuthContext } from '../AuthProvider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { formatBigCountNumbers, formatDate, shareProperty } from '../../scripts/myScripts';
-import { ArrowBendDoubleUpRight, ArrowClockwise, Bed, Building, Car, CaretRight, ChatText, Clock, CookingPot, DeviceMobileCamera, HashStraight, Heart, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo, X } from '@phosphor-icons/react';
+import { ArrowBendDoubleUpRight, Bed, Building, Car, CaretRight, ChatText, Clock, CookingPot, DeviceMobileCamera, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo } from '@phosphor-icons/react';
 // import Button from '@mui/material/Button';
 import PropertyMediaContainer from './PropertyMediaContainer';
 import WorkingHours from '../common/workinghours/WorkingHours';
@@ -134,7 +134,7 @@ const Property = () => {
     const {
         id, cover, category, type, name, location, about, price, currency,
         payment, area, volume, bedrooms, bathrooms, kitchens, garages,
-        videoUrl, mapUrl, booked, bookedBy, closed, media, likes, createdAt
+        videoUrl, booked, bookedBy, closed, media, likes, createdAt
     } = matchProperty || {};
 
     // Construct an array for gallery images
@@ -308,7 +308,7 @@ const Property = () => {
             {/* Content State */}
             {!loading && !error && (
                 <>
-                    <PropertyMediaContainer className="px-0" primaryImage={cover} media={JSON.parse(media)} video={!closed ? videoUrl : null} map={!closed ? mapUrl : null} />
+                    <PropertyMediaContainer className="px-0" primaryImage={cover} media={JSON.parse(media)} video={!closed ? videoUrl : null} />
 
                     {/* Login form */}
                     {showLogin && <LoginForm setShowLogin={setShowLogin} toggler={reservePropertyRef} />}
