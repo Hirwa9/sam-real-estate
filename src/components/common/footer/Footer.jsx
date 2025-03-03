@@ -70,7 +70,7 @@ function Footer() {
                 <div className="d-lg-flex container">
                     <div className="between-5 boxmb-lg-5 box">
                         <div className="logo">
-                            <img src="/images/logo.jpg" alt="" className='mb-3 rounded' />
+                            <img src="/images/logo.webp" alt="" className='mb-3 rounded' />
                             <h3 className="h2">
                                 Subscribe to our newsletter
                             </h3>
