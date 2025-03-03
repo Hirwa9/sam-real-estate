@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./propertyCard.css";
 import { PropertiesContext } from "../../App";
 import {
-    Heart, BuildingApartment, HouseLine, BuildingOffice, Bookmark,
+    BuildingApartment, HouseLine, BuildingOffice, Bookmark,
     ShareFat, MapPinArea, Mountains, Storefront, Car, Shower, Bed, CircleWavyCheck,
     CaretDown, ArrowClockwise, ArrowsLeftRight, CaretRight, Plus, CaretDoubleRight
 } from '@phosphor-icons/react';
