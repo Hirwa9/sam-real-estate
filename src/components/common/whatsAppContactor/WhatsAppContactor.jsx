@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './whatsAppContactor.css';
 
-import logo from "../../../components/images/logo.jpg";
+import logo from "../../../components/images/logo.webp";
 import { CaretDown, CaretUp, FacebookLogo, TwitterLogo, User, WhatsappLogo } from '@phosphor-icons/react';
 import SocialMediaIcons from '../SocialMediaIcons';
 
