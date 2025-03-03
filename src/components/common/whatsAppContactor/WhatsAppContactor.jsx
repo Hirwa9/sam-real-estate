@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './whatsAppContactor.css';
 
-import logo from "../../../components/images/logo.webp";
 import { CaretDown, CaretUp, FacebookLogo, TwitterLogo, User, WhatsappLogo } from '@phosphor-icons/react';
 import SocialMediaIcons from '../SocialMediaIcons';
 
@@ -56,7 +55,7 @@ const WhatsAppContactor = ({ show, className, toggler, onClose }) => {
                                 </div>
                             </div>
                             <div className='rounded-circle profile-photo'>
-                                <img src={logo} alt="bg-image" className="dim-100 object-fit-cover rad-inherit bg-gray-400" />
+                                <img src='/images/logo.webp' alt="bg-image" className="dim-100 object-fit-cover rad-inherit bg-gray-400" />
                             </div>
                         </div>
                         <div className="p-2 pt-5 bg-light">
