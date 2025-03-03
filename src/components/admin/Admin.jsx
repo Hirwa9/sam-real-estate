@@ -4020,7 +4020,9 @@ const Admin = () => {
 
                                         <hr className={`d-md-none`} />
 
-                                        <li className={`nav-item mb-3 d-md-none`}>
+                                        <li className={`nav-item mb-3 d-md-none`}
+                                            onClick={() => { logout() }}
+                                        >
                                             <button className="nav-link w-100">
                                                 <SignOut size={20} weight='fill' className="me-2" /> Sign out
                                             </button>
