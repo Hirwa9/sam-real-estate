@@ -54,7 +54,6 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
         }
     };
 
-
     // Compare properties
     const [showPropComparison, setShowPropComparison] = useState(false);
 
@@ -146,36 +145,43 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                             return filters.every((filter) => !filter.isActive || filter.check());
                         };
 
-                        return applyCombinedFilters(val);
+                        return applyCombinedFilters(val); // Apply the combined filters
+                    }
+                    case "combinedSearchOptions": {
+                        const combinedFilter = filterValue;
+                        const applyCombinedFilters = (val) => {
+                            const filters = [
+                                {
+                                    isActive: combinedFilter.location !== '',
+                                    check: (val) => {
+                                        const searchString = combinedFilter.location.toLowerCase();
+                                        return val.name.toLowerCase().includes(searchString) ||
+                                            val.location.toLowerCase().includes(searchString) ||
+                                            val.about.toLowerCase().includes(searchString)
+                                    },
+                                },
+                                {
+                                    isActive: combinedFilter.type !== '',
+                                    check: (val) => val.type.toLowerCase() === combinedFilter.type.toLowerCase(),
+                                },
+                                {
+                                    isActive: combinedFilter.price !== '',
+                                    check: (val) => {
+                                        const [minPrice, maxPrice] = combinedFilter.price.split('and').map(Number);
+                                        return val.price >= minPrice && val.price <= maxPrice;
+                                    },
+                                },
+                                {
+                                    isActive: combinedFilter.bedrooms !== '',
+                                    check: (val) => val.bedrooms === Number(combinedFilter.bedrooms),
+                                },
+                            ];
 
-                        // Without the helper function (applyCombinedFilters())
-                        // // All 3 filters
-                        // if (hasPriceRangeFilter && hasPropCategoryFilter && hasPropTypeFilter) {
-                        //     return (
-                        //         (val.price >= Number(filterValue.priceRange[0]) && val.price <= Number(filterValue.priceRange[1]))
-                        //         && val.category === filterValue.propCategorySubFilter
-                        //         && val.type === filterValue.propTypeSubFilter
-                        //     );
-                        // }
-                        // // 2 filters
-                        // if (hasPriceRangeFilter && hasPropCategoryFilter && !hasPropTypeFilter) {
-                        //     return (
-                        //         (val.price >= Number(filterValue.priceRange[0]) && val.price <= Number(filterValue.priceRange[1]))
-                        //         && val.category === filterValue.propCategorySubFilter
-                        //     );
-                        // }
-                        // if (hasPriceRangeFilter && !hasPropCategoryFilter && hasPropTypeFilter) {
-                        //     return (
-                        //         (val.price >= Number(filterValue.priceRange[0]) && val.price <= Number(filterValue.priceRange[1]))
-                        //         && val.type === filterValue.propTypeSubFilter
-                        //     );
-                        // }
-                        // if (!hasPriceRangeFilter && hasPropCategoryFilter && hasPropTypeFilter) {
-                        //     return (
-                        //         val.category === filterValue.propCategorySubFilter
-                        //         && val.type === filterValue.propTypeSubFilter
-                        //     );
-                        // }
+                            // Check if ALL ACTIVE FILTERS are valid for the current item (val)
+                            return filters.every((filter) => !filter.isActive || filter.check(val));
+                        }
+
+                        return applyCombinedFilters(val); // Apply the combined filters
                     }
                     default:
                         return val[filterOption] === filterValue;
