@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './properties.css';
 import { aboutProperties } from '../data/Data';
 import PageInfo from '../common/header/PageInfo';
@@ -32,6 +32,23 @@ const Properties = () => {
     const [filterValue, setFilterValue] = useState("all");
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const [filterOptions, setFilterOptions] = useState({
+        location: '',
+        type: '',
+        price: '',
+        bedrooms: ''
+    });
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        setFilterOptions({
+            location: searchParams.get('location') || '',
+            type: searchParams.get('type') || '',
+            price: searchParams.get('price') || '',
+            bedrooms: searchParams.get('bedrooms') || ''
+        });
+    }, [location.search]);
 
     const [minPriceInputValue, setMinPriceInputValue] = useState('');
     const [maxPriceInputValue, setMaxPriceInputValue] = useState('');
@@ -243,29 +260,6 @@ const Properties = () => {
         // Filter by parameter
         if (filterParameter) {
             if (filterParameter !== 'all') {
-                // switch (filterParameter) {
-                //     case "sale" || "rent":
-                //         setFilterOption('category');
-                //         if (filterParameter === 'sale') setFilterValue('For Sale')
-                //         else if (filterParameter === 'rent') setFilterValue('For Rent');
-                //         break;
-                //     case filterParameter.includes('search_query'):
-                //         setFilterOption('name');
-                //         setFilterValue(filterParameter.slice(filterParameter.indexOf('_') + 1));
-                //         break;
-                //     case filterParameter.includes('bedrooms_'):
-                //         setFilterOption('bedrooms');
-                //         setFilterValue(filterParameter.slice(filterParameter.indexOf('_') + 1));
-                //         break;
-                //     case filterParameter.includes('_unfurnished'):
-                //         setFilterOption('unfurnished');
-                //         break;
-                //     default:
-                //         setFilterOption('type');
-                //         setFilterValue(filterParameter);
-                //         break;
-                // }
-
                 if (filterParameter === 'sale' || filterParameter === 'rent') {
                     setFilterOption('category');
                     if (filterParameter === 'sale') setFilterValue('For Sale')
@@ -286,6 +280,9 @@ const Properties = () => {
                     setFilterOption('unfurnished');
                 } else if (filterParameter.includes('_furnished')) {
                     setFilterOption('furnished');
+                } else if (filterParameter.includes('search')) {
+                    setFilterOption('combinedSearchOptions');
+                    setFilterValue(filterOptions);
                 }
                 else {
                     setFilterOption('type');
@@ -293,7 +290,7 @@ const Properties = () => {
                 }
             }
         }
-    }, [filterParameter]);
+    }, [filterParameter, filterOptions]);
 
     // Filter by search bar
     const filterByName = (e) => {
