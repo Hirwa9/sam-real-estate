@@ -2957,7 +2957,7 @@ const Admin = () => {
                             </div>
                             <div className={`d-flex align-items-center w-fit text-nowrap ${showOnlyUnrepliedMessages ? 'bg-gray-700' : 'bg-gray-300'} rounded-3 px-2 py-1 small ptr`} onClick={() => setShowOnlyUnrepliedMessages(true)}
                             >
-                                <span className={`small d-flex align-items-center ${showOnlyUnrepliedMessages ? 'text-light' : 'text-gray-700'}`}><EnvelopeSimple className='me-1' /> Not replied</span>
+                                <span className={`small d-flex align-items-center ${showOnlyUnrepliedMessages ? 'text-light' : 'text-gray-700'}`}><EnvelopeSimple className='me-1' /> Unreplied</span>
                                 <span className={`badge w-fit ms-2 p-1 ${showOnlyUnrepliedMessages ? 'text-light border-light' : 'text-dark border-secondary'} border border-opacity-25 fw-normal`}>{notRepliedMessages.length}</span>
                             </div>
                             <div className={`d-flex align-items-center w-fit text-nowrap bg-gray-300 rounded-3 px-2 py-1 small ptr`} onClick={() => { fetchMessages(); setShowOnlyUnrepliedMessages(false) }}
