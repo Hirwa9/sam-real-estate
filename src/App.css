@@ -186,6 +186,14 @@ body {
 	}
 }
 
+.search-suggestions > li {
+	padding: .5rem 1rem;
+}
+
+.search-suggestions > li:not(:last-child) {
+	border-bottom: 1px solid var(--black4);
+}
+
 .review-item::before {
 	content: '';
 	position: absolute;
