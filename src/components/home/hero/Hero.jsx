@@ -103,7 +103,6 @@ const Hero = () => {
                         subtitleClassName="w-fit mx-auto px-4 px-md-5 py-3 bg-bodi"
                     />
                     <div className="mb-3 px-2 pt-3 bg-bodi blur-bg-2px text-gray-700 property-filter">
-
                         <div className="d-flex flex-column flex-xl-row">
                             <div className="col-xl-10 d-md-flex flex-wrap align-items-center justify-content-between">
                                 <div className="d-grid p-2 col-md-6 box">
