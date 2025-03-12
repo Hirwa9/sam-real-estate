@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./hero.css";
 import Heading from "../../common/Heading";
@@ -6,6 +6,9 @@ import { aboutProperties } from "../../data/Data";
 import { Bed, Building, CaretDoubleRight, CaretDown, CaretRight, MapPinArea, MoneyWavy } from "@phosphor-icons/react";
 import useCustomDialogs from "../../hooks/useCustomDialogs";
 import MyToast from "../../common/Toast";
+import SearchInput from 'react-search-input';
+import { PropertiesContext } from "../../../App";
+import SearchSuggestions from "../../common/SearchSuggestions";
 
 const Hero = () => {
     // Custom hooks
@@ -21,9 +24,20 @@ const Hero = () => {
     const searcherRef = useRef();
     const navigate = useNavigate();
 
+    /**
+     * Data
+    */
+
+    // __Properties
+    const { propertiesContext, loadingProperties, errorLoadingProperties } = useContext(PropertiesContext);
+
+    const propertyLocations = useMemo(() => (
+        propertiesContext.map(property => property?.location)
+    ), [propertiesContext]);
+
     // All input values
     const [formData, setFormData] = useState({
-        propertySearcher: '',
+        searchValue: '',
         propertyType: '',
         priceRange: '',
         bedrooms: ''
@@ -38,16 +52,34 @@ const Hero = () => {
         });
     };
 
+    // Show location suggestions
+    const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
+    const [matchLocations, setMatchLocations] = useState([]);
+
+    useEffect(() => {
+        if (formData.searchValue !== '') {
+            const uniqueLocations = new Set();
+            setMatchLocations(propertyLocations.filter(location => {
+                const isMatch = location.toLowerCase().includes(formData.searchValue.toLowerCase());
+                if (isMatch && !uniqueLocations.has(location.toLowerCase())) {
+                    uniqueLocations.add(location.toLowerCase());
+                    return true;
+                }
+                return false;
+            }));
+        }
+    }, [propertyLocations, formData.searchValue]);
+
     // Handle search
     const handleSearch = () => {
-        const { propertySearcher, propertyType, priceRange, bedrooms } = formData;
+        const { searchValue, propertyType, priceRange, bedrooms } = formData;
         // Check for at least one valid search criteria
-        if (!propertySearcher && !propertyType && !priceRange && !bedrooms) {
+        if (!searchValue && !propertyType && !priceRange && !bedrooms) {
             return toast({ message: 'Please fill in at least one search criteria', type: 'gray-700' });
         }
         // Navigate to properties page with search query
         const query = new URLSearchParams({
-            location: propertySearcher,
+            location: searchValue,
             type: propertyType,
             price: priceRange,
             bedrooms: bedrooms
@@ -74,7 +106,22 @@ const Hero = () => {
                             <div className="col-xl-10 d-md-flex flex-wrap align-items-center justify-content-between">
                                 <div className="d-grid p-2 col-md-6 box">
                                     <span className="flex-align-center mb-2 fw-bold small"><MapPinArea weight='bold' className='me-2 opacity-50' />Location</span>
-                                    <input ref={searcherRef} type="text" name="propertySearcher" id="" placeholder="City / Street" className="p-2 border border-0 w-100" value={formData.propertySearcher} onChange={handleChange} onKeyUp={(e) => { (e.key === "Enter") && handleSearch() }} />
+                                    <div className="position-relative">
+                                        <SearchInput
+                                            className="p-2 border border-0 w-100 search-input"
+                                            placeholder="City / Street"
+                                            value={formData.searchValue}
+                                            onChange={(val) => {
+                                                setFormData({ ...formData, searchValue: val });
+                                                setShowLocationSuggestions(true);
+                                            }}
+                                        />
+                                        {!loadingProperties && !errorLoadingProperties &&
+                                            (formData.searchValue !== '' && matchLocations.length !== 0 && showLocationSuggestions) && (
+                                                <SearchSuggestions array={matchLocations} setData={setFormData} data={formData} callBack={() => setShowLocationSuggestions(false)} />
+                                            )
+                                        }
+                                    </div>
                                 </div>
                                 <div className="d-grid p-2 col-md-6 box">
                                     <span className="flex-align-center mb-2 fw-bold small"><Building weight='bold' className='me-2 opacity-50' /> Property type</span>
