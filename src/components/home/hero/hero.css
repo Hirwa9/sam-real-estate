@@ -19,8 +19,7 @@
 
 .hero p {
     clip-path: polygon(1rem 0, 100% 0, 100% calc(100% - 1rem), calc(100% - 1rem) 100%, 0 100%, 0 1rem);
-    /* border-radius: 1.5rem 0 1.5rem 0; */
-    animation: bounceElem 1s 1;
+    animation: flyInBottom .6s 1;
 }
 
 .hero .container {
