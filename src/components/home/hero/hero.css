@@ -44,6 +44,7 @@
 }
 
 .hero input,
+.hero .search-input,
 .hero select,
 .hero .confirm-search {
     border-radius: 100vw;
@@ -52,6 +53,19 @@
     color: var(--bs-gray-600);
     font-size: small;
     padding-inline: 1rem !important;
+}
+
+.hero .search-input {
+    padding: 0 !important;
+    border: none !important;
+}
+
+.hero .search-input input {
+    width: 100%;
+    border: none;
+    padding-block: .5rem;
+    padding-inline: 1rem;
+    background-color: transparent;
 }
 
 .hero .confirm-search {
