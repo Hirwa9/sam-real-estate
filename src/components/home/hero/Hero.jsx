@@ -32,7 +32,9 @@ const Hero = () => {
     const { propertiesContext, loadingProperties, errorLoadingProperties } = useContext(PropertiesContext);
 
     const propertyLocations = useMemo(() => (
-        propertiesContext.map(property => property?.location)
+        propertiesContext
+            .filter(property => property?.listed)
+            .map(property => property?.location)
     ), [propertiesContext]);
 
     // All input values
