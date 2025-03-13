@@ -77,7 +77,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                     </>
                 ),
                 action: () => { setShowPropComparison(true); resetConfirmDialog() },
-                actionText: <>Compare <CaretRight /> </>,
+                actionText: <>Compare <CaretRight /></>,
                 closeText: 'Later',
             });
         }
