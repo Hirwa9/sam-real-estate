@@ -1850,7 +1850,7 @@ const Customer = () => {
                         <div className="row">
                             {/* Sidebar Navigation */}
                             <nav className={`col-12 col-md-3 col-xl-2 d-md-block border-end overflow-y-auto sidebar ${sideNavbarIsFloated ? 'floated' : ''}`} id="sidebarMenu">
-                                <div ref={sideNavbarRef} className="position-sticky top-0 h-fit col-8 col-sm-5 col-md-12 pt-3 pt-md-2 pb-3 peak-borders-tb">
+                                <div ref={sideNavbarRef} className="position-sticky top-0 h-fit col-8 col-sm-5 col-md-12 py-4 pt-md-2 peak-borders-tb">
                                     <ul className="nav flex-column">
                                         <li className={`nav-item ${activeSection === 'dashboard' ? 'active' : ''} mb-3`}
                                             onClick={() => { setActiveSection("dashboard"); hideSideNavbar() }}
@@ -1888,7 +1888,15 @@ const Customer = () => {
                                             </button>
                                         </li> */}
 
-                                        <hr className={`d-md-none`} />
+                                        <hr />
+
+                                        <li className={`nav-item mb-3`}
+                                            onClick={() => navigate('/properties/all')}
+                                        >
+                                            <button className="nav-link w-100">
+                                                <Building size={20} weight='fill' className="me-2" /> Properties
+                                            </button>
+                                        </li>
 
                                         <li className={`nav-item mb-3 d-md-none`}
                                             onClick={() => logout()}
