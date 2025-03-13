@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { Axios, BASE_URL } from '../api/api';
+import { Axios } from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import LoadingBubbles from './common/LoadingBubbles';
-import { Building, CaretDown } from '@phosphor-icons/react';
+import { Building, CaretDown, SmileySticker } from '@phosphor-icons/react';
 import useCustomDialogs from './hooks/useCustomDialogs';
 import MyToast from './common/Toast';
 
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     // Login function
-    const login = async (email, password) => {
+    const login = async (email, password, params) => {
         try {
             const response = await Axios.post('/login', { email, password }, { withCredentials: true });
             setUser(response.data.user);
@@ -71,10 +71,20 @@ export const AuthProvider = ({ children }) => {
 
             // Redirect based on user type
             const user = response.data.user;
-            if (user.type === "admin") {
-                navigate("/admin");
-            } else if (user.type === "user") {
-                navigate(`/user/${user.id}`);
+            if (params && params.redirect) {
+                if (user.type === "admin") {
+                    navigate("/admin");
+                } else if (user.type === "user") {
+                    navigate(`/user/${user.id}`);
+                }
+            } else {
+                toast({
+                    message:
+                        <>
+                            <div><SmileySticker size={20} weight='fill' className='me-1' /> Welcome back {user.name}. You're signed in.</div>
+                        </>,
+                    type: 'dark'
+                });
             }
         } catch (error) {
             const errorMessage = error.response?.data?.error || error.response?.data?.message || "Login failed";
