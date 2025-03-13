@@ -38,7 +38,7 @@ header .nav.navbar-nav li {
 }
 
 #smNavbar ul li.active a {
-    padding-left: .5rem;
+    padding-left: 1rem;
 }
 
 #smNavbar ul li.active::after {
@@ -46,7 +46,6 @@ header .nav.navbar-nav li {
     position: absolute;
     top: .5rem;
     bottom: .5rem;
-    left: .5rem;
     width: .35rem;
     border-radius: 0 .5rem .5rem 0;
     background-color: var(--primaryColor);
