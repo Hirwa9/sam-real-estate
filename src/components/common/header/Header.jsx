@@ -8,7 +8,7 @@ import {
 import { AuthContext } from "../../AuthProvider";
 import { developerWebsiteLink, nav } from "../../data/Data";
 import SocialMediaIcons from '../SocialMediaIcons';
-import { ArrowsLeftRight, CaretRight, ChartPieSlice, City, Code, ListStar, SignOut, User } from "@phosphor-icons/react";
+import { ArrowsLeftRight, CaretRight, ChartPie, ChartPieSlice, City, Code, ListStar, SignOut, User } from "@phosphor-icons/react";
 import BottomFixedCard from "../bottomFixedCard/BottomFixedCard";
 import ReviewForm from "../reviewForm/ReviewForm";
 import CompareProperties from "../compareProperties/CompareProperties";
@@ -236,9 +236,14 @@ const Header = () => {
                                 </button>
                             </div>
                             <ul className="list-unstyled mb-0 nav-links">
+                                {isAuthenticated && (
+                                    <li className={`nav-item mt-3 px-3 h-2_5rem text-uppercase clickDown`}>
+                                        <Link to={`${user.type === 'admin' ? '/admin' : `/user/${user.id}`}`}><ChartPie size={22} className="me-2 text-primaryColor" /> Dashboard</Link>
+                                    </li>
+                                )}
                                 {nav.map((list, index) => {
                                     return (
-                                        <li key={index} className={`nav-item px-3 h-3rem text-uppercase ${activeHeaderLink === list.path ? "active" : ""} ${((activeHeaderLink.includes('property/') || activeHeaderLink.includes('properties/')) && list.path.includes('properties/')) ? 'active' : ''}`}
+                                        <li key={index} className={`nav-item px-3 h-3rem text-uppercase clickDown ${activeHeaderLink === list.path ? "active" : ""} ${((activeHeaderLink.includes('property/') || activeHeaderLink.includes('properties/')) && list.path.includes('properties/')) ? 'active' : ''}`}
                                             onClick={() => { window.scrollTo({ top: 0, behavior: 'auto' }); hideSmNavbar() }}>
                                             <Link to={list.path}>{list.text}</Link>
                                         </li>
@@ -247,14 +252,14 @@ const Header = () => {
                             </ul>
                             <hr className="col-8 ms-3 my-3 border-white2" />
                             <ul className="list-unstyled nav-links mb-5">
-                                <li className={`nav-item ${activeHeaderLink === '/FAQs' ? "active" : ""} px-3 h-2_5rem text-uppercase`} onClick={() => { window.scrollTo({ top: 0, behavior: 'auto' }); hideSmNavbar() }}>
+                                <li className={`nav-item ${activeHeaderLink === '/FAQs' ? "active" : ""} px-3 h-2_5rem text-uppercase clickDown`} onClick={() => { window.scrollTo({ top: 0, behavior: 'auto' }); hideSmNavbar() }}>
                                     <Link to={'/FAQs'}>Faqs</Link>
                                 </li>
-                                <li className={`nav-item ${activeHeaderLink === '/terms' ? "active" : ""} px-3 h-2_5rem text-uppercase`} onClick={() => { window.scrollTo({ top: 0, behavior: 'auto' }); hideSmNavbar() }}>
+                                <li className={`nav-item ${activeHeaderLink === '/terms' ? "active" : ""} px-3 h-2_5rem text-uppercase clickDown`} onClick={() => { window.scrollTo({ top: 0, behavior: 'auto' }); hideSmNavbar() }}>
                                     <Link to={'/terms'}>Terms</Link>
                                 </li>
                                 {isAuthenticated ? (
-                                    <li className={`nav-item mt-3 px-3 h-2_5rem text-uppercase`} onClick={() => { logout(); hideSmNavbar() }}>
+                                    <li className={`nav-item mt-3 px-3 h-2_5rem text-uppercase clickDown`} onClick={() => { logout(); hideSmNavbar() }}>
                                         <Link to={'/login'}><SignOut size={22} className="me-2 text-danger" /> Sign out</Link>
                                     </li>
                                 ) : (
