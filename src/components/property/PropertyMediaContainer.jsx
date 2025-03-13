@@ -8,7 +8,7 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
     const images = availableMedia.images.slice(1);
     const totalImage = images.length;
     // Show only 4 images in first grid
-    let nextImageIndex =  4;
+    let nextImageIndex = 4;
 
     /**
      * Scrolling images
@@ -96,7 +96,7 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
                 </div>
                 {/* Property details */}
                 <div className="postion-absolute bottom-0 left-0 right-0 mx-auto d-flex flex-wrap column-gap-3 row-gap-1 bg-light p-2 rounded w-fit overflow-auto shadow" style={{ translate: "0 -50%", maxWidth: "95vw" }}>
-                    <span className='btn btn-sm rad-inherit text-nowrap px-3 border' onClick={() => setShowPropertyImages(true)} >{totalImage + 1} photos</span>
+                    <span className='btn btn-sm rad-inherit text-nowrap px-3 border' onClick={() => setShowPropertyImages(true)} >{totalImage + 1} images</span>
                     {video !== null &&
                         <span className='btn btn-sm rad-inherit text-nowrap px-3 border'>1 video</span>
                     }
