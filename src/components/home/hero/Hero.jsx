@@ -148,7 +148,7 @@ const Hero = () => {
                                         name="priceRange"
                                         value={formData.priceRange}
                                         onChange={handleChange}>
-                                        <option value="" disabled>Price range (RWF)</option>
+                                        <option value="" disabled>Price range (RWF / USD)</option>
                                         {aboutProperties.priceRanges
                                             .map((val, index) => (
                                                 <option key={index} value={val.min.replaceAll(',', '') + 'and' + val.max.replaceAll(',', '')}
