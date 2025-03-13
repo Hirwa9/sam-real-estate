@@ -337,7 +337,7 @@ const LoginForm = ({ setShowLogin }) => {
                                     >
                                         Forgot password?
                                     </div>
-                                    <DividerText />
+                                    <DividerText className="mb-3" />
                                     <Link to="/login" className="flex-align-center w-fit mx-auto small text-dark text-decoration-none">
                                         Create account <UserCirclePlus size={20} weight='fill' className='ms-2' />
                                     </Link>
@@ -502,7 +502,7 @@ const LoginForm = ({ setShowLogin }) => {
                                 }
 
                                 <div className='d-grid gap-2 pb-5 place-items-center'>
-                                    <DividerText />
+                                    <DividerText className="mb-3" />
                                     {/* Reset PW reset states */}
                                     <div className="flex-align-center w-fit mx-auto small text-dark ptr"
                                         onClick={() => passwordResetToDefault()}
