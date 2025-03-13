@@ -3,7 +3,7 @@ import useCustomDialogs from '../hooks/useCustomDialogs';
 import './customer.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowLeft, BellRinging, BellSimpleSlash, Bookmark, Building, Calendar, CalendarCheck, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, ChatsTeardrop, Check, CheckCircle, CircleWavyCheck, Envelope, FloppyDisk, Gear, HourglassHigh, House, IdentificationBadge, Image, Info, List, ListDashes, MapPinArea, PaperPlaneRight, Pen, Phone, SealCheck, ShoppingCart, SignIn, SignOut, User, Video, WarningCircle, WhatsappLogo } from '@phosphor-icons/react';
+import { ArrowLeft, BellRinging, BellSimpleSlash, Bookmark, Building, Calendar, CalendarCheck, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, ChatsTeardrop, Check, CheckCircle, CircleWavyCheck, DotsThreeVertical, Envelope, FloppyDisk, Gear, HourglassHigh, House, IdentificationBadge, Image, Info, List, ListDashes, MapPinArea, PaperPlaneRight, Pen, Phone, SealCheck, ShoppingCart, SignOut, User, Video, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatDate, getDateHoursMinutes, isValidEmail } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
@@ -26,8 +26,6 @@ const Customer = () => {
     const { userId } = useParams();
     const paramId = Number(userId);
     const [signedUser, setSignedUser] = useState([]);
-
-    console.log(paramId)
 
     // Custom hooks
     const {
@@ -182,6 +180,21 @@ const Customer = () => {
     const [dontCloseCard, setDontCloseCard] = useState([]);
     const [refreshProperties, setRefreshProperties] = useState(false);
 
+    // Remove property reservation
+    const removePropertyReservation = async (propertyId) => {
+        try {
+            setIsWaitingAdminEditAction(true);
+            const response = await Axios.post(`/property/${propertyId}/remove-reservation`, { userId: signedUser?.id });
+            resetConfirmDialog();
+            toast({ message: response.data.message, type: 'gray-800' });
+            fetchProperties();
+        } catch (error) {
+            console.error("Error removing property reservation:", error.response?.data || error.message);
+            toast({ message: error.response?.data, type: 'warning' });
+        } finally {
+            setIsWaitingAdminEditAction(false);
+        }
+    };
 
     // Handle request property closure
     const requestPropertyClosure = async (propertyId) => {
@@ -909,7 +922,34 @@ const Customer = () => {
                                                         <Bookmark size={15} weight="fill" /> {orderCount}
                                                     </span>
                                                     <span>{name}</span>
-                                                    <CaretDoubleRight weight="bold" size={17} className='ms-auto me-2 opacity-75 ptr clickDown' onClick={() => goToProperty(property.id)} title="View property" />
+
+                                                    <Menu menuButton={
+                                                        <MenuButton className="border-0 p-0 ms-auto me-2 bg-transparent">
+                                                            <DotsThreeVertical weight="bold" size={17} className='clickDown' title="Actions" />
+                                                        </MenuButton>
+                                                    } transition>
+                                                        <MenuItem className="fw-normal clickDown" onClick={() => goToProperty(property.id)}>
+                                                            <CaretDoubleRight weight="bold" size={17} className='me-2 opacity-50' /> View property
+                                                        </MenuItem>
+                                                        <MenuItem className="text-danger fw-normal clickDown"
+                                                            onClick={() => {
+                                                                customConfirmDialog({
+                                                                    message:
+                                                                        <>
+                                                                            <div className='h6 my-4 px-2 border-start border-end border-2 border-secondary fw-bold text-center text-balance'>
+                                                                                Unreserve "{property.name}"
+                                                                            </div>
+                                                                            <p>
+                                                                                Are you sure you want to remove your reservation from this property?
+                                                                            </p>
+                                                                        </>,
+                                                                    action: () => removePropertyReservation(property.id),
+                                                                    type: 'warning'
+                                                                })
+                                                            }}>
+                                                            <X className="me-2 opacity-50" /> Remove reservation
+                                                        </MenuItem>
+                                                    </Menu>
                                                 </div>
                                                 <p className='px-2 text-gray-600 smaller'>
                                                     <span style={{ color: mainColor }}>{type} {category}</span> <CaretRight /> {location}
