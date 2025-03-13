@@ -4,7 +4,7 @@ import './property.css';
 import { AuthContext } from '../AuthProvider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { formatBigCountNumbers, formatDate, shareProperty } from '../../scripts/myScripts';
-import { ArrowBendDoubleUpRight, Bed, Building, Car, CaretRight, ChatText, Clock, CookingPot, DeviceMobileCamera, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo } from '@phosphor-icons/react';
+import { ArrowBendDoubleUpRight, Bed, Building, Car, CaretRight, ChatText, Check, Clock, CookingPot, DeviceMobileCamera, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo } from '@phosphor-icons/react';
 // import Button from '@mui/material/Button';
 import PropertyMediaContainer from './PropertyMediaContainer';
 import WorkingHours from '../common/workinghours/WorkingHours';
@@ -20,7 +20,9 @@ import LoadingBubbles from '../common/LoadingBubbles';
 import { companyPhoneNumber1 } from '../data/Data';
 import FetchError from '../common/FetchError';
 import ReactImageGallery from 'react-image-gallery';
-import { BASE_URL } from '../../api/api';
+import { Axios, BASE_URL } from '../../api/api';
+import LoadingIndicator from '../common/LoadingIndicator';
+import { PropertiesContext } from '../../App';
 
 const Property = () => {
     // Custom hooks
@@ -45,10 +47,13 @@ const Property = () => {
     } = useCustomDialogs();
 
     // Auth check
-    const { isAuthenticated, checkAuthOnMount } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount, user } = useContext(AuthContext);
     useEffect(() => {
         !isAuthenticated && checkAuthOnMount();
     }, [isAuthenticated, checkAuthOnMount]);
+
+    // Properties data context
+    const { fetchProperties } = useContext(PropertiesContext);
 
     const sendMessage = () => {
         window.open(`https://wa.me/${companyPhoneNumber1.phone}?text=Hello%2C%20I%27m%20interested%20in%20your%20services.%20Especially%20with%20this%20property_*${name}*_%20${window.location}`, '_blank');
@@ -84,7 +89,7 @@ const Property = () => {
     const workingHoursTogglerRef = useRef(null);
 
     // Fetch properties
-    const fetchProperties = useCallback(async () => {
+    const preFetchProperties = useCallback(async () => {
         try {
             setLoading(true);
             const response = await fetch(`${BASE_URL}/properties`);
@@ -121,13 +126,13 @@ const Property = () => {
     }, [propertyId]);
 
     useEffect(() => {
-        fetchProperties();
-    }, [fetchProperties]);
+        preFetchProperties();
+    }, [preFetchProperties]);
 
 
     // Handle reload on fetch failure
     const handleReload = () => {
-        fetchProperties();
+        preFetchProperties();
     };
 
     // Destructure safely using optional chaining
@@ -164,31 +169,36 @@ const Property = () => {
 
     // Reserve property
     const [showLogin, setShowLogin] = useState(false);
+    const [isWaitingFetchAction, setIsWaitingFetchAction] = useState(false);
     const [reserverError, setReserverError] = useState('');
     const reservePropertyRef = useRef();
 
     const handleReserveProperty = async () => {
-        if (!isAuthenticated) return setShowLogin(true); // Auth
+        if (!isAuthenticated) return setShowLogin(true); // Require authentication
         try {
-            const response = await fetch(`${BASE_URL}/property/${propertyId}/reserve`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}` // Replace with your token logic
-                }
-            });
-            const result = await response.json();
-            if (response.ok) {
+            setIsWaitingFetchAction(true);
+            const response = await Axios.post(`/property/${propertyId}/reserve`, { userId: user.id });
+            if (response.status === 200) {
                 // On success, redirect to user dashboard
-                toast({ message: 'Property reserved successfully!', type: 'dark' });
-                // navigate('/user/orders');
-                navigate('/user');
+                toast({
+                    message: <><Check size={20} className='me-2' /> Property reserved successfully! You're being redirected to the dashboard </>,
+                    type: 'dark'
+                });
+                fetchProperties();
+                setTimeout(() => {
+                    navigate(`/user/${user.id}`);
+                }, 5000);
             } else {
-                setReserverError(result.message || 'Error reserving property');
+                setReserverError(response.data.message || 'Error reserving property');
                 toast({ message: reserverError, type: 'warning' });
             }
-        } catch (err) {
-            setReserverError('Error reserving property');
+        } catch (error) {
+            const errorMessage = error.response?.data?.error || error.response?.data?.message || "Couldn't remove this member";
+            setReserverError(errorMessage);
+            toast({ message: errorMessage, type: 'gray-700' });
+        } finally {
+            resetConfirmDialog();
+            setIsWaitingFetchAction(false);
         }
     };
 
@@ -290,6 +300,13 @@ const Property = () => {
             />
             <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
 
+            {/* Ongoing/unsettled fetch indicator */}
+            {isWaitingFetchAction && (
+                <div className='position-fixed fixed-top inset-0 bg-black3 flex-center py-md-3 px-lg-5 inx-high'>
+                    <LoadingIndicator loaderColor="gray-200" />
+                </div>
+            )}
+
             {/* Component */}
             <BackButton />
 
@@ -365,11 +382,30 @@ const Property = () => {
                                     <h2 className='h5 mb-4 text-center font-variant-small-caps'>Contact This Property</h2>
                                     <div>
                                         <div>
-                                            {/* <button ref={reservePropertyRef} className="btn w-100 btn-secondary text-light d-block mb-3 fw-light rounded-pill clickDown"
-                                                onClick={handleReserveProperty}
+                                            <button ref={reservePropertyRef} className="btn w-100 border-dark border-opacity-50 text-dark d-block mb-3 fw-light rounded-pill clickDown"
+                                                // onClick={handleReserveProperty}
+                                                onClick={
+                                                    () => {
+                                                        customConfirmDialog({
+                                                            message: (
+                                                                <>
+                                                                    <div className='h6 my-4 px-2 border-start border-end border-2 border-secondary fw-bold text-center text-balance'>
+                                                                        Reserve "{name}"
+                                                                    </div>
+                                                                    <p>
+                                                                        This property will be added to your wishlist. Reserving a property simplifies the process of getting in touch with the property owner and helps you keep track of your favorite properties.
+                                                                    </p>
+                                                                </>
+                                                            ),
+                                                            actionText: <>Reserve property <CaretRight /></>,
+                                                            type: 'gray-700',
+                                                            action: () => handleReserveProperty(),
+                                                        });
+                                                    }
+                                                }
                                             >
                                                 Reserve Property
-                                            </button> */}
+                                            </button>
 
                                             {/* <button className="btn w-100 border-dark text-dark d-block mb-3 fw-light rounded-pill clickDown">
                                 Request Tour
@@ -388,7 +424,7 @@ const Property = () => {
                                                                 </>
                                                             ),
                                                             closeText: 'Maybe Later',
-                                                            actionText: <>Start Chat <CaretRight /> </>,
+                                                            actionText: <>Start Chat <CaretRight /></>,
                                                             type: 'gray-700',
                                                             action: () => { sendMessage(); resetConfirmDialog(); },
                                                         });
