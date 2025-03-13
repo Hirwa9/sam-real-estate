@@ -107,7 +107,7 @@ const Team = ({ id }) => {
 																			</p>
 																		</>
 																	),
-																	actionText: <>Start Chat <CaretRight /> </>,
+																	actionText: <>Start Chat <CaretRight /></>,
 																	closeText: 'Maybe later',
 																	type: 'dark',
 																	action: () => { sendMessage(); resetConfirmDialog(); },
