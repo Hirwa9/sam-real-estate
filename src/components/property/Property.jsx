@@ -382,7 +382,7 @@ const Property = () => {
                                     <h2 className='h5 mb-4 text-center font-variant-small-caps'>Contact This Property</h2>
                                     <div>
                                         <div>
-                                            <button ref={reservePropertyRef} className="btn w-100 border-dark border-opacity-50 text-dark d-block mb-3 fw-light rounded-pill clickDown"
+                                            <button ref={reservePropertyRef} className="btn btn-dark w-100 mb-3 fw-light rounded-pill clickDown"
                                                 // onClick={handleReserveProperty}
                                                 onClick={
                                                     () => {
@@ -396,12 +396,13 @@ const Property = () => {
                                                                             Reserve "{name}"
                                                                         </div>
                                                                         <p>
-                                                                            This property will be added to your wishlist. Reserving a property simplifies the process of getting in touch with the property owner and helps you keep track of your favorite properties.
+                                                                            By reserving this property, it will be added to your wishlist. <br /><br />
+                                                                            This action facilitates communication with the property owner and our dedicated agents, ensuring that you can easily keep track of your preferred properties in one place.
                                                                         </p>
                                                                     </>
                                                                 ),
-                                                                actionText: <>Reserve property <CaretRight /></>,
-                                                                type: 'gray-700',
+                                                                actionText: <>Reserve Property <CaretRight /></>,
+                                                                type: 'dark',
                                                                 action: () => handleReserveProperty(),
                                                             });
                                                         }
@@ -415,7 +416,7 @@ const Property = () => {
                                 Request Tour
                             </button> */}
 
-                                            <button ref={reservePropertyRef} className="btn w-100 border-dark border-opacity-50 text-dark d-block mb-3 fw-light rounded-pill clickDown"
+                                            <button ref={reservePropertyRef} className="btn btn-dark w-100 mb-3 fw-light rounded-pill clickDown"
                                                 onClick={
                                                     () => {
                                                         customConfirmDialog({
@@ -429,7 +430,7 @@ const Property = () => {
                                                             ),
                                                             closeText: 'Maybe Later',
                                                             actionText: <>Start Chat <CaretRight /></>,
-                                                            type: 'gray-700',
+                                                            type: 'dark',
                                                             action: () => { sendMessage(); resetConfirmDialog(); },
                                                         });
                                                     }
@@ -438,7 +439,7 @@ const Property = () => {
                                                 Send Message
                                             </button>
                                         </div>
-                                        <p className='d-flex flex-column justify-content-center small clickDown'>
+                                        <p className='d-flex flex-column justify-content-center mt-3 small clickDown'>
                                             <span className='flex-align-center mx-auto mb-3'>
                                                 <DeviceMobileCamera className='me-2 fs-4 text-dark opacity-75' /> <a href="tel:+250788321583" className='text-decoration-none text-dark'>(250) 788 321 583</a>
                                             </span>
