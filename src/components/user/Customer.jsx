@@ -785,11 +785,11 @@ const Customer = () => {
                                 >
                                     <span className='fw-bold fs-4'><CaretRight className='me-2 opacity-75' /> Orders </span>
                                 </li>
-                                <li className="my-3 py-1 ptr"
+                                {/* <li className="my-3 py-1 ptr"
                                     onClick={() => setActiveSection("settings")}
                                 >
                                     <span className='fw-bold fs-4'><CaretRight className='me-2 opacity-75' /> Settings </span>
-                                </li>
+                                </li> */}
                             </ul>
                         </div>
                     </div>
@@ -928,10 +928,10 @@ const Customer = () => {
                                                             <DotsThreeVertical weight="bold" size={17} className='clickDown' title="Actions" />
                                                         </MenuButton>
                                                     } transition>
-                                                        <MenuItem className="fw-normal clickDown" onClick={() => goToProperty(property.id)}>
+                                                        <MenuItem className="px-3 py-2 fw-normal clickDown" onClick={() => goToProperty(property.id)}>
                                                             <CaretDoubleRight weight="bold" size={17} className='me-2 opacity-50' /> View property
                                                         </MenuItem>
-                                                        <MenuItem className="text-danger fw-normal clickDown"
+                                                        <MenuItem className="text-danger px-3 py-2 fw-normal clickDown"
                                                             onClick={() => {
                                                                 customConfirmDialog({
                                                                     message:
@@ -1880,13 +1880,13 @@ const Customer = () => {
                                                 <ChatsTeardrop size={20} weight='fill' className="me-2" /> Feedback
                                             </button>
                                         </li>
-                                        <li className={`nav-item ${activeSection === 'settings' ? 'active' : ''} mb-3`}
+                                        {/* <li className={`nav-item ${activeSection === 'settings' ? 'active' : ''} mb-3`}
                                             onClick={() => { setActiveSection("settings"); hideSideNavbar() }}
                                         >
                                             <button className="nav-link w-100">
                                                 <Gear size={20} weight='fill' className="me-2" /> Settings
                                             </button>
-                                        </li>
+                                        </li> */}
 
                                         <hr className={`d-md-none`} />
 
