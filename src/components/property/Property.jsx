@@ -386,21 +386,25 @@ const Property = () => {
                                                 // onClick={handleReserveProperty}
                                                 onClick={
                                                     () => {
-                                                        customConfirmDialog({
-                                                            message: (
-                                                                <>
-                                                                    <div className='h6 my-4 px-2 border-start border-end border-2 border-secondary fw-bold text-center text-balance'>
-                                                                        Reserve "{name}"
-                                                                    </div>
-                                                                    <p>
-                                                                        This property will be added to your wishlist. Reserving a property simplifies the process of getting in touch with the property owner and helps you keep track of your favorite properties.
-                                                                    </p>
-                                                                </>
-                                                            ),
-                                                            actionText: <>Reserve property <CaretRight /></>,
-                                                            type: 'gray-700',
-                                                            action: () => handleReserveProperty(),
-                                                        });
+                                                        if (!isAuthenticated || (isAuthenticated && user.type === 'admin')) {
+                                                            setShowLogin(true);
+                                                        } else {
+                                                            customConfirmDialog({
+                                                                message: (
+                                                                    <>
+                                                                        <div className='h6 my-4 px-2 border-start border-end border-2 border-secondary fw-bold text-center text-balance'>
+                                                                            Reserve "{name}"
+                                                                        </div>
+                                                                        <p>
+                                                                            This property will be added to your wishlist. Reserving a property simplifies the process of getting in touch with the property owner and helps you keep track of your favorite properties.
+                                                                        </p>
+                                                                    </>
+                                                                ),
+                                                                actionText: <>Reserve property <CaretRight /></>,
+                                                                type: 'gray-700',
+                                                                action: () => handleReserveProperty(),
+                                                            });
+                                                        }
                                                     }
                                                 }
                                             >
