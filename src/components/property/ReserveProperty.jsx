@@ -1,65 +1,71 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../common/loginForm/LoginForm';
 import { Axios, BASE_URL } from '../../api/api';
+import LoadingIndicator from '../common/LoadingIndicator';
+import useCustomDialogs from '../hooks/useCustomDialogs';
+import { AuthContext } from '../AuthProvider';
 
 const ReserveProperty = ({ propertyId }) => {
-    // Auth checks
-    const [isAuthenticated, setIsLoggedIn] = useState(false);
+    // Custom hooks
+    const {
+        // Toast
+        toast,
+
+    } = useCustomDialogs();
+    // Auth check
+    const { isAuthenticated, checkAuthOnMount, user } = useContext(AuthContext);
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
-    const [error, setError] = useState('');const navigate = useNavigate();
-    
+    const navigate = useNavigate();
 
     // Check login status on component mount
-    const checkAuthOnMount = async () => {
-        try {
-            const response = await Axios.get(`${BASE_URL}/token`, { withCredentials: true });
-            response.data.accessToken ?
-                setIsLoggedIn(true)
-                : setIsLoggedIn(false);
-        } catch (error) {
-            setIsLoggedIn(false); // If an error occurs, set as not logged in
-        }
-    }
-
-    // Attempt to refresh the access token if it's expired
     useEffect(() => {
         checkAuthOnMount();
     }, []);
 
+    // Reserve property
+    const [isWaitingFetchAction, setIsWaitingFetchAction] = useState(false);
+    const [reserverError, setReserverError] = useState('');
+
     const handleReserveProperty = async () => {
         if (!isAuthenticated) return setShowLogin(true); // Auth
-
         try {
-            const response = await fetch(`${BASE_URL}/property/${propertyId}/reserve`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}` // Replace with your token logic
-                }
-            });
-            const result = await response.json();
-            if (response.ok) {
-                // Redirect or show a success message
-                alert('Property reserved successfully!');
-                navigate('/user/orders');
+            setIsWaitingFetchAction(true);
+            const response = await Axios.post(`/property/${propertyId}/reserve`, { userId: user.id });
+            if (response.status === 200) {
+                // On success, redirect to user dashboard
+                toast({ message: 'Property reserved successfully!', type: 'dark' });
+                navigate(`/user/${user.id}`);
             } else {
-                setError(result.message || 'Error reserving property');
+                setReserverError(response.data.message || 'Error reserving property');
+                toast({ message: reserverError, type: 'warning' });
             }
         } catch (err) {
-            setError('Error reserving property');
+            setReserverError('Error reserving property');
+        } finally {
+            setIsWaitingFetchAction(false);
         }
     };
 
     return (
-        <div>
-            <button className="btn w-100 btn-success d-block mb-3 fw-light clickDown" onClick={handleReserveProperty}>
-                Reserve Property
-            </button>
+        <>
+            {/* Ongoing/unsettled fetch indicator */}
+            {isWaitingFetchAction && (
+                <div className='position-fixed fixed-top inset-0 bg-black3 flex-center py-md-3 px-lg-5 inx-high'>
+                    <LoadingIndicator loaderColor="gray-200" />
+                </div>
+            )}
+            <div>
+                <button className="btn w-100 btn-success d-block mb-3 fw-light clickDown" onClick={handleReserveProperty}>
+                    Reserve Property
+                </button>
 
-            {showLogin && <LoginForm setShowLogin={setShowLogin} setIsLoggedIn={setIsLoggedIn} />}
-            {error && <p className="text-danger">{error}</p>}
-        </div>
+                {showLogin && <LoginForm setShowLogin={setShowLogin} setIsLoggedIn={setIsLoggedIn} />}
+                {reserverError && <p className="text-danger">{reserverError}</p>}
+            </div>
+        </>
     );
 };
 
