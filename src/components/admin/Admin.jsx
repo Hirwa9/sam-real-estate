@@ -3809,12 +3809,8 @@ const Admin = () => {
                         <div className="row">
                             {/* Sidebar Navigation */}
                             <nav className={`col-12 col-md-3 col-xl-2 d-md-block border-end overflow-y-auto sidebar ${sideNavbarIsFloated ? 'floated' : ''}`} id="sidebarMenu">
-                                <div ref={sideNavbarRef} className="position-sticky top-0 h-fit col-8 col-sm-5 col-md-12 pt-3 pt-md-2 pb-3 peak-borders-tb">
-                                    {/* <button type="button" className='btn col-11 col-md-auto flex-center mt-2 mt-md-0 mb-4 mb-md-3 mx-auto px-4 py-3 rounded-4 bg-gray-600 text-gray-300 shadow-sm clickDown'>
-                                <Plus className='me-2' />
-                                New property
-                            </button> */}
-                                    <button type="button" className='btn col-11 col-md-auto flex-center mt-2 mt-md-0 mb-4 mb-md-3 mx-auto px-4 py-3 rounded-4 border border-secondary border-opacity-25 text-gray-600 shadow-sm clickDown'
+                                <div ref={sideNavbarRef} className="position-sticky top-0 h-fit col-8 col-sm-5 col-md-12 py-4 pt-md-2 pb-3 peak-borders-tb">
+                                    <button type="button" className='btn col-11 col-md-auto flex-center mt-2 mt-md-0 mb-4 mb-md-3 mx-auto px-4 py-3 rounded-4 border border-secondary border-opacity-25 text-gray-600 shadow-sm clickDown new-property-toggler'
                                         onClick={() => { hideSideNavbar(); setShowCreatePropertyForm(true) }}>
                                         <Plus className='me-2' />
                                         New property
