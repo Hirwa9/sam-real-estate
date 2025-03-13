@@ -11,7 +11,7 @@ import CtaTextButton from '../ctaTextButton/CtaTextButton';
 import { BASE_URL } from '../../../api/api';
 /* globals $ */
 
-const LoginForm = ({ setShowLogin }) => {
+const LoginForm = ({ setShowLogin, redirect = false }) => {
     // Custom hooks
     const {
         // Toast
@@ -31,6 +31,8 @@ const LoginForm = ({ setShowLogin }) => {
     /**
      * Authentication
      */
+    const [isWaitingFetchAction, setIsWaitingFetchAction] = useState(false);
+
 
     // Handle input UI changes
     const handleChange = (e) => {
@@ -62,7 +64,17 @@ const LoginForm = ({ setShowLogin }) => {
             return alert('Enter a valid email address.');
         }
 
-        login(email, password);
+        try {
+            setIsWaitingFetchAction(true);
+            await login(email, password, { redirect });
+            setShowLogin(false);
+        } catch (error) {
+            const errorMessage = error.response?.data?.error || error.response?.data?.message || "Login failed";
+            toast({ message: errorMessage, type: 'warning' });
+            console.error('Error signing in:', error);
+        } finally {
+            setIsWaitingFetchAction(false);
+        }
     };
 
     // Reset form
@@ -293,7 +305,7 @@ const LoginForm = ({ setShowLogin }) => {
                     <div className={`rad-inherit login-otp-container ${flipLoginCard ? 'flipped' : ''} flip-card`}>
                         {/* Front side */}
                         <div className='p-3 rad-inherit flip-card_front front-side'>
-                            <div className='h5 mb-4 text-center font-variant-small-caps'>Login</div>
+                            <div className='h5 mb-4 text-center font-variant-small-caps'>Sign in</div>
                             <form onSubmit={handleLogin}>
                                 <div className={`form-input-element`}>
                                     <input
@@ -328,7 +340,10 @@ const LoginForm = ({ setShowLogin }) => {
 
                                 <div className="pt-1 mt-4 mb-2">
                                     <button type="submit" className="btn btn-sm btn-dark flex-center mb-4 px-3 py-2 rounded-pill w-100 fs-75 clickDown">
-                                        LOGIN <CaretRight size={15} className='ms-2' />
+                                        SIGN IN {isWaitingFetchAction ?
+                                            <span className="spinner-grow spinner-grow-sm ms-2"></span>
+                                            : <SignIn size={15} className='ms-2' />
+                                        }
                                     </button>
                                 </div>
                                 <div className='d-grid gap-2 place-items-center'>
@@ -507,7 +522,7 @@ const LoginForm = ({ setShowLogin }) => {
                                     <div className="flex-align-center w-fit mx-auto small text-dark ptr"
                                         onClick={() => passwordResetToDefault()}
                                     >
-                                        LOGIN <SignIn size={20} weight='fill' className='ms-2' />
+                                        SIGN IN <SignIn size={20} weight='fill' className='ms-2' />
                                     </div>
                                 </div>
                             </form>
