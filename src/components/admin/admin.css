@@ -94,6 +94,13 @@
     color: inherit;
 }
 
+@media screen and (max-width: 768px) {
+    .sidebar .new-property-toggler {
+        color: var(--bs-gray-300) !important;
+        border-color: var(--bs-gray-700) !important;
+    }
+}
+
 .sidebar-heading {
     font-size: .75rem;
     text-transform: uppercase;
