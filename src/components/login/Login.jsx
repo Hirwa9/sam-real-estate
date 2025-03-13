@@ -76,7 +76,7 @@ const Login = () => {
 
 		try {
 			setIsWaitingFetchAction(true);
-			await login(email, password);
+			await login(email, password, { redirect: true });
 		} catch (error) {
 			const errorMessage = error.response?.data?.error || error.response?.data?.message || "Login failed";
 			toast({ message: errorMessage, type: 'warning' });
