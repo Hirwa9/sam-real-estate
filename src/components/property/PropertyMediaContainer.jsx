@@ -50,7 +50,7 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
      */
 
     const videoRef = useRef();
-    const [showPropertyVideo, setShowPropertyVideo] = useState(true);
+    const [showPropertyVideo, setShowPropertyVideo] = useState(false);
     const hidePropertyVideo = () => {
         videoRef.current.classList.add('flyOutB');
         setTimeout(() => {
