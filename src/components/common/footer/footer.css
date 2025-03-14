@@ -5,10 +5,8 @@ footer {
 }
 
 .footerContact {
-    /* background-image: linear-gradient(30deg, var(--primaryColor), var(--primaryColorDark)); */
-    /* background-image: linear-gradient(var(--primaryColorDark), rgb(154, 117, 21)); */
-    background-color: var(--black4);
-    /* background-color: var(--primaryColorDark); */
+    background-color: #1c2636;
+    color: var(--bs-light);
 }
 
 .footerContact .send button,
@@ -17,10 +15,6 @@ footer {
 }
 
 /* Set a scroll watch based animation */
-
-/* .footerContact .container img {
-    border-radius: 50px;
-} */
 
 @media screen and (min-width: 576px) {
     .footerContact .container img {
@@ -38,10 +32,10 @@ footer,
     color: var(--bs-light);
 }
 
-footer .logo > img {
-    width: 4rem;
-    height: 4rem;
-    object-fit: cover;
+footer img.logo {
+    width: 6rem;
+    /* height: 4rem; */
+    object-fit: contain;
 }
 
 footer .subscriber {
