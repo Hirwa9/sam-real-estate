@@ -45,6 +45,20 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
     const [openImageViewer, setOpenImageViewer] = useState(false);
     const [scrollTo, setScrollTo] = useState('');
 
+    /**
+     * Toggling property video
+     */
+
+    const videoRef = useRef();
+    const [showPropertyVideo, setShowPropertyVideo] = useState(true);
+    const hidePropertyVideo = () => {
+        videoRef.current.classList.add('flyOutB');
+        setTimeout(() => {
+            setShowPropertyVideo(false);
+            videoRef.current.classList.add('flyOutB');
+        }, 400);
+    }
+
     return (
         <>
             {/* Property images presentation */}
@@ -98,7 +112,7 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
                 <div className="postion-absolute bottom-0 left-0 right-0 mx-auto d-flex flex-wrap column-gap-3 row-gap-1 bg-light p-2 rounded w-fit overflow-auto shadow" style={{ translate: "0 -50%", maxWidth: "95vw" }}>
                     <span className='btn btn-sm rad-inherit text-nowrap px-3 border' onClick={() => setShowPropertyImages(true)} >{totalImage + 1} images</span>
                     {video !== null &&
-                        <span className='btn btn-sm rad-inherit text-nowrap px-3 border'>1 video</span>
+                        <span className='btn btn-sm rad-inherit text-nowrap px-3 border' onClick={() => setShowPropertyVideo(true)}>1 video</span>
                     }
                 </div>
             </div>
@@ -136,8 +150,39 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
                 </div>
             }
 
+            {/* Property video  */}
+            {showPropertyVideo &&
+                <div className="position-fixed inset-0 inx-high flex-center px-lg-5 bg-black3 blur-bg-2px user-select-none" id="porpertyImages">
+                    <div ref={videoRef}
+                        className="rounded-top content-container overflow-hidden" style={{ height: '98%' }}>
+                        <div className="d-flex align-items-center gap-2 p-2 text-light">
+                            <div className="flex-align-center">
+                                <Image className="me-2 p-2 border border-2 border-light rounded-circle"
+                                    size={36}
+                                    weight="bold"
+                                />
+                                <span>Property video</span>
+                            </div>
+                            <XCircle className="ms-auto ptr clickDown"
+                                size={45}
+                                weight="fill"
+                                onClick={hidePropertyVideo}
+                            />
+                        </div>
+                        {/* Render property video */}
+                        <div className="bg-black mx-2 rounded-4 overflow-hidden" style={{ height: 'calc(100% - 2.8125rem)', borderRadius: '0 0 1rem 1rem' }}>
+                            <video controls autoPlay muted className='d-block dim-100 overflow-hidden'>
+                                <source src={video} />
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            }
+
             {/* Property images fullscreen viewer */}
-            {openImageViewer &&
+            {
+                openImageViewer &&
                 <MediaViewer media={images} goToUrl={scrollTo} onClose={() => setOpenImageViewer(false)} />
             }
         </>
