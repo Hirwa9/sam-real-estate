@@ -32,11 +32,6 @@ const Header = () => {
     // Site common setting
     const {
         businessProfileSettings,
-        errorLoadingBusinessProfileSettings,
-        fetchBusinessProfileSettings,
-        propertySettings,
-        errorLoadingPropertySettings,
-        fetchPropertySettings,
     } = useSettings();
 
     /**
