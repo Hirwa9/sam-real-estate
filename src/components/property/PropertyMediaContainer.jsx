@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import './propertyMediaContainer.css'
 import MediaViewer from '../common/mediaViewer/MediaViewer';
-import { CaretLeft, CaretRight, Image, XCircle } from '@phosphor-icons/react';
+import { CaretLeft, CaretRight, Image, Video, XCircle } from '@phosphor-icons/react';
 
 const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, video }) => {
     const availableMedia = JSON.parse(media);
@@ -157,7 +157,7 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
                         className="rounded-top content-container overflow-hidden" style={{ height: '98%' }}>
                         <div className="d-flex align-items-center gap-2 p-2 text-light">
                             <div className="flex-align-center">
-                                <Image className="me-2 p-2 border border-2 border-light rounded-circle"
+                                <Video className="me-2 p-2 border border-2 border-light rounded-circle"
                                     size={36}
                                     weight="bold"
                                 />
