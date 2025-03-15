@@ -4,7 +4,7 @@
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "64x64",
       "type": "image/x-icon"
     },
     {
@@ -18,8 +18,49 @@
       "sizes": "512x512"
     }
   ],
+  "id": "/",
   "start_url": ".",
-  "display": "standalone",
+  "display": "fullscreen",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#f0f0f0",
+  "shortcuts": [
+    {
+      "name": "What is real estate?",
+      "short_name": "Real estate",
+      "description": "View the most common inquiries related to property buying, selling, and renting.",
+      "url": "/faqs",
+      "icons": [
+        {
+          "src": "/logo96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "How can I buy or rent a property",
+      "short_name": "Buy and rent properties",
+      "description": "Discover our top-tier property listings. Stay ahead with the most desirable propertiess and receive expert support.",
+      "url": "/properties/all",
+      "icons": [
+        {
+          "src": "/logo96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/screenshot_sm.jpg",
+      "type": "image/jpg",
+      "sizes": "1080x2220",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/images/screenshot_lg.jpg",
+      "type": "image/jpg",
+      "sizes": "1920x1080",
+      "form_factor": "wide"
+    }
+  ]
 }
