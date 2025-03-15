@@ -12,7 +12,6 @@ import About from "../about/About";
 import Services from "../services/Services";
 import Properties from "../properties/Properties";
 import Blog from "../blog/Blog";
-import Pricing from "../pricing/Pricing";
 import Contact from "../contact/Contact";
 import Property from "../property/Property";
 import Login from "../login/Login";
@@ -42,9 +41,8 @@ const Pages = () => {
                 <Route path="/services" element={<Services />} />
                 <Route path="/properties/:filterParameter" element={<Properties />} />
                 <Route path="/property/:propertyId" element={<Property />} />
-                <Route path="/blogs" element={<Blog />} />
+                {/* <Route path="/blogs" element={<Blog />} /> */}
                 <Route path="/faqs" element={<Faqs />} />
-                <Route path="/pricing" element={<Pricing />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/terms" element={<Terms />} />
