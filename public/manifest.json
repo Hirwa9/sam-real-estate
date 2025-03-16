@@ -1,6 +1,6 @@
 {
   "short_name": "Sam Real Estate",
-  "name": "Sam real estate web app",
+  "name": "Sam Real Estate Properties",
   "icons": [
     {
       "src": "favicon.ico",
@@ -26,7 +26,7 @@
   "shortcuts": [
     {
       "name": "What is real estate?",
-      "short_name": "Real estate",
+      "short_name": "Real Estate",
       "description": "View the most common inquiries related to property buying, selling, and renting.",
       "url": "/faqs",
       "icons": [
@@ -41,6 +41,18 @@
       "short_name": "Buy and rent properties",
       "description": "Discover our top-tier property listings. Stay ahead with the most desirable propertiess and receive expert support.",
       "url": "/properties/all",
+      "icons": [
+        {
+          "src": "/logo96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Need good management of properties wishlist",
+      "short_name": "Sign in",
+      "description": "Manage your favorite properties and reservations in one place",
+      "url": "/login",
       "icons": [
         {
           "src": "/logo96.png",
