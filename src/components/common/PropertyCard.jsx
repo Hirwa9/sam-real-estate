@@ -152,29 +152,42 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                         const applyCombinedFilters = (val) => {
                             const filters = [
                                 {
-                                    isActive: combinedFilter.location !== '',
-                                    check: (val) => {
-                                        const searchString = combinedFilter.location.toLowerCase();
-                                        return val.name.toLowerCase().includes(searchString) ||
-                                            val.location.toLowerCase().includes(searchString) ||
-                                            val.about.toLowerCase().includes(searchString)
-                                    },
-                                },
-                                {
-                                    isActive: combinedFilter.type !== '',
-                                    check: (val) => val.type.toLowerCase() === combinedFilter.type.toLowerCase(),
-                                },
-                                {
                                     isActive: combinedFilter.price !== '',
                                     check: (val) => {
-                                        const [minPrice, maxPrice] = combinedFilter.price.split('and').map(Number);
-                                        return val.price >= minPrice && val.price <= maxPrice;
+                                        try {
+                                            // Validate the price range format
+                                            if (!combinedFilter.price || !combinedFilter.price.includes('and')) {
+                                                // console.error('Invalid price range format:', combinedFilter.price);
+                                                return false; // Return false if format is invalid
+                                            }
+
+                                            // Parse minPrice and maxPrice, ensuring they are numbers
+                                            const [minPrice, maxPrice] = combinedFilter.price.split('and').map((price) => {
+                                                const parsedPrice = parseFloat(price.trim());
+                                                if (isNaN(parsedPrice)) {
+                                                    throw new Error(`Invalid price value: ${price}`); // Throw an error for debugging
+                                                }
+                                                return parsedPrice;
+                                            });
+
+                                            // Validate val.price as a number
+                                            const itemPrice = parseFloat(val.price);
+                                            if (isNaN(itemPrice)) {
+                                                // console.error('Invalid item price:', val.price);
+                                                return false; // Return false if val.price is not a valid number
+                                            }
+
+                                            // Check if val.price is within the specified range
+                                            const isWithinRange = itemPrice >= minPrice && itemPrice <= maxPrice;
+                                            // console.log('Price Range Validation:', { itemPrice, minPrice, maxPrice, isWithinRange });
+
+                                            return isWithinRange; // Return true or false based on the check
+                                        } catch (error) {
+                                            console.error('Error in price range filter:', error.message);
+                                            return false; // Return false if there's any error during validation
+                                        }
                                     },
-                                },
-                                {
-                                    isActive: combinedFilter.bedrooms !== '',
-                                    check: (val) => val.bedrooms === Number(combinedFilter.bedrooms),
-                                },
+                                }
                             ];
 
                             // Check if ALL ACTIVE FILTERS are valid for the current item (val)
