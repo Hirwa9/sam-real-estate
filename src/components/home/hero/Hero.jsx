@@ -41,9 +41,18 @@ const Hero = () => {
     const [formData, setFormData] = useState({
         searchValue: '',
         propertyType: '',
+        currency: 'rwf',
         priceRange: '',
         bedrooms: ''
     });
+
+    // Price range selection based on currency
+    const priceRangeSelection = useMemo(() => {
+        return formData.currency === 'rwf'
+            ? aboutProperties?.priceRanges?.['RWF']
+            : aboutProperties?.priceRanges?.['USD'];
+    }, [formData.currency]);
+
 
     // General handleChange function
     const handleChange = (e) => {
@@ -74,7 +83,7 @@ const Hero = () => {
 
     // Handle search
     const handleSearch = () => {
-        const { searchValue, propertyType, priceRange, bedrooms } = formData;
+        const { searchValue, propertyType, priceRange, currency, bedrooms } = formData;
         // Check for at least one valid search criteria
         if (!searchValue && !propertyType && !priceRange && !bedrooms) {
             return toast({ message: 'Please fill in at least one search criteria', type: 'gray-700' });
@@ -84,6 +93,7 @@ const Hero = () => {
             location: searchValue,
             type: propertyType,
             price: priceRange,
+            currency: currency,
             bedrooms: bedrooms
         }).toString();
         navigate(`/properties/search?${query}`);
@@ -143,17 +153,33 @@ const Hero = () => {
                                     </select>
                                 </div>
                                 <div className="d-grid p-2 col-md-6 box">
-                                    <span className="flex-align-center mb-2 fw-bold small"><MoneyWavy weight='bold' className='me-2 opacity-50' />Price range</span>
+                                    <span className="flex-align-center mb-2 fw-bold small"><MoneyWavy weight='bold' className='me-2 opacity-50' />
+                                        Price range
+                                        <span className="d-flex align-content-center justify-content-center gap-3 border border-top-0 border-bottom-0 border-bg-secondary border-opacity-25 ms-3 px-2 py-1">
+                                            <span
+                                                className={`small ${formData.currency === 'rwf' ? 'text-primary px-2 bg-primary-subtle rounded-pill' : 'text-gray-500'} ptr`}
+                                                onClick={() => setFormData({ ...formData, currency: 'rwf' })}
+                                            >
+                                                RWF
+                                            </span>
+                                            <span
+                                                className={`small ${formData.currency === 'usd' ? 'text-primary px-2 bg-primary-subtle rounded-pill' : 'text-gray-500'} ptr`}
+                                                onClick={() => setFormData({ ...formData, currency: 'usd' })}
+                                            >
+                                                USD
+                                            </span>
+                                        </span>
+                                    </span>
                                     <select id="filterParametersPriceRange" className="p-2 border border-0 w-100 ptr"
                                         name="priceRange"
                                         value={formData.priceRange}
                                         onChange={handleChange}>
-                                        <option value="" disabled>Price range (RWF / USD)</option>
-                                        {aboutProperties.priceRanges
+                                        <option value="" disabled>Price range ({formData.currency.toUpperCase()})</option>
+                                        {priceRangeSelection
                                             .map((val, index) => (
                                                 <option key={index} value={val.min.replaceAll(',', '') + 'and' + val.max.replaceAll(',', '')}
                                                     className='dropdown-item p-2 px-3 small'>
-                                                    {val.min} - {val.max}
+                                                    {`${val.min} ${formData.currency.toUpperCase()} - ${val.max} ${formData.currency.toUpperCase()}`}
                                                 </option>
                                             ))}
                                     </select>
