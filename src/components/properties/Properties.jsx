@@ -37,6 +37,7 @@ const Properties = () => {
         location: '',
         type: '',
         price: '',
+        currency: '',
         bedrooms: ''
     });
 
@@ -46,6 +47,7 @@ const Properties = () => {
             location: searchParams.get('location') || '',
             type: searchParams.get('type') || '',
             price: searchParams.get('price') || '',
+            currency: searchParams.get('currency') || '',
             bedrooms: searchParams.get('bedrooms') || ''
         });
     }, [location.search]);
@@ -427,7 +429,7 @@ const Properties = () => {
                                 <DividerText noBorder className="mx-3 my-2 shadow-none" />
                                 <div className='py-1 px-2 text-muted'>Pick a range (RWF)</div>
                                 <div className='mb-3 fw-light price-filter-options'>
-                                    {aboutProperties.priceRanges
+                                    {aboutProperties?.priceRanges?.['RWF']
                                         .map((val, index) => (
                                             <div key={index} className='p-2 small ptr mb-1 clickDown filter-option-value'
                                                 onClick={() => {
