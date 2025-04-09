@@ -90,3 +90,37 @@
 .property-filter {
     border-radius: 1rem;
 }
+
+@media screen and (min-width: 768px) {
+    .property-filter {
+        border-radius: 0;
+    }
+
+    .property-filter::before {
+        opacity: .25;
+        content: "";
+        position: absolute;
+        top: -1.25rem;
+        left: -1.25rem;
+        right: -1.25rem;
+        bottom: -1.25rem;
+        z-index: -1;
+        background-image: repeating-linear-gradient(45deg, var(--white2), var(--white2) .25rem, transparent .25rem, transparent .5rem);
+        transition: .3s ease-in-out;
+        z-index: -1;
+    }
+
+    .property-filter:focus-within::before {
+        opacity: 1;
+        background-image: repeating-linear-gradient(45deg, var(--bodi), var(--bodi) .25rem, transparent .25rem, transparent .5rem);
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .property-filter::before {
+        top: -1.875rem;
+        left: -1.875rem;
+        right: -1.875rem;
+        bottom: -1.875rem;
+    }
+}

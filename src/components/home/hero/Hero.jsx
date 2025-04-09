@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./hero.css";
 import Heading from "../../common/Heading";
@@ -21,7 +21,6 @@ const Hero = () => {
         resetToast,
     } = useCustomDialogs();
 
-    const searcherRef = useRef();
     const navigate = useNavigate();
 
     /**
@@ -112,10 +111,10 @@ const Hero = () => {
                         titleClassName="mb-4"
                         subtitleClassName="w-fit mx-auto px-4 px-md-5 py-3 bg-bodi"
                     />
-                    <div className="mb-3 px-2 pt-3 bg-bodi blur-bg-2px text-gray-700 property-filter">
+                    <div className="position-relative mb-3 mb-md-5 mb-xl-3 px-2 py-3 px-md-3 p-lg-4 bg-bodi blur-bg-2px text-gray-700 property-filter">
                         <div className="d-flex flex-column flex-xl-row">
                             <div className="col-xl-10 d-md-flex flex-wrap align-items-center justify-content-between">
-                                <div className="d-grid p-2 col-md-6 box">
+                                <div className="d-grid p-2 pe-lg-3 col-md-6 box">
                                     <span className="flex-align-center mb-2 fw-bold small"><MapPinArea weight='bold' className='me-2 opacity-50' />Location</span>
                                     <div className="position-relative">
                                         <SearchInput
@@ -134,7 +133,7 @@ const Hero = () => {
                                         }
                                     </div>
                                 </div>
-                                <div className="d-grid p-2 col-md-6 box">
+                                <div className="d-grid p-2 ps-lg-3 col-md-6 box">
                                     <span className="flex-align-center mb-2 fw-bold small"><Building weight='bold' className='me-2 opacity-50' /> Property type</span>
                                     <select id="filterParametersType" className="p-2 border border-0 w-100 ptr"
                                         name="propertyType"
@@ -152,7 +151,7 @@ const Hero = () => {
                                             ))}
                                     </select>
                                 </div>
-                                <div className="d-grid p-2 col-md-6 box">
+                                <div className="d-grid p-2 pe-lg-3 col-md-6 box">
                                     <span className="flex-align-center mb-2 fw-bold small"><MoneyWavy weight='bold' className='me-2 opacity-50' />
                                         Price range
                                         <span className="d-flex align-content-center justify-content-center gap-3 border border-top-0 border-bottom-0 border-bg-secondary border-opacity-25 ms-3 px-2 py-1">
@@ -184,7 +183,7 @@ const Hero = () => {
                                             ))}
                                     </select>
                                 </div>
-                                <div className="d-grid p-2 col-md-6 box">
+                                <div className="d-grid p-2 ps-lg-3 col-md-6 box">
                                     <span className="flex-align-center mb-2 fw-bold small"><Bed weight='bold' className='me-2 opacity-50' />Bedrooms</span>
                                     <select id="filterParametersBedrooms" className="p-2 border border-0 w-100 ptr"
                                         name="bedrooms"
@@ -202,7 +201,7 @@ const Hero = () => {
                                 <span className="py-2 rounded-pill text-inherit"><CaretDoubleRight weight='bold' size={18} /></span>
                             </div>
                         </div>
-                        <nav className="navbar navbar-expand-md px-2 pb-4">
+                        <nav className="navbar navbar-expand-md px-2">
                             <ul className="list-unstyled d-flex flex-wrap row-gap-2 m-0 pt-3 fw-bold small">
                                 <li className="px-2 border-start border-secondary border-opacity-50">
                                     <Link to="/properties/rent" className="text-decoration-none text-gray-700">Rentals <CaretRight className="ms-1" /></Link>
