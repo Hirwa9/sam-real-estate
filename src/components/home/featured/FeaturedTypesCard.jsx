@@ -38,7 +38,7 @@ const FeaturedTypesCard = () => {
                     const availableProps = typesCount.find(el => el.type === item.name.slice(0, -1));
                     const count = availableProps ? availableProps.count : 0;
                     return (
-                        <div key={index} className="mb-3 p-3 ptr rounded clickDown box">
+                        <div key={index} className="mb-3 p-3 ptr rounded clickDown">
                             <Link to={item.path} className="text-decoration-none text-muted">
                                 <img src={item.cover} alt="featured" className="m-auto" />
                                 <div className="text-center small">
