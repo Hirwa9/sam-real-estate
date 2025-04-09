@@ -203,6 +203,19 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                         const applyCombinedFilters = (val) => {
                             const filters = [
                                 {
+                                    isActive: combinedFilter.location !== '',
+                                    check: (val) => {
+                                        const searchString = combinedFilter.location.toLowerCase();
+                                        return val.name.toLowerCase().includes(searchString) ||
+                                            val.location.toLowerCase().includes(searchString) ||
+                                            val.about.toLowerCase().includes(searchString)
+                                    },
+                                },
+                                {
+                                    isActive: combinedFilter.type !== '',
+                                    check: (val) => val.type.toLowerCase() === combinedFilter.type.toLowerCase(),
+                                },
+                                {
                                     isActive: combinedFilter.price !== '',
                                     check: (val) => {
                                         try {
@@ -256,7 +269,11 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                             return false; // Return false if there's any error during validation
                                         }
                                     },
-                                }
+                                },
+                                {
+                                    isActive: combinedFilter.bedrooms !== '',
+                                    check: (val) => val.bedrooms === Number(combinedFilter.bedrooms),
+                                },
                             ];
 
                             // Check if ALL ACTIVE FILTERS are valid for the current item (val)
