@@ -13,6 +13,8 @@ import MyToast from "./Toast";
 import ConfirmDialog from "./confirmDialog/ConfirmDialog";
 import CompareProperties from "./compareProperties/CompareProperties";
 import FetchError from "./FetchError";
+import { CURRENCY_KEY } from "../../api/api";
+import axios from "axios";
 
 const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount, sortStatus, limited }) => {
     // Custom hooks
@@ -35,6 +37,55 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
         customConfirmDialog,
         resetConfirmDialog,
     } = useCustomDialogs();
+
+    // Get currency rates
+    const [loadingCurrencyRates, setLoadingCurrencyRates] = useState(true);
+    const [errorLoadingCurrencyRates, setErrorLoadingCurrencyRates] = useState(null);
+    const [currencyRates, setCurrencyRates] = useState(null);
+    const [rwandanFrancRate, setRwandanFrancRate] = useState(null);
+
+    const getCurrencyRates = async () => {
+        try {
+            setLoadingCurrencyRates(true);
+            setErrorLoadingCurrencyRates(null);
+            const response = await axios.get(`https://v1.apiplugin.io/v1/currency/${CURRENCY_KEY}/rates`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            return response.data;
+        } catch (error) {
+            setErrorLoadingCurrencyRates(error.response?.data || error.message);
+            console.error('Error fetching currency rates:', error.response?.data || error.message);
+            return null; // Handle error as needed
+        } finally {
+            setLoadingCurrencyRates(false);
+        }
+    };
+
+    // Fetch currency rates on component mount
+    useEffect(() => {
+        const fetchCurrencyRates = async () => {
+            const rates = await getCurrencyRates();
+            if (rates) {
+                setCurrencyRates(rates);
+            }
+        };
+        fetchCurrencyRates();
+    }, []);
+
+    // Set Rwandan Franc rate
+    useEffect(() => {
+        if (currencyRates) {
+            const rwf = currencyRates?.rates?.RWF;
+            if (rwf) {
+                setRwandanFrancRate(rwf);
+            } else {
+                console.error('Rwandan Franc rate not found in the response:', currencyRates);
+            }
+        }
+    }, [currencyRates]);
 
     // Get fetched properties
     const { propertiesContext, loadingProperties, errorLoadingProperties, fetchProperties } = useContext(PropertiesContext);
@@ -157,7 +208,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                         try {
                                             // Validate the price range format
                                             if (!combinedFilter.price || !combinedFilter.price.includes('and')) {
-                                                // console.error('Invalid price range format:', combinedFilter.price);
+                                                console.error('Invalid price range format:', combinedFilter.price);
                                                 return false; // Return false if format is invalid
                                             }
 
@@ -165,7 +216,8 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                             const [minPrice, maxPrice] = combinedFilter.price.split('and').map((price) => {
                                                 const parsedPrice = parseFloat(price.trim());
                                                 if (isNaN(parsedPrice)) {
-                                                    throw new Error(`Invalid price value: ${price}`); // Throw an error for debugging
+                                                    // Throw an error for debugging
+                                                    throw new Error(`Invalid price value: ${price}`);
                                                 }
                                                 return parsedPrice;
                                             });
@@ -173,15 +225,32 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                             // Validate val.price as a number
                                             const itemPrice = parseFloat(val.price);
                                             if (isNaN(itemPrice)) {
-                                                // console.error('Invalid item price:', val.price);
+                                                console.error('Invalid item price:', val.price);
                                                 return false; // Return false if val.price is not a valid number
                                             }
 
-                                            // Check if val.price is within the specified range
-                                            const isWithinRange = itemPrice >= minPrice && itemPrice <= maxPrice;
-                                            // console.log('Price Range Validation:', { itemPrice, minPrice, maxPrice, isWithinRange });
+                                            const currency = val.currency?.toLowerCase();
+                                            const filterCurrency = combinedFilter?.currency?.toLowerCase();
 
-                                            return isWithinRange; // Return true or false based on the check
+                                            // Allign currecy comparison
+                                            let convertedMinPrice;
+                                            let convertedMaxPrice;
+
+                                            if (currency === 'usd' && filterCurrency === 'rwf') {
+                                                convertedMinPrice = minPrice / rwandanFrancRate;
+                                                convertedMaxPrice = maxPrice / rwandanFrancRate;
+                                            } else if (currency === 'rwf' && filterCurrency === 'usd') {
+                                                convertedMinPrice = minPrice * rwandanFrancRate;
+                                                convertedMaxPrice = maxPrice * rwandanFrancRate;
+                                            } else {
+                                                convertedMinPrice = minPrice;
+                                                convertedMaxPrice = maxPrice;
+                                            }
+
+                                            // Check if val.price is within the specified range
+                                            const isWithinRange = itemPrice >= convertedMinPrice && itemPrice <= convertedMaxPrice;
+
+                                            return isWithinRange;
                                         } catch (error) {
                                             console.error('Error in price range filter:', error.message);
                                             return false; // Return false if there's any error during validation
@@ -204,7 +273,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
         } else {
             setPropertiesToShow(listedProperties); // Reset to all properties if no filter
         }
-    }, [filterOption, filterValue, listedProperties]);
+    }, [filterOption, filterValue, listedProperties, rwandanFrancRate]);
 
     /**
      * Sort properties
@@ -269,7 +338,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
     return (
         <>
             {/* Loading State */}
-            {loadingProperties &&
+            {(loadingProperties || loadingCurrencyRates) &&
                 <div className="d-flex flex-wrap px-sm-2">
                     {Array.from({ length: 6 }).map((_, index) => (
                         <div key={index} className="col-12 col-sm-6 col-lg-4 col-xl-6 mb-4 mb-md-0 p-md-3 loading-skeleton">
@@ -293,16 +362,16 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
             }
 
             {/* Error State */}
-            {!loadingProperties && errorLoadingProperties && (
+            {!loadingProperties && !loadingCurrencyRates && (errorLoadingProperties || errorLoadingCurrencyRates) && (
                 <FetchError
-                    errorMessage={errorLoadingProperties}
+                    errorMessage={errorLoadingProperties || errorLoadingCurrencyRates}
                     refreshFunction={() => fetchProperties()}
                     className="mb-5 mt-4"
                 />
             )}
 
             {/* No Properties State */}
-            {!loadingProperties && !errorLoadingProperties && propertiesToShowCount === 0 && (
+            {!loadingProperties && !loadingCurrencyRates && !errorLoadingProperties && !errorLoadingCurrencyRates && propertiesToShowCount === 0 && (
                 <div className="mx-auto my-4 col-sm-8 col-md-6 col-lg-5 col-xl-4 rounded mb-5 p-3">
                     <img src="/images/not_found_illustration.webp" alt="Not found" />
                     <div className="text-center text-muted small">
@@ -322,7 +391,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
             )}
 
             {/* Main Content */}
-            {!loadingProperties && !errorLoadingProperties && propertiesToShowCount > 0 && (
+            {!loadingProperties && !errorLoadingProperties && !loadingCurrencyRates && !errorLoadingCurrencyRates && propertiesToShowCount > 0 && (
                 <>
                     <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={() => setShowToast(false)} />
                     <ConfirmDialog
