@@ -453,15 +453,15 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                                 <img src={cover} alt="Property" className="dim-100 object-fit-cover" />
                                                 {/* CAT buttons */}
                                                 <div className="position-absolute top-0 bottom-0 mt-3 mb-2 me-3 property-actions">
-                                                    <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 fst-italic small rounded-pill clickDown" onClick={() => goToProperty(id)}>
+                                                    <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 small rounded-pill clickDown" onClick={() => goToProperty(id)}>
                                                         View property <CaretDoubleRight size={16} className="ms-1" />
                                                     </button>
                                                     {!closed && (
                                                         <>
-                                                            <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 fst-italic small rounded-pill clickDown" onClick={() => shareProperty(id, name, category)} >
+                                                            <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 small rounded-pill clickDown" onClick={() => shareProperty(id, name, category)} >
                                                                 Share <ShareFat size={16} className="ms-1" />
                                                             </button>
-                                                            <button className="btn d-flex align-items-center mt-auto border-0 bg-light text-black2 fst-italic small rounded-pill clickDown" title="Compare" onClick={() => compareProperty(id)} >
+                                                            <button className="btn d-flex align-items-center mt-auto border-0 bg-light text-black2 small rounded-pill clickDown" title="Compare" onClick={() => compareProperty(id)} >
                                                                 <Plus size={7} weight="bold" className="text-dark" /> <ArrowsLeftRight size={16} />
                                                             </button>
                                                         </>
@@ -504,7 +504,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                                     </div>
                                                     <h4 className="m-0 fs-6 text-gray-700 text-capitalize-first-letter">{name}</h4>
                                                     <p className="mb-2 text-capitalize"><MapPinArea size={20} weight="fill" /> {location}</p>
-                                                    <p className="d-none d-md-block text-muted small">
+                                                    <p className="d-none d-sm-block text-muted small">
                                                         <span className="text-clamp text-clamp-4 text-capitalize-first-letter">
                                                             {about}
                                                         </span>
