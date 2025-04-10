@@ -502,10 +502,10 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                                             <Heart className="text ms-1 fs-4 ptr me-1 bounceClick" />
                                                         </span> */}
                                                     </div>
-                                                    <h4 className="m-0 fs-6 text-gray-700">{name}</h4>
-                                                    <p className="mb-2"><MapPinArea size={20} weight="fill" /> {location}</p>
+                                                    <h4 className="m-0 fs-6 text-gray-700 text-capitalize-first-letter">{name}</h4>
+                                                    <p className="mb-2 text-capitalize"><MapPinArea size={20} weight="fill" /> {location}</p>
                                                     <p className="d-none d-md-block text-muted small">
-                                                        <span className="text-clamp text-clamp-4">
+                                                        <span className="text-clamp text-clamp-4 text-capitalize-first-letter">
                                                             {about}
                                                         </span>
                                                     </p>
