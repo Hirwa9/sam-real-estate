@@ -143,6 +143,10 @@ body {
 
 /* Customs */
 
+.text-capitalize-first-letter::first-letter {
+	text-transform: uppercase;
+}
+
 .app-loading-page {
 	/* background-image: linear-gradient(150deg, rgba(39, 128, 157, 0.3), rgba(195, 133, 0, 0.3)); */
 
