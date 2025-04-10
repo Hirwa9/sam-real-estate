@@ -72,6 +72,21 @@ export const getDateHoursMinutes = (d, params) => {
     }
 };
 
+// Function to format time (e.g., "09:00:00" -> "9am")
+export const formatWorkingHoursTime = (timeString) => {
+    const [hours, minutes] = timeString.split(':');
+    const hour = parseInt(hours, 10);
+    const period = hour >= 12 ? 'pm' : 'am';
+    const formattedHour = hour % 12 || 12; // Convert 24-hour time to 12-hour time
+    return `${formattedHour}:${minutes}${period}`;
+};
+
+// Function to check if today is a weekend
+export const isWeekend = () => {
+    const today = new Date().getDay(); // 0 = Sunday, 6 = Saturday
+    return today === 0 || today === 6;
+};
+
 // Format big numbers
 export const formatBigCountNumbers = (number) => {
     let formattedNumber;
