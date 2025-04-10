@@ -4,9 +4,9 @@ import MediaViewer from '../common/mediaViewer/MediaViewer';
 import { CaretLeft, CaretRight, Image, Video, XCircle } from '@phosphor-icons/react';
 
 const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, video }) => {
-    const availableMedia = JSON.parse(media);
-    const images = availableMedia.images.slice(1);
-    const totalImage = images.length;
+    const availableImages = JSON.parse(media)?.images;
+    const slicedImagess = availableImages.slice(1);
+    const totalSlicedImage = slicedImagess.length;
     // Show only 4 images in first grid
     let nextImageIndex = 4;
 
@@ -76,20 +76,21 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
                 <div className="h-100 w-100 d-grid scroll-smooth slides-container images-container" ref={containerRef}>
                     {/* Render images */}
                     <div className="imgages-grid imgages-grid-main">
-                        <img src={primaryImage} alt="" className="main-image" onClick={() => { setScrollTo(images[0].url); setOpenImageViewer(true); }} />
-                        <img src={images[0]?.url} alt=""
-                            onClick={() => { setScrollTo(images[0]?.url); setOpenImageViewer(true); }} />
-                        <img src={images[1]?.url} alt=""
-                            onClick={() => { setScrollTo(images[1]?.url); setOpenImageViewer(true); }} />
-                        <img src={images[2]?.url} alt=""
-                            onClick={() => { setScrollTo(images[2]?.url); setOpenImageViewer(true); }} />
-                        <img src={images[3]?.url} alt=""
-                            onClick={() => { setScrollTo(images[3]?.url); setOpenImageViewer(true); }} />
+                        <img src={primaryImage} alt="" className="main-image"
+                            onClick={() => { setScrollTo(primaryImage); setOpenImageViewer(true); }} />
+                        <img src={slicedImagess[0]?.url} alt=""
+                            onClick={() => { setScrollTo(slicedImagess[0]?.url); setOpenImageViewer(true); }} />
+                        <img src={slicedImagess[1]?.url} alt=""
+                            onClick={() => { setScrollTo(slicedImagess[1]?.url); setOpenImageViewer(true); }} />
+                        <img src={slicedImagess[2]?.url} alt=""
+                            onClick={() => { setScrollTo(slicedImagess[2]?.url); setOpenImageViewer(true); }} />
+                        <img src={slicedImagess[3]?.url} alt=""
+                            onClick={() => { setScrollTo(slicedImagess[3]?.url); setOpenImageViewer(true); }} />
                     </div>
                     {/* Check if we need to create the second grid */}
-                    {totalImage > nextImageIndex && (
+                    {totalSlicedImage > nextImageIndex && (
                         <div className="imgages-grid">
-                            {images.slice(nextImageIndex, nextImageIndex + 8).map((image, index) => (
+                            {slicedImagess.slice(nextImageIndex, nextImageIndex + 8).map((image, index) => (
                                 <img key={index} src={image.url} alt={`Image_${nextImageIndex + index}`}
                                     onClick={() => { setScrollTo(image.url); setOpenImageViewer(true); }}
                                 />
@@ -98,9 +99,9 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
                     )}
 
                     {/* Limit to at most two image grids */}
-                    {totalImage > nextImageIndex + 8 && (
+                    {totalSlicedImage > nextImageIndex + 8 && (
                         <div className="imgages-grid">
-                            {images.slice(nextImageIndex + 8, nextImageIndex + 16).map((image, index) => (
+                            {slicedImagess.slice(nextImageIndex + 8, nextImageIndex + 16).map((image, index) => (
                                 <img key={index} src={image.url} alt={`Image_${nextImageIndex + 8 + index}`}
                                     onClick={() => { setScrollTo(image.url); setOpenImageViewer(true); }}
                                 />
@@ -110,7 +111,7 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
                 </div>
                 {/* Property details */}
                 <div className="postion-absolute bottom-0 left-0 right-0 mx-auto d-flex flex-wrap column-gap-3 row-gap-1 bg-light p-2 rounded w-fit overflow-auto shadow" style={{ translate: "0 -50%", maxWidth: "95vw" }}>
-                    <span className='btn btn-sm rad-inherit text-nowrap px-3 border' onClick={() => setShowPropertyImages(true)} >{totalImage + 1} images</span>
+                    <span className='btn btn-sm rad-inherit text-nowrap px-3 border' onClick={() => setShowPropertyImages(true)} >{totalSlicedImage + 1} images</span>
                     {video !== null &&
                         <span className='btn btn-sm rad-inherit text-nowrap px-3 border' onClick={() => setShowPropertyVideo(true)}>1 video</span>
                     }
@@ -140,7 +141,7 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
                         <div className="h-100 bg-light overflow-auto">
                             <div className="row w-fit m-0 px-sm-1 py-1 py-sm-2">
                                 {
-                                    images.map((image, index) => (
+                                    availableImages.map((image, index) => (
                                         <img key={index} src={image.url} alt={`Property_image_${index + 1}`} className='col-sm-6 col-md-4 col-xl-3 px-1 mb-1 mb-sm-2 ptr clickDown' onClick={() => { setScrollTo(image.url); setOpenImageViewer(true); setShowPropertyImages(false) }} />
                                     ))
                                 }
@@ -183,7 +184,7 @@ const PropertyMediaContainer = ({ className, inlineStyles, primaryImage, media, 
             {/* Property images fullscreen viewer */}
             {
                 openImageViewer &&
-                <MediaViewer media={images} goToUrl={scrollTo} onClose={() => setOpenImageViewer(false)} />
+                <MediaViewer media={availableImages} goToUrl={scrollTo} onClose={() => setOpenImageViewer(false)} />
             }
         </>
     );
