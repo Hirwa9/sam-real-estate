@@ -1106,12 +1106,12 @@ const Admin = () => {
                             {/* CAT buttons */}
                             {listed &&
                                 <div className="position-absolute top-0 mt-3 me-3 property-actions">
-                                    <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 fst-italic small rounded-pill clickDown"
+                                    <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 small rounded-pill clickDown"
                                         onClick={() => goToProperty(id)} title="View property">
                                         View property <CaretDoubleRight size={16} className="ms-1" />
                                     </button>
                                     {!closed &&
-                                        <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 fst-italic small rounded-pill clickDown" title="Share property"
+                                        <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 small rounded-pill clickDown" title="Share property"
                                             onClick={() => shareProperty(id, name, category)} >
                                             Share <ShareFat size={16} className="ms-1" />
                                         </button>
