@@ -3,8 +3,8 @@ import useCustomDialogs from '../hooks/useCustomDialogs';
 import './property.css';
 import { AuthContext } from '../AuthProvider';
 import { useNavigate, useParams } from 'react-router-dom';
-import { formatBigCountNumbers, formatDate, shareProperty } from '../../scripts/myScripts';
-import { ArrowBendDoubleUpRight, Bed, Building, Car, CaretRight, ChatText, Check, Clock, CookingPot, DeviceMobileCamera, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo } from '@phosphor-icons/react';
+import { formatBigCountNumbers, formatDate, formatWorkingHoursTime, isWeekend, shareProperty } from '../../scripts/myScripts';
+import { ArrowBendDoubleUpRight, ArrowClockwise, Bed, Building, Car, CaretRight, ChatText, Check, Clock, CookingPot, DeviceMobileCamera, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo } from '@phosphor-icons/react';
 // import Button from '@mui/material/Button';
 import PropertyMediaContainer from './PropertyMediaContainer';
 import WorkingHours from '../common/workinghours/WorkingHours';
@@ -23,6 +23,7 @@ import ReactImageGallery from 'react-image-gallery';
 import { Axios, BASE_URL } from '../../api/api';
 import LoadingIndicator from '../common/LoadingIndicator';
 import { PropertiesContext } from '../../App';
+import { useSettings } from '../SettingsProvider';
 
 const Property = () => {
     // Custom hooks
@@ -54,6 +55,14 @@ const Property = () => {
 
     // Properties data context
     const { fetchProperties } = useContext(PropertiesContext);
+
+    // Settings context
+    const {
+        businessProfileSettings,
+        loadingBusinessProfileSettings,
+        errorLoadingBusinessProfileSettings,
+        fetchBusinessProfileSettings,
+    } = useSettings();
 
     const sendMessage = () => {
         window.open(`https://wa.me/${companyPhoneNumber1.phone}?text=Hello%2C%20I%27m%20interested%20in%20your%20services.%20Especially%20with%20this%20property_*${name}*_%20${window.location}`, '_blank');
@@ -457,8 +466,34 @@ const Property = () => {
                                             </div>
                                             <div className='d-flex justify-content-center'>
                                                 <div className='text-gray-600 d-grid'>
-                                                    <span>Open 10am - 5pm Today</span>
-                                                    <span className="text-black2 fw-bold mx-auto ptr clickDown" ref={workingHoursTogglerRef} onClick={toggleWorkingHours}>See All Hours</span>
+                                                    {loadingBusinessProfileSettings ? (
+                                                        <span>Loading hours...</span>
+                                                    ) : errorLoadingBusinessProfileSettings ? (
+                                                        <span className="text-danger d-flex align-items-center justify-content-center gap-2 mb-2">
+                                                            <span>Failed to load hours.</span> <button className="btn btn-sm btn-outline-secondary border-0 d-block mx-auto border border-secondary border-opacity-25"
+                                                                onClick={() => fetchBusinessProfileSettings()}
+                                                            >
+                                                                <ArrowClockwise weight="bold" size={18} className="me-1" /> Retry
+                                                            </button>
+                                                        </span>
+                                                    ) : businessProfileSettings ? (
+                                                        <>
+                                                            <span>
+                                                                {isWeekend()
+                                                                    ? `Open ${formatWorkingHoursTime(businessProfileSettings.weekendsOpen)} - ${formatWorkingHoursTime(businessProfileSettings.weekendsClose)} Today`
+                                                                    : `Open ${formatWorkingHoursTime(businessProfileSettings.weekdaysOpen)} - ${formatWorkingHoursTime(businessProfileSettings.weekdaysClose)} Today`}
+                                                            </span>
+                                                            <span
+                                                                className="text-black2 fw-bold mx-auto ptr clickDown"
+                                                                ref={workingHoursTogglerRef}
+                                                                onClick={toggleWorkingHours}
+                                                            >
+                                                                See All Hours
+                                                            </span>
+                                                        </>
+                                                    ) : (
+                                                        <span>No working hours available.</span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
