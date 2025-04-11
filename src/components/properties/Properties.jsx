@@ -115,9 +115,9 @@ const Properties = () => {
     const closePriceModal = () => setPriceModalOpen(false);
 
     // Combined filter modal
-    const [combonedFilterModalOpen, setCombonedFilterModalOpen] = useState(false);
-    const openCombonedFilterModal = () => setCombonedFilterModalOpen(true);
-    const closeCombonedFilterModal = () => setCombonedFilterModalOpen(false);
+    const [combinedFilterModalOpen, setCombinedFilterModalOpen] = useState(false);
+    const openCombinedFilterModal = () => setCombinedFilterModalOpen(true);
+    const closeCombinedFilterModal = () => setCombinedFilterModalOpen(false);
 
     // Filter combination
     const submitCombinedFilter = () => {
@@ -158,7 +158,7 @@ const Properties = () => {
         }
 
         // Set the filter option and value
-        closeCombonedFilterModal();
+        closeCombinedFilterModal();
         setFilterOption('combined');
         setFilterValue(combinedFilter);
     };
@@ -200,7 +200,7 @@ const Properties = () => {
     }, [minPriceInputValue, maxPriceInputValue, propCategorySubFilter, propTypeSubFilter]);
 
     // Clear combined filter value
-    const clearCombinedFilter = () => {
+    const clearCombinedFilters = () => {
         setMinPriceInputValue('');
         setMaxPriceInputValue('');
         setPropCategorySubFilter('');
@@ -525,7 +525,7 @@ const Properties = () => {
                             </Modal>
 
                             {/* Filter by All */}
-                            <div className='h-2rem px-3 flex-align-center border-end border-black4 rad-0 text-muted ptr' onClick={openCombonedFilterModal}>
+                            <div className='h-2rem px-3 flex-align-center border-end border-black4 rad-0 text-muted ptr' onClick={openCombinedFilterModal}>
                                 <Sliders className='me-2' />
                                 <span className='text-nowrap small'>Combined</span> <CaretDown className='ms-1' />
                             </div>
@@ -662,7 +662,7 @@ const Properties = () => {
 
                 {/* Advanced filter */}
 
-                <Modal open={combonedFilterModalOpen} onClose={closeCombonedFilterModal} center>
+                <Modal open={combinedFilterModalOpen} onClose={closeCombinedFilterModal} center>
                     <div className="border-0 rounded-0">
                         <h5 className="mb-3 text-black2" id="filterByAllLabel"> Advanced Search</h5>
                         <div className="pt-0">
@@ -741,7 +741,7 @@ const Properties = () => {
                         </div>
                         <div className="modal-footer py-3">
                             <button type="button" className='btn btn-sm me-3 text-primaryColorDark' data-bs-dismiss='modal'
-                                onClick={() => clearCombinedFilter()}
+                                onClick={() => { clearCombinedFilters(); closeCombinedFilterModal() }}
                             >
                                 Cancel
                             </button>
