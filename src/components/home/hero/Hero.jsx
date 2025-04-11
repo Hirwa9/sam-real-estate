@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./hero.css";
 import Heading from "../../common/Heading";
@@ -36,20 +36,26 @@ const Hero = () => {
             .map(property => property?.location)
     ), [propertiesContext]);
 
+
+    // Currency value
+    const currencyValuesRef = useRef();
+    currencyValuesRef.current = Object.keys(aboutProperties?.priceRanges);
+
+    // const [currency, setCurrency] = useState(currencyValuesRef.current[0]);
     // All input values
     const [formData, setFormData] = useState({
         searchValue: '',
         propertyType: '',
-        currency: 'rwf',
+        currency: currencyValuesRef.current[0],
         priceRange: '',
         bedrooms: ''
     });
 
     // Price range selection based on currency
     const priceRangeSelection = useMemo(() => {
-        return formData.currency === 'rwf'
-            ? aboutProperties?.priceRanges?.['RWF']
-            : aboutProperties?.priceRanges?.['USD'];
+        return formData.currency === currencyValuesRef.current[0]
+            ? aboutProperties?.priceRanges?.[currencyValuesRef.current[0]]
+            : aboutProperties?.priceRanges?.[currencyValuesRef.current[1]];
     }, [formData.currency]);
 
 
@@ -156,16 +162,16 @@ const Hero = () => {
                                         Price range
                                         <span className="d-flex align-content-center justify-content-center gap-3 border border-top-0 border-bottom-0 border-bg-secondary border-opacity-25 ms-3 px-2 py-1">
                                             <span
-                                                className={`small ${formData.currency === 'rwf' ? 'text-primary px-2 bg-primary-subtle rounded-pill' : 'text-gray-500'} ptr`}
-                                                onClick={() => setFormData({ ...formData, currency: 'rwf' })}
+                                                className={`small ${formData.currency === currencyValuesRef.current[0] ? 'text-primary px-2 bg-primary-subtle rounded-pill' : 'text-gray-500'} ptr`}
+                                                onClick={() => setFormData({ ...formData, currency: currencyValuesRef.current[0] })}
                                             >
-                                                RWF
+                                                {currencyValuesRef.current[0].toUpperCase()}
                                             </span>
                                             <span
-                                                className={`small ${formData.currency === 'usd' ? 'text-primary px-2 bg-primary-subtle rounded-pill' : 'text-gray-500'} ptr`}
-                                                onClick={() => setFormData({ ...formData, currency: 'usd' })}
+                                                className={`small ${formData.currency === currencyValuesRef.current[1] ? 'text-primary px-2 bg-primary-subtle rounded-pill' : 'text-gray-500'} ptr`}
+                                                onClick={() => setFormData({ ...formData, currency: currencyValuesRef.current[1] })}
                                             >
-                                                USD
+                                                {currencyValuesRef.current[1].toUpperCase()}
                                             </span>
                                         </span>
                                     </span>
