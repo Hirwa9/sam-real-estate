@@ -305,6 +305,36 @@ label,
 	clip-path: polygon(1rem 0, 100% 0, 100% calc(100% - 1rem), calc(100% - 1rem) 100%, 0 100%, 0 1rem);
 }
 
+/* Modify/overwrite modal positioning styles */
+.react-responsive-modal-container {
+	padding-inline: .5rem;
+}
+
+@media screen and (max-width: 768px) {
+	.react-responsive-modal-container .filter-options {
+		padding-inline: 0 !important;
+	}
+}
+
+@media screen and (min-width: 768px) {
+	.react-responsive-modal-container {
+		padding-inline: 0;
+	}
+}
+
+.react-responsive-modal-modal {
+	display: block;
+	margin-inline: 0 !important;
+	margin-block: 1.2rem;
+}
+
+@media screen and (min-width: 768px) {
+	.react-responsive-modal-modal {
+		max-width: 50rem !important;
+		margin-inline: auto !important;
+	}
+}
+
 /* Peak borders */
 
 .peak-borders-t {
