@@ -307,7 +307,7 @@ label,
 
 /* Modify/overwrite modal positioning styles */
 .react-responsive-modal-container {
-	padding-inline: .5rem;
+	padding-inline: .5rem !important;
 }
 
 @media screen and (max-width: 768px) {
@@ -318,12 +318,12 @@ label,
 
 @media screen and (min-width: 768px) {
 	.react-responsive-modal-container {
-		padding-inline: 0;
+		padding-inline: 0 !important;
 	}
 }
 
 .react-responsive-modal-modal {
-	display: block;
+	display: block !important;
 	margin-inline: 0 !important;
 	margin-block: 1.2rem;
 }
@@ -554,6 +554,10 @@ label,
 
 .bg-primaryColor {
 	background-color: var(--primaryColor) !important;
+}
+
+.bg-primaryColorDark {
+	background-color: var(--primaryColorDark) !important;
 }
 
 .bg-none {
