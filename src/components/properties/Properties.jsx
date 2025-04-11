@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './properties.css';
 import { aboutProperties } from '../data/Data';
@@ -7,6 +7,10 @@ import img from '../images/pricing.jpg';
 import PropertyCard from '../common/PropertyCard';
 import DividerText from '../common/DividerText';
 /* global $ */
+
+// Resources
+import 'react-responsive-modal/styles.css';
+import { Modal } from 'react-responsive-modal';
 
 // Icons
 import { ArrowsClockwise, Binoculars, CaretDoubleUp, CaretDown, MagnifyingGlass, XCircle, Sliders, X, ArrowClockwise } from '@phosphor-icons/react';
@@ -52,6 +56,51 @@ const Properties = () => {
         });
     }, [location.search]);
 
+    // Currency value
+    const currencyValuesRef = useRef();
+    currencyValuesRef.current = Object.keys(aboutProperties?.priceRanges);
+
+    const [currency, setCurrency] = useState(currencyValuesRef.current[0]);
+
+    // Price range selection based on currency
+    const priceRangeSelection = useMemo(() => {
+        return currency === currencyValuesRef.current[0]
+            ? aboutProperties?.priceRanges?.[currencyValuesRef.current[0]]
+            : aboutProperties?.priceRanges?.[currencyValuesRef.current[1]];
+    }, [currency]);
+
+    // Currency switcher
+    const CurrencyComponent = () => {
+        return (
+            <>
+                <div className='mb-3 mb-md-1 p-3 rounded-4 border border-secondary border-opacity-50'>
+                    <div className="d-flex align-content-center gap-3 mb-3">
+                        <button
+                            type='button'
+                            className={`small ${currency === currencyValuesRef.current[0] ? 'text-primary bg-primary-subtle' : 'text-gray-500'} flex-grow-1 py-2 px-4 rounded-2 border-0 ptr`}
+                            onClick={() => setCurrency(currencyValuesRef.current[0])}
+                        >
+                            {currencyValuesRef.current[0].toUpperCase()}
+                        </button>
+                        <button
+                            type='button'
+                            className={`small ${currency === currencyValuesRef.current[1] ? 'text-primary bg-primary-subtle' : 'text-gray-500'} flex-grow-1 py-2 px-4 rounded-2 border-0 ptr`}
+                            onClick={() => setCurrency(currencyValuesRef.current[1])}
+                        >
+                            {currencyValuesRef.current[1].toUpperCase()}
+                        </button>
+                    </div>
+                    <div>
+                        <div className="fw-semibold mb-0">Currency: {currency}</div>
+                        <p className='mb-0 text-muted small'>
+                            The type of currency to use when filtering properties within a specific range of prices
+                        </p>
+                    </div>
+                </div>
+            </>
+        )
+    }
+
     const [minPriceInputValue, setMinPriceInputValue] = useState('');
     const [maxPriceInputValue, setMaxPriceInputValue] = useState('');
     const [propPriceRangeSubFilter, setPropPriceRangeSubFilter] = useState([]);
@@ -59,6 +108,16 @@ const Properties = () => {
     const [propTypeSubFilter, setPropTypeSubFilter] = useState('');
     const [combinedFilter, setCombinedFilter] = useState('');
     const [canUseCombinedFilter, setCanUseCombinedFilter] = useState(false);
+
+    // Price modal
+    const [priceModalOpen, setPriceModalOpen] = useState(false);
+    const openPriceModal = () => setPriceModalOpen(true);
+    const closePriceModal = () => setPriceModalOpen(false);
+
+    // Combined filter modal
+    const [combonedFilterModalOpen, setCombonedFilterModalOpen] = useState(false);
+    const openCombonedFilterModal = () => setCombonedFilterModalOpen(true);
+    const closeCombonedFilterModal = () => setCombonedFilterModalOpen(false);
 
     // Filter combination
     const submitCombinedFilter = () => {
@@ -99,6 +158,7 @@ const Properties = () => {
         }
 
         // Set the filter option and value
+        closeCombonedFilterModal();
         setFilterOption('combined');
         setFilterValue(combinedFilter);
     };
@@ -115,7 +175,7 @@ const Properties = () => {
         const validValues = combinedArray.filter(val => val !== '').length;
         if (validValues > 1) {
             setCombinedFilter({
-                priceRange: [Math.min(minPriceInputValue, maxPriceInputValue), Math.max(minPriceInputValue, maxPriceInputValue)],
+                priceRange: [Math.min(minPriceInputValue, maxPriceInputValue), Math.max(minPriceInputValue, maxPriceInputValue), currency],
                 propCategorySubFilter,
                 propTypeSubFilter,
             });
@@ -273,8 +333,9 @@ const Properties = () => {
                 } else if (filterParameter.includes('priceRange_')) {
                     setFilterOption('priceRange');
                     const rangeNums = filterParameter.slice(filterParameter.indexOf('_') + 1).split('and');
+                    const rangeNumsWithCurrency = [...rangeNums, 'rwf'];
                     setPropPriceRangeSubFilter([rangeNums[0], rangeNums[1]]);
-                    setFilterValue(rangeNums);
+                    setFilterValue(rangeNumsWithCurrency);
                 } else if (filterParameter.includes('bedrooms_')) {
                     setFilterOption('bedrooms');
                     setFilterValue(filterParameter.slice(filterParameter.indexOf('_') + 1));
@@ -315,8 +376,9 @@ const Properties = () => {
         }
         if (minPriceInputValue !== 0 && maxPriceInputValue !== 0) {
             setFilterOption("priceRange");
-            setFilterValue([Math.min(minPriceInputValue, maxPriceInputValue), Math.max(minPriceInputValue, maxPriceInputValue)]);
+            setFilterValue([Math.min(minPriceInputValue, maxPriceInputValue), Math.max(minPriceInputValue, maxPriceInputValue), currency]);
             setPropPriceRangeSubFilter([Math.min(minPriceInputValue, maxPriceInputValue), Math.max(minPriceInputValue, maxPriceInputValue)]);
+            closePriceModal();
             scrollToResults();
         }
     }
@@ -325,7 +387,6 @@ const Properties = () => {
         setMinPriceInputValue('');
         setMaxPriceInputValue('');
     }
-
 
     // Scroll to results
     const scrollToResults = () => {
@@ -397,60 +458,74 @@ const Properties = () => {
                             </div>
 
                             {/* Filter by Price */}
-                            <div className='h-2rem px-3 flex-align-center border-end border-black4 rad-0 text-muted ptr' data-bs-toggle="dropdown" id="filterByPrice" aria-expanded="false">
+                            <div className='h-2rem px-3 flex-align-center border-end border-black4 rad-0 text-muted ptr' id="filterByPrice" onClick={openPriceModal} aria-expanded="false">
                                 <span className='small'>Price</span>
                                 <CaretDown className='ms-1' />
                             </div>
-                            <div className="dropdown-menu col-12 col-sm-auto me-1 me-sm-0 p-3 filter-options" aria-labelledby="filterByPrice">
-                                <DividerText text="Enter price range" className="mx-3 mb-2 no-line text-gray-600 fw-bold" />
-                                <form onSubmit={(e) => { e.preventDefault(); handlePriceRangeInput() }}>
-                                    <div className='d-flex flex-column flex-sm-row align-items-center flex-wrap mb-2 px-2'>
-                                        <input type="number"
-                                            value={minPriceInputValue}
-                                            onChange={(e) => setMinPriceInputValue(e.target.value)} placeholder='Min Price (RWF)' className='col-12 col-sm-auto h-2_5rem rounded px-2 border border-2' />
-                                        <span className='mx-2 fw-bold text-primaryColor'>-</span>
-                                        <input type="number"
-                                            value={maxPriceInputValue}
-                                            onChange={(e) => setMaxPriceInputValue(e.target.value)} placeholder='Max Price (RWF)' className='col-12 col-sm-auto h-2_5rem rounded px-2 border border-2' />
-                                    </div>
-                                    <div className='flex-align-center justify-content-between mx-2'>
-                                        <button type="reset" className='btn btn-sm flex-align-center ms-auto px-3 text-muted rounded-pill clickDown'
-                                            onClick={clearPriceRangeInput}
-                                        >
-                                            Clear <X size={15} className='ms-1 opacity-50' />
-                                        </button>
-                                        <button type="submit" className='btn btn-sm bg-primaryColor flex-align-center ms-3 px-3 text-muted rounded-pill clickDown'
-                                            onClick={handlePriceRangeInput}
-                                        >
-                                            Search <MagnifyingGlass size={17} className='ms-1' />
-                                        </button>
-                                    </div>
-                                </form>
-                                <DividerText noBorder className="mx-3 my-2 shadow-none" />
-                                <div className='py-1 px-2 text-muted'>Pick a range (RWF)</div>
-                                <div className='mb-3 fw-light price-filter-options'>
-                                    {aboutProperties?.priceRanges?.['RWF']
-                                        .map((val, index) => (
-                                            <div key={index} className='p-2 small ptr mb-1 clickDown filter-option-value'
-                                                onClick={() => {
-                                                    setFilterOption("priceRange");
-                                                    setFilterValue([val.min.replaceAll(',', ''), val.max.replaceAll(',', '')]);
-                                                    setPropPriceRangeSubFilter([val.min.replaceAll(',', ''), val.max.replaceAll(',', '')]);
-                                                    scrollToResults();
-                                                }}
-                                            >
-                                                <div className='d-flex align-items-center justify-content-between px-4'>
-                                                    <span className='px-3'>{val.min}</span>
-                                                    <span className='px-3'> - </span>
-                                                    <span className='px-3'>{val.max}</span>
-                                                </div>
+
+                            <Modal open={priceModalOpen} onClose={closePriceModal} center>
+                                <div className="col-12 col-sm-auto me-1 me-sm-0 p-3 filter-options" aria-labelledby="filterByPrice">
+                                    <DividerText
+                                        text="Enter price range"
+                                        clickable
+                                        className="mx-3 mb-2 no-line text-gray-600 fw-bold"
+                                    />
+                                    <form onSubmit={(e) => { e.preventDefault(); handlePriceRangeInput() }} className='mb-4 py-3'>
+                                        <CurrencyComponent />
+
+                                        <div className="d-md-flex px-md-3">
+                                            <div className='col-12 col-md-auto d-flex flex-column flex-sm-row align-items-center justify-content-sm-center flex-wrap mb-2 mb-md-0 px-0'>
+                                                <input type="number"
+                                                    value={minPriceInputValue}
+                                                    onChange={(e) => setMinPriceInputValue(e.target.value)}
+                                                    placeholder="Enter Min. Price" className='col-12 col-sm-auto h-2_5rem rounded px-2 border border-secondary border-opacity-50' />
+                                                <span className='mx-2 fw-bold text-primaryColor'>-</span>
+                                                <input type="number"
+                                                    value={maxPriceInputValue}
+                                                    onChange={(e) => setMaxPriceInputValue(e.target.value)}
+                                                    placeholder="Enter Max. Price" className='col-12 col-sm-auto h-2_5rem rounded px-2 border border-secondary border-opacity-50' />
                                             </div>
-                                        ))}
+                                            <div className='flex-align-center justify-content-between mx-auto me-sm-0 w-fit my-3'>
+                                                <button type="reset" className='btn btn-sm flex-align-center ms-auto px-3 text-muted rounded-pill clickDown'
+                                                    onClick={clearPriceRangeInput}
+                                                >
+                                                    Clear <X size={15} className='ms-1 opacity-50' />
+                                                </button>
+                                                <button type="submit" className='btn btn-sm bg-primaryColor flex-align-center ms-3 px-3 text-muted rounded-pill clickDown'
+                                                    onClick={handlePriceRangeInput}
+                                                >
+                                                    Search <MagnifyingGlass size={17} className='ms-1' />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <DividerText noBorder className="mx-3 my-2 shadow-none" />
+                                    <div className='py-1 px-2 text-muted'>Pick a range (RWF)</div>
+                                    <div className='mb-3 fw-light price-filter-options'>
+                                        {priceRangeSelection
+                                            .map((val, index) => (
+                                                <div key={index} className='p-2 small ptr mb-1 clickDown filter-option-value'
+                                                    onClick={() => {
+                                                        setFilterOption("priceRange");
+                                                        setFilterValue([val.min.replaceAll(',', ''), val.max.replaceAll(',', ''), currency]);
+                                                        setPropPriceRangeSubFilter([val.min.replaceAll(',', ''), val.max.replaceAll(',', '')]);
+                                                        closePriceModal();
+                                                        scrollToResults();
+                                                    }}
+                                                >
+                                                    <div className='d-flex align-items-center justify-content-between px-2 px-sm-4'>
+                                                        <span className='px-2 px-sm-3 text-nowrap'>{`${val.min} ${currency.toUpperCase()}`}</span>
+                                                        <span className='px-2 px-sm-3 text-nowrap'> - </span>
+                                                        <span className='px-2 px-sm-3 text-nowrap'>{`${val.max} ${currency.toUpperCase()}`}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                    </div>
                                 </div>
-                            </div>
+                            </Modal>
 
                             {/* Filter by All */}
-                            <div className='h-2rem px-3 flex-align-center border-end border-black4 rad-0 text-muted ptr' data-bs-toggle="modal" data-bs-target="#filterByAll">
+                            <div className='h-2rem px-3 flex-align-center border-end border-black4 rad-0 text-muted ptr' onClick={openCombonedFilterModal}>
                                 <Sliders className='me-2' />
                                 <span className='text-nowrap small'>Combined</span> <CaretDown className='ms-1' />
                             </div>
@@ -532,13 +607,13 @@ const Properties = () => {
                             {(filterOption === "priceRange" || propPriceRangeSubFilter.length > 0) &&
                                 (filterOption === "priceRange") ?
                                 <li>
-                                    <b>Price range</b>:
-                                    RwF {Number(filterValue[0]).toLocaleString()} - RwF {Number(filterValue[1]).toLocaleString()}
+                                    <b>Price range</b>: {' '}
+                                    {currency.toUpperCase()} {Number(filterValue[0]).toLocaleString()} - {currency.toUpperCase()} {Number(filterValue[1]).toLocaleString()}
                                 </li>
                                 : (filterOption === 'combined' && propPriceRangeSubFilter.length > 0) &&
                                 <li>
-                                    <b>Price range</b>:
-                                    RwF {Number(propPriceRangeSubFilter[0]).toLocaleString()} - RwF {Number(propPriceRangeSubFilter[1]).toLocaleString()}
+                                    <b>Price range</b>: {' '}
+                                    {currency.toUpperCase()} {Number(propPriceRangeSubFilter[0]).toLocaleString()} - {currency.toUpperCase()} {Number(propPriceRangeSubFilter[1]).toLocaleString()}
                                 </li>
                             }
                             {filterOption === "bedrooms" &&
@@ -586,103 +661,102 @@ const Properties = () => {
                 </div>
 
                 {/* Advanced filter */}
-                <div className="modal fade" id="filterByAll" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="filterByAllLabel" aria-hidden="true">
-                    <div className="modal-dialog">
-                        <div className="modal-content border-0 rounded-0" style={{ marginTop: "4rem" }}>
-                            <div className="modal-header border-0">
-                                <h5 className="justify-self-center modal-title text-black2" id="filterByAllLabel"> Advanced Search</h5>
-                                <button type="button" className="btn-close me-0" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <Modal open={combonedFilterModalOpen} onClose={closeCombonedFilterModal} center>
+                    <div className="border-0 rounded-0">
+                        <h5 className="mb-3 text-black2" id="filterByAllLabel"> Advanced Search</h5>
+                        <div className="pt-0">
+                            {/* Description */}
+                            <div className="alert alert-secondary border-0 rounded-0 text-justify text-gray-600 smaller">
+                                <span>
+                                    Combine different filters to refine your search and discover exactly what you're looking for.
+                                </span>
                             </div>
-                            <div className="modal-body pt-0">
-                                {/* Description */}
-                                <div className="alert alert-secondary border-0 rounded-0 text-justify text-gray-600 smaller">
-                                    <span>
-                                        Combine different filters to refine your search and discover exactly what you're looking for.
-                                    </span>
-                                </div>
-                                {/* Filters */}
-                                <div className='p-3 filter-options-all'>
-                                    {/* Price */}
-                                    <div>
-                                        <form onSubmit={(e) => e.preventDefault()}>
-                                            <div className='d-flex flex-column flex-sm-row flex-wrap align-items-center justify-content-between  mb-2'>
-                                                <input type="number"
-                                                    value={minPriceInputValue}
-                                                    onChange={(e) => setMinPriceInputValue(e.target.value)} placeholder='Min Price (RWF)' className='col-12 col-sm-5 h-2_5rem rounded px-2 border border-2' />
-                                                <span className='mx-2 fw-bold text-muted opacity-50'>-</span>
-                                                <input type="number"
-                                                    value={maxPriceInputValue}
-                                                    onChange={(e) => setMaxPriceInputValue(e.target.value)} placeholder='Max Price (RWF)' className='col-12 col-sm-5 h-2_5rem rounded px-2 border border-2' />
-                                            </div>
-                                            <div className='flex-align-center justify-content-between'>
-                                                <button type="reset" className='btn btn-sm flex-align-center mx-auto px-3 text-muted rounded-pill clickDown'
-                                                    onClick={clearPriceRangeInput} >
-                                                    Clear <X size={15} className='ms-1 opacity-50' />
-                                                </button>
-                                            </div>
-                                        </form>
+                            {/* Filters */}
+                            <div className='py-3 px-md-3 filter-options-all'>
+                                {/* Price */}
+                                <form onSubmit={(e) => e.preventDefault()} className=''>
+                                    <CurrencyComponent />
+
+                                    <div className='d-flex flex-column flex-sm-row flex-wrap align-items-center justify-content-between mb-2 mt-md-3'>
+                                        <input type="number"
+                                            value={minPriceInputValue}
+                                            onChange={(e) => setMinPriceInputValue(e.target.value)} placeholder="Enter Min. Price" className='col-12 col-sm-5 h-2_5rem rounded px-2 border border-secondary border-opacity-50' />
+                                        <span className='mx-2 fw-bold text-muted opacity-50'>-</span>
+                                        <input type="number"
+                                            value={maxPriceInputValue}
+                                            onChange={(e) => setMaxPriceInputValue(e.target.value)} placeholder="Enter Max. Price" className='col-12 col-sm-5 h-2_5rem rounded px-2 border border-secondary border-opacity-50' />
                                     </div>
-                                    <hr />
-                                    {/* Type */}
-                                    <ul className='mb-0 px-0 small row-gap-3 list-flexible'>
-                                        {aboutProperties.allTypes
-                                            .sort((a, b) =>
-                                                a.localeCompare(b)
-                                            )
-                                            .map((val, index) => (
-                                                <li key={index} className={`dropdown-item px-3 py-1 small flex-center rounded-pill ptr clickDown ${propTypeSubFilter === val ? 'border border-primaryColor border-2' : ''} filter-option-value`}
-                                                    onClick={() => setPropTypeSubFilter(val)}
-                                                >
-                                                    {val}
-                                                </li>
-                                            ))
-                                        }
-                                        {propTypeSubFilter !== '' &&
-                                            <li className={"dropdown-item ms-2 py-0 px-2 small ptr clickDown bg-danger border border-danger opacity-50 rounded-3 align-self-center filter-option-value"}
-                                                onClick={() => setPropTypeSubFilter('')}
+                                    <div className='flex-align-center justify-content-between'>
+                                        <button type="reset" className='btn btn-sm flex-align-center mx-auto px-3 text-muted rounded-pill clickDown'
+                                            onClick={clearPriceRangeInput} >
+                                            Clear <X size={15} className='ms-1 opacity-50' />
+                                        </button>
+                                    </div>
+                                </form>
+                                <hr />
+                                {/* Type */}
+                                <ul className='mb-0 px-0 small row-gap-3 list-flexible'>
+                                    {aboutProperties.allTypes
+                                        .sort((a, b) =>
+                                            a.localeCompare(b)
+                                        )
+                                        .map((val, index) => (
+                                            <li key={index} className={`dropdown-item px-3 py-1 flex-center rounded-pill ptr clickDown ${propTypeSubFilter === val ? 'border border-primaryColor border-2' : ''} filter-option-value`}
+                                                onClick={() => setPropTypeSubFilter(val)}
                                             >
-                                                <X size={20} fill='var(--bs-light)' className='p-1' />
+                                                {val}
                                             </li>
-                                        }
-                                    </ul>
-                                    <hr />
-                                    {/* Category */}
-                                    <ul className='mb-0 px-0 small row-gap-3 list-flexible'>
-                                        {aboutProperties.allCategories
-                                            .map((val, index) => (
-                                                <li key={index} className={`dropdown-item px-3 py-1 small flex-center rounded-pill ptr clickDown ${propCategorySubFilter === val ? 'border border-primaryColor border-2' : ''} filter-option-value`}
-                                                    onClick={() => setPropCategorySubFilter(val)}
-                                                >
-                                                    {val}
-                                                </li>
-                                            ))
-                                        }
-                                        {propCategorySubFilter !== '' &&
-                                            <li className={"dropdown-item ms-2 py-0 px-2 small ptr clickDown bg-danger border border-danger opacity-50 rounded-3 align-self-center filter-option-value"}
-                                                onClick={() => setPropCategorySubFilter('')}
+                                        ))
+                                    }
+                                    {propTypeSubFilter !== '' &&
+                                        <li className={"dropdown-item ms-2 py-0 px-2 ptr clickDown bg-danger border border-danger opacity-50 rounded-3 align-self-center filter-option-value"}
+                                            onClick={() => setPropTypeSubFilter('')}
+                                        >
+                                            <X size={20} fill='var(--bs-light)' className='p-1' />
+                                        </li>
+                                    }
+                                </ul>
+                                <hr />
+                                {/* Category */}
+                                <ul className='mb-0 px-0 small row-gap-3 list-flexible'>
+                                    {aboutProperties.allCategories
+                                        .map((val, index) => (
+                                            <li key={index} className={`dropdown-item px-3 py-1 flex-center rounded-pill ptr clickDown ${propCategorySubFilter === val ? 'border border-primaryColor border-2' : ''} filter-option-value`}
+                                                onClick={() => setPropCategorySubFilter(val)}
                                             >
-                                                <X size={20} fill='var(--bs-light)' className='p-1' />
+                                                {val}
                                             </li>
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className='btn btn-sm me-3 text-primaryColorDark' data-bs-dismiss='modal'
-                                    onClick={() => clearCombinedFilter()}
-                                >
-                                    Cancel
-                                </button>
-                                <button type="submit" className='btn btn-sm bg-primaryColor flex-align-center px-3 text-muted rounded-pill clickDown'
-                                    data-bs-dismiss={canUseCombinedFilter ? 'modal' : undefined}
-                                    onClick={() => { submitCombinedFilter() }}
-                                >
-                                    Search <MagnifyingGlass size={17} className='ms-1' />
-                                </button>
+                                        ))
+                                    }
+                                    {propCategorySubFilter !== '' &&
+                                        <li className={"dropdown-item ms-2 py-0 px-2 ptr clickDown bg-danger border border-danger opacity-50 rounded-3 align-self-center filter-option-value"}
+                                            onClick={() => setPropCategorySubFilter('')}
+                                        >
+                                            <X size={20} fill='var(--bs-light)' className='p-1' />
+                                        </li>
+                                    }
+                                </ul>
                             </div>
                         </div>
+                        <div className="modal-footer py-3">
+                            <button type="button" className='btn btn-sm me-3 text-primaryColorDark' data-bs-dismiss='modal'
+                                onClick={() => clearCombinedFilter()}
+                            >
+                                Cancel
+                            </button>
+                            <button type="submit" className='btn btn-sm bg-primaryColor flex-align-center px-3 text-muted rounded-pill clickDown'
+                                onClick={() => {
+                                    if (canUseCombinedFilter) {
+                                        submitCombinedFilter()
+                                    }
+                                }}
+                            >
+                                Search <MagnifyingGlass size={17} className='ms-1' />
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </Modal>
 
                 {/* Properties list */}
                 <PropertyCard
