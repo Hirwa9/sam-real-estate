@@ -145,6 +145,25 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
     }
 
     // Filter properties to show
+
+    const getConvertedMinMaxPrices = (currency, filterCurrency, minPrice, maxPrice) => {
+        let convertedMinPrice;
+        let convertedMaxPrice;
+
+        if (currency === 'usd' && filterCurrency === 'rwf') {
+            convertedMinPrice = minPrice / rwandanFrancRate;
+            convertedMaxPrice = maxPrice / rwandanFrancRate;
+        } else if (currency === 'rwf' && filterCurrency === 'usd') {
+            convertedMinPrice = minPrice * rwandanFrancRate;
+            convertedMaxPrice = maxPrice * rwandanFrancRate;
+        } else {
+            convertedMinPrice = minPrice;
+            convertedMaxPrice = maxPrice;
+        }
+
+        return { convertedMinPrice, convertedMaxPrice };
+    }
+
     useEffect(() => {
         if (filterOption) {
             let filteredProperties = listedProperties.filter(val => {
@@ -152,8 +171,25 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                 switch (filterOption) {
                     case "type":
                         return val.type.toLowerCase() === filterValue.toLowerCase();
-                    case "priceRange":
-                        return val.price >= Number(filterValue[0]) && val.price <= Number(filterValue[1]);
+                    case "priceRange": {
+
+                        const currency = val.currency?.toLowerCase();
+                        const itemPrice = parseFloat(val.price);
+
+                        const filterCurrency = filterValue[2].toLowerCase();
+                        const [minPrice, maxPrice] = filterValue.slice(0, 2);
+
+                        // Allign currecy comparison
+                        const { convertedMinPrice, convertedMaxPrice } =
+                            getConvertedMinMaxPrices(
+                                currency, filterCurrency, minPrice, maxPrice
+                            );
+
+                        // Check if val.price is within the specified range
+                        const isWithinRange = itemPrice >= convertedMinPrice && itemPrice <= convertedMaxPrice;
+
+                        return isWithinRange;
+                    }
                     case "name":
                     case "location": {
                         let searchString = filterValue.toLowerCase();
@@ -171,24 +207,42 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                         return (val.featured !== null && val.featured && !val.closed);
                     // Combined filters (price range, category and type)
                     case "combined": {
-                        const combinedFilter = filterValue;
-                        const hasPriceRangeFilter = combinedFilter.priceRange[0] && combinedFilter.priceRange[1];
-                        const hasPropCategoryFilter = combinedFilter.propCategorySubFilter !== '';
-                        const hasPropTypeFilter = combinedFilter.propTypeSubFilter !== '';
+                        const combinedFilters = filterValue;
+                        const hasPriceRangeFilter = combinedFilters.priceRange[0] && combinedFilters.priceRange[1];
+                        const hasPropCategoryFilter = combinedFilters.propCategorySubFilter !== '';
+                        const hasPropTypeFilter = combinedFilters.propTypeSubFilter !== '';
 
                         const applyCombinedFilters = (val) => {
                             const filters = [
                                 {
                                     isActive: hasPriceRangeFilter,
-                                    check: () => val.price >= Number(combinedFilter.priceRange[0]) && val.price <= Number(combinedFilter.priceRange[1]),
+                                    check: () => {
+
+                                        const currency = val.currency?.toLowerCase();
+                                        const itemPrice = parseFloat(val.price);
+
+                                        const filterCurrency = combinedFilters.priceRange[2].toLowerCase();
+                                        const [minPrice, maxPrice] = combinedFilters.priceRange.slice(0, 2);
+
+                                        // Allign currecy comparison
+
+                                        const { convertedMinPrice, convertedMaxPrice } =
+                                            getConvertedMinMaxPrices(
+                                                currency, filterCurrency, minPrice, maxPrice
+                                            );
+
+                                        // Check if val.price is within the specified range
+                                        const isWithinRange = itemPrice >= convertedMinPrice && itemPrice <= convertedMaxPrice;
+                                        return isWithinRange;
+                                    },
                                 },
                                 {
                                     isActive: hasPropCategoryFilter,
-                                    check: () => val.category === combinedFilter.propCategorySubFilter,
+                                    check: () => val.category === combinedFilters.propCategorySubFilter,
                                 },
                                 {
                                     isActive: hasPropTypeFilter,
-                                    check: () => val.type === combinedFilter.propTypeSubFilter,
+                                    check: () => val.type === combinedFilters.propTypeSubFilter,
                                 },
                             ];
 
@@ -199,34 +253,34 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                         return applyCombinedFilters(val); // Apply the combined filters
                     }
                     case "combinedSearchOptions": {
-                        const combinedFilter = filterValue;
+                        const combinedFilters = filterValue;
                         const applyCombinedFilters = (val) => {
                             const filters = [
                                 {
-                                    isActive: combinedFilter.location !== '',
+                                    isActive: combinedFilters.location !== '',
                                     check: (val) => {
-                                        const searchString = combinedFilter.location.toLowerCase();
+                                        const searchString = combinedFilters.location.toLowerCase();
                                         return val.name.toLowerCase().includes(searchString) ||
                                             val.location.toLowerCase().includes(searchString) ||
                                             val.about.toLowerCase().includes(searchString)
                                     },
                                 },
                                 {
-                                    isActive: combinedFilter.type !== '',
-                                    check: (val) => val.type.toLowerCase() === combinedFilter.type.toLowerCase(),
+                                    isActive: combinedFilters.type !== '',
+                                    check: (val) => val.type.toLowerCase() === combinedFilters.type.toLowerCase(),
                                 },
                                 {
-                                    isActive: combinedFilter.price !== '',
+                                    isActive: combinedFilters.price !== '',
                                     check: (val) => {
                                         try {
                                             // Validate the price range format
-                                            if (!combinedFilter.price || !combinedFilter.price.includes('and')) {
-                                                console.error('Invalid price range format:', combinedFilter.price);
+                                            if (!combinedFilters.price || !combinedFilters.price.includes('and')) {
+                                                console.error('Invalid price range format:', combinedFilters.price);
                                                 return false; // Return false if format is invalid
                                             }
 
                                             // Parse minPrice and maxPrice, ensuring they are numbers
-                                            const [minPrice, maxPrice] = combinedFilter.price.split('and').map((price) => {
+                                            const [minPrice, maxPrice] = combinedFilters.price.split('and').map((price) => {
                                                 const parsedPrice = parseFloat(price.trim());
                                                 if (isNaN(parsedPrice)) {
                                                     // Throw an error for debugging
@@ -243,7 +297,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                             }
 
                                             const currency = val.currency?.toLowerCase();
-                                            const filterCurrency = combinedFilter?.currency?.toLowerCase();
+                                            const filterCurrency = combinedFilters?.currency?.toLowerCase();
 
                                             // Allign currecy comparison
                                             let convertedMinPrice;
@@ -271,8 +325,8 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                     },
                                 },
                                 {
-                                    isActive: combinedFilter.bedrooms !== '',
-                                    check: (val) => val.bedrooms === Number(combinedFilter.bedrooms),
+                                    isActive: combinedFilters.bedrooms !== '',
+                                    check: (val) => val.bedrooms === Number(combinedFilters.bedrooms),
                                 },
                             ];
 
