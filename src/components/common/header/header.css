@@ -28,17 +28,13 @@ header .nav.navbar-nav li {
     position: relative;
 }
 
-/* header .nav.navbar-nav li.active a,
-#smNavbar ul li.active a {
-    color: var(--primaryColorDark);
-} */
-
 #smNavbar ul li.active {
     position: relative;
 }
 
 #smNavbar ul li.active a {
     padding-left: 1rem;
+    color: var(--bs-gray-200);
 }
 
 #smNavbar ul li.active::after {
@@ -82,15 +78,18 @@ header a {
     color: var(--bs-gray-700);
 }
 
-#smNavbar a {
-    color: var(--bs-gray-400);
-}
 
-header a:hover,
-#smNavbar a:hover {
+header a:hover {
     color: goldenrod;
 }
 
+#smNavbar a {
+    color: var(--primaryColorDark);
+}
+
+#smNavbar a:hover {
+    color: var(--bs-gray-300);
+}
 
 header .nav.navbar-nav .nav-item .dropdown-menu {
     border: 0;

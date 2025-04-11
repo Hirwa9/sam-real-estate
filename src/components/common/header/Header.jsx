@@ -206,7 +206,7 @@ const Header = () => {
                         {/* <div ref={smNavbarRef} className="position-relative d-flex inx-inherit smNavbar-wrapper"> */}
                         {/* Nav */}
                         <div className="d-flex flex-column h-100 w-100 pb-2 inx-inherit" id='smNavbar'>
-                            <div className="inx-inherit d-flex align-items-center mb-4 p-3 pb-4 peak-borders-b bg-primaryColor smNavbar-header">
+                            <div className="inx-inherit d-flex align-items-center mb-4 p-3 pb-4 peak-borders-b bg-primaryColorDark smNavbar-header">
 
                                 {isAuthenticated ? (
                                     <div className="d-flex gap-3">
@@ -259,7 +259,10 @@ const Header = () => {
                                     </li>
                                 ) : (
                                     <li className={`nav-item ${activeHeaderLink === '/login' ? "active" : ""} mt-3 px-3 h-2_5rem text-uppercase mt-4 clickDown`} onClick={() => { window.scrollTo({ top: 0, behavior: 'auto' }); hideSmNavbar() }}>
-                                        <Link to={'/login'} className="btn btn-sm bg-gray-700 text-gray-400 bg-opacity-25 border-0 flex-center py-3 clip-path-tl-br-corner">Login</Link>
+                                        <Link
+                                            to={'/login'}
+                                            className={`btn btn-sm ${activeHeaderLink === '/login' ? "bg-transparent text-gray-200 border border-2 border-light border-opacity-50 border-start-0 border-end-0 rounded-0" : "bg-primaryColorDark text-gray-900 border-0 clip-path-tl-br-corner"} bg-opacity-25 flex-center py-3`}
+                                        >Login</Link>
                                     </li>
                                 )}
                             </ul>
