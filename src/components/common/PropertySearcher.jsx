@@ -97,7 +97,7 @@ const PropertySearcher = ({ className, id, iconed, callback }) => {
                                 .map((val, index) => (
                                     <option key={index} value={val.min.replaceAll(',', '') + 'and' + val.max.replaceAll(',', '')}
                                         className='dropdown-item p-2 px-3 small'>
-                                        {val.min} - {val.max}
+                                        {val.min} RWF - {val.max} RWF
                                     </option>
                                 ))}
                         </select>
