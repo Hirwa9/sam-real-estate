@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../common/loginForm/LoginForm';
-import { Axios, BASE_URL } from '../../api/api';
+import { Axios } from '../../api/api';
 import LoadingIndicator from '../common/LoadingIndicator';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import { useAuth } from '../AuthProvider';
@@ -62,7 +62,7 @@ const ReserveProperty = ({ propertyId }) => {
                     Reserve Property
                 </button>
 
-                {showLogin && <LoginForm setShowLogin={setShowLogin} setIsLoggedIn={setIsLoggedIn} />}
+                {!isLoggedIn && showLogin && <LoginForm setShowLogin={setShowLogin} setIsLoggedIn={setIsLoggedIn} />}
                 {reserverError && <p className="text-danger">{reserverError}</p>}
             </div>
         </>

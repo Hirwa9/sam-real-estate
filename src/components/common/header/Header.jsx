@@ -18,8 +18,6 @@ import '@szhsin/react-menu/dist/index.css';
 import '@szhsin/react-menu/dist/transitions/zoom.css';
 import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu';
 
-/* globals $ */
-
 const Header = () => {
     // Auth check
     const { isAuthenticated, checkAuthOnMount, user, logout } = useAuth();

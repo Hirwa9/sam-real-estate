@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId, useContext } from 'react';
+import React, { useState, useEffect, useId, useRef } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import './login.css'
@@ -41,24 +41,18 @@ const Login = () => {
 			toast({ message: 'You are logged in' });
 			navigate('/');
 		}
-	}, []);
+	}, [isAuthenticated, dashboardRoutes, currentLocation]);
 
 	const [isWaitingFetchAction, setIsWaitingFetchAction] = useState(false);
-	const [errorWithFetchAction, setErrorWithFetchAction] = useState(null);
 
 	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	// const [responseMessage, setResponseMessage] = useState('');
 
 	const signInId = useId();
 	const signUpId = useId();
 	const [signingIn, setSigningIn] = useState(true);
 	const toggleSigninSignup = () => setSigningIn(!signingIn);
-
-	const [accessToken, setAccessToken] = useState(null);
-	const [refreshToken, setRefreshToken] = useState(null);
-
 
 	/**
 	 * Login
@@ -162,15 +156,15 @@ const Login = () => {
 				confPassword: confirmNewUserPassword
 			});
 			const data = response.data;
-			setIsAuthenticated(true);
-			setUser(data.user);
+			resetRegisterForm();
 			toast({
 				message: <><UserCirclePlus size={22} weight='fill' className='me-1 opacity-50' /> {data.message}.</>,
 				type: 'success'
 			});
 			setTimeout(() => {
-				resetRegisterForm();
-				navigate(`/user/${data.userId}`); // Navigate to user's dashboard
+				setUser(data.user);
+				navigate(`/user/${data.user.id}`); // Navigate to user's dashboard
+				setIsAuthenticated(true);
 			}, 2000);
 		} catch (err) {
 			const errorMessage = err.response?.data?.message || "Something went wrong. You can try again.";

@@ -1,4 +1,4 @@
-import React, { useState, useId, useRef, useEffect, useContext } from 'react';
+import React, { useState, useId, useRef, useEffect } from 'react';
 import useCustomDialogs from '../../hooks/useCustomDialogs';
 import './loginForm.css';
 import { useAuth } from "../../AuthProvider";
