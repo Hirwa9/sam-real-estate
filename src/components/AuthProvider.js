@@ -111,9 +111,11 @@ export const AuthProvider = ({ children }) => {
     const value = {
         loading,
         user,
+        setUser,
+        isAuthenticated,
+        setIsAuthenticated,
         login,
         logout,
-        isAuthenticated,
         checkAuthOnMount,
     };
 
