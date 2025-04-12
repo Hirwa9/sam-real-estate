@@ -14,7 +14,7 @@ import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
 import { Axios, BASE_URL } from '../../api/api';
-import { AuthContext } from '../AuthProvider';
+import { useAuth } from '../AuthProvider';
 import BusinessLogoName from '../common/BusinessLogoName';
 import '@szhsin/react-menu/dist/index.css';
 import '@szhsin/react-menu/dist/transitions/zoom.css';
@@ -64,7 +64,7 @@ const Customer = () => {
         resetPrompt,
     } = useCustomDialogs();
 
-    const { user, accessToken, logout } = useContext(AuthContext);
+    const { user, accessToken, logout } = useAuth();
 
     /**
      * Sidebar

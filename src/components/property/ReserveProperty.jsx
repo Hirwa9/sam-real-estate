@@ -4,7 +4,7 @@ import LoginForm from '../common/loginForm/LoginForm';
 import { Axios, BASE_URL } from '../../api/api';
 import LoadingIndicator from '../common/LoadingIndicator';
 import useCustomDialogs from '../hooks/useCustomDialogs';
-import { AuthContext } from '../AuthProvider';
+import { useAuth } from '../AuthProvider';
 
 const ReserveProperty = ({ propertyId }) => {
     // Custom hooks
@@ -14,7 +14,7 @@ const ReserveProperty = ({ propertyId }) => {
 
     } = useCustomDialogs();
     // Auth check
-    const { isAuthenticated, checkAuthOnMount, user } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount, user } = useAuth();
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogin, setShowLogin] = useState(false);

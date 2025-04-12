@@ -1,7 +1,7 @@
 import React, { useState, useId, useRef, useEffect, useContext } from 'react';
 import useCustomDialogs from '../../hooks/useCustomDialogs';
 import './loginForm.css';
-import { AuthContext } from "../../AuthProvider";
+import { useAuth } from "../../AuthProvider";
 import { Link } from "react-router-dom";
 import { CaretRight, SignIn, UserCirclePlus, XCircle } from '@phosphor-icons/react';
 import DividerText from '../DividerText';
@@ -23,7 +23,7 @@ const LoginForm = ({ setShowLogin, redirect = false }) => {
     } = useCustomDialogs();
 
     // Auth check
-    const { isAuthenticated, checkAuthOnMount, login } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount, login } = useAuth();
     useEffect(() => {
         !isAuthenticated && checkAuthOnMount();
     }, [isAuthenticated, checkAuthOnMount]);

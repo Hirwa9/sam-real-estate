@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useCustomDialogs from '../hooks/useCustomDialogs';
 import './property.css';
-import { AuthContext } from '../AuthProvider';
+import { useAuth } from '../AuthProvider';
 import { useNavigate, useParams } from 'react-router-dom';
 import { formatBigCountNumbers, formatDate, formatWorkingHoursTime, isWeekend, shareProperty } from '../../scripts/myScripts';
 import { ArrowBendDoubleUpRight, ArrowClockwise, Bed, Building, Car, CaretRight, ChatText, Check, Clock, CookingPot, DeviceMobileCamera, Images, MapPinArea, MoneyWavy, ShareFat, Shower, Translate, VectorThree, VectorTwo } from '@phosphor-icons/react';
@@ -48,7 +48,7 @@ const Property = () => {
     } = useCustomDialogs();
 
     // Auth check
-    const { isAuthenticated, checkAuthOnMount, user } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount, user } = useAuth();
     useEffect(() => {
         !isAuthenticated && checkAuthOnMount();
     }, [isAuthenticated, checkAuthOnMount]);

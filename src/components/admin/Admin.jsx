@@ -14,7 +14,7 @@ import { aboutProperties, companyPhoneNumber1 } from '../data/Data';
 import LoadingBubbles from '../common/LoadingBubbles';
 import FetchError from '../common/FetchError';
 import { useSettings } from '../SettingsProvider';
-import { AuthContext } from '../AuthProvider';
+import { useAuth } from '../AuthProvider';
 import BusinessLogoName from '../common/BusinessLogoName';
 import { BASE_URL } from '../../api/api';
 import '@szhsin/react-menu/dist/index.css';
@@ -60,7 +60,7 @@ const Admin = () => {
         resetPrompt,
     } = useCustomDialogs();
 
-    const { user, accessToken, logout } = useContext(AuthContext);
+    const { user, accessToken, logout } = useAuth();
 
     /**
      * Sidebar
