@@ -5,7 +5,7 @@ import {
     useLocation,
     useNavigate,
 } from "react-router-dom";
-import { AuthContext } from "../../AuthProvider";
+import { useAuth } from "../../AuthProvider";
 import { developerWebsiteLink, nav } from "../../data/Data";
 import SocialMediaIcons from '../SocialMediaIcons';
 import { ArrowsLeftRight, CaretRight, ChartPie, ChartPieSlice, City, Code, ListStar, SignOut, User } from "@phosphor-icons/react";
@@ -22,7 +22,7 @@ import { Menu, MenuItem, MenuButton } from '@szhsin/react-menu';
 
 const Header = () => {
     // Auth check
-    const { isAuthenticated, checkAuthOnMount, user, logout } = useContext(AuthContext);
+    const { isAuthenticated, checkAuthOnMount, user, logout } = useAuth();
     useEffect(() => {
         !isAuthenticated && checkAuthOnMount();
     }, [isAuthenticated, checkAuthOnMount]);
@@ -218,7 +218,7 @@ const Header = () => {
                                                 <span className='ms-auto smaller'>{user.name}</span>
                                                 <span className='ms-auto fs-70 opacity-75 text-capitalize' style={{ lineHeight: 1 }}>{user.type}</span>
                                             </div>
-                                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-3 border-light bg-light rounded-circle' />
+                                            <img src="/images/user_placeholder_image.jpg" alt="" className='w-2_5rem ratio-1-1 object-fit-cover ms-2 d-none d-md-block border border-2 border-dark border-opacity-50 rounded-circle' />
                                         </div>
                                     </div>
                                 ) : (
@@ -226,7 +226,7 @@ const Header = () => {
                                         <img src={businessProfileSettings.logoUrl} alt="logo" className="rounded-circle logo"></img>
                                     </div>
                                 )}
-                                <a href="/login" className="flex-center w-2rem ratio-1-1 border border-dark border-opacity-50 text-dark rounded-circle"> <User size={20} /></a>
+                                <a href="/login" className="flex-center w-2rem ratio-1-1 border border-2 border-dark border-opacity-50 text-dark rounded-circle"> <User size={20} weight="bold" /></a>
                                 <button className="btn d-block ms-auto ratio-1-1 bounceClick w-2_5rem border-0 clickDown closerX closerX-black2" onClick={() => hideSmNavbar()} style={{ scale: "0.8" }}>
                                 </button>
                             </div>
@@ -278,17 +278,17 @@ const Header = () => {
 
                         {/* Floating nav icons */}
                         <div className="r-middle d-grid gap-2 inx-inherit" style={{ translate: '30% 0' }}>
-                            <div className="p-2 bg-gray-900 text-gray-300 border border-2 border-secondary border-opacity-25 rounded-circle ptr bounceClick" title="Compare properties"
+                            <div className="p-2 bg-gray-900 text-gray-300 border border-2 border-warning border-opacity-25 rounded-circle ptr bounceClick" title="Compare properties"
                                 onClick={() => { hideSmNavbar(); setShowPropComparison(true) }}
                             >
                                 <ArrowsLeftRight size={23} />
                             </div>
-                            <div ref={reviewAdderTogglerRef} className="p-2 bg-gray-900 text-gray-300 border border-2 border-secondary border-opacity-25 rounded-circle ptr bounceClick" title="Submit a review"
+                            <div ref={reviewAdderTogglerRef} className="p-2 bg-gray-900 text-gray-300 border border-2 border-warning border-opacity-25 rounded-circle ptr bounceClick" title="Submit a review"
                                 onClick={() => { hideSmNavbar(); setClientAddReview(true) }}
                             >
                                 <ListStar size={23} />
                             </div>
-                            {/* <div className="p-2 bg-gray-900 text-gray-300 border border-2 border-secondary border-opacity-25 rounded-circle ptr bounceClick" title="Notifications">
+                            {/* <div className="p-2 bg-gray-900 text-gray-300 border border-2 border-warning border-opacity-25 rounded-circle ptr bounceClick" title="Notifications">
                                 <BellRinging size={23} />
                             </div> */}
                         </div>
