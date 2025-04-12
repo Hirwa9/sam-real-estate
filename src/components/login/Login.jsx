@@ -8,7 +8,7 @@ import CtaTextButton from '../common/ctaTextButton/CtaTextButton';
 import { isValidEmail, isValidName } from '../../scripts/myScripts';
 import ContentListing from '../common/contentListing/ContentListing';
 // import { companyEmail } from '../data/Data';
-import { AuthContext } from '../AuthProvider';
+import { useAuth } from '../AuthProvider';
 import { Axios, BASE_URL } from '../../api/api';
 /* globals $ */
 
@@ -25,7 +25,7 @@ const Login = () => {
 	} = useCustomDialogs();
 
 	// Auth check
-	const { isAuthenticated, checkAuthOnMount, login } = useContext(AuthContext);
+	const { isAuthenticated, checkAuthOnMount, login, setUser, setIsAuthenticated } = useAuth();
 	useEffect(() => {
 		!isAuthenticated && checkAuthOnMount();
 	}, [isAuthenticated, checkAuthOnMount]);
@@ -63,10 +63,6 @@ const Login = () => {
 	/**
 	 * Login
 	*/
-
-	const { setAuthState } = useContext(AuthContext);
-	// const [email, setEmail] = useState('');
-	// const [password, setPassword] = useState('');
 
 	const handleSignIn = async (e) => {
 		e.preventDefault();
@@ -157,42 +153,35 @@ const Login = () => {
 			return alert("Set a valid password to continue");
 
 		// Sending data with the expected keys
-		await Axios.post(`${BASE_URL}/register`, {
-			name: newUserName,
-			email: newUserEmail,
-			password: newUserPassword,
-			confPassword: confirmNewUserPassword
-		})
-			.then(response => {
-				const data = response.data;
-				// setIsAuthenticated(true);
-				setAuthState({
-					accessToken: response.data.accessToken,
-					refreshToken: response.data.refreshToken,
-				});
-				toast({
-					message: <><UserCirclePlus size={22} weight='fill' className='me-1 opacity-50' /> {data.message}.</>,
-					type: 'success'
-				});
-				setTimeout(() => {
-					resetRegisterForm();
-					navigate(`/user/${data.userId}`); // Navigate to user's dashboard
-				}, 2000);
-			})
-			.catch(err => {
-				if (err.response && err.response.data && err.response.data.message) {
-					toast({
-						message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> {err.response.data.message}.</>,
-						type: 'warning'
-					});
-				} else {
-					toast({
-						message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Something went wrong. You can try again.</>,
-						type: 'warning'
-					});
-				}
-				console.error(err);
+		try {
+			setIsWaitingFetchAction(true);
+			const response = await Axios.post(`${BASE_URL}/register`, {
+				name: newUserName,
+				email: newUserEmail,
+				password: newUserPassword,
+				confPassword: confirmNewUserPassword
 			});
+			const data = response.data;
+			setIsAuthenticated(true);
+			setUser(data.user);
+			toast({
+				message: <><UserCirclePlus size={22} weight='fill' className='me-1 opacity-50' /> {data.message}.</>,
+				type: 'success'
+			});
+			setTimeout(() => {
+				resetRegisterForm();
+				navigate(`/user/${data.userId}`); // Navigate to user's dashboard
+			}, 2000);
+		} catch (err) {
+			const errorMessage = err.response?.data?.message || "Something went wrong. You can try again.";
+			toast({
+				message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> {errorMessage}.</>,
+				type: 'warning'
+			});
+			console.error(err);
+		} finally {
+			setIsWaitingFetchAction(false);
+		}
 	};
 
 	// Handle input's UI
@@ -435,8 +424,12 @@ const Login = () => {
 											By submitting, you agree to our <Link to="/terms" className="text-muted">Terms of use</Link>.
 										</p>
 										<div className="pt-1 my-4">
-											<button type="submit" className="btn btn-sm btn-dark flex-center mb-3 px-3 rounded-pill w-100 clickDown" style={{ fontSize: "75%", paddingBlock: ".8rem" }}>CREATE ACCOUNT <UserCirclePlus size={20} className='ms-2' /></button>
-											<button type="reset" className="btn btn-sm btn-outline-danger d-block border-3 border-danger border-opacity-25 mx-auto px-5 rounded-pill w-fit clickDown" style={{ fontSize: "75%" }} onClick={resetRegisterForm}>Cancel</button>
+											<button type="submit" className="btn btn-sm btn-dark flex-center mb-3 px-3 rounded-pill w-100 clickDown" style={{ fontSize: "75%", paddingBlock: ".8rem" }}>
+												CREATE ACCOUNT  {!isWaitingFetchAction ? <UserCirclePlus size={20} className='ms-2' />
+													: <span className="spinner-grow spinner-grow-sm ms-2"></span>
+												}
+											</button>
+											<button type="reset" className="btn btn-sm btn-outline-danger d-block border-3 border-danger border-opacity-25 mx-auto px-5 rounded-pill w-fit clickDown" style={{ fontSize: "75%" }} onClick={() => { resetRegisterForm(); toggleSigninSignup(); window.scrollTo({ top: 0, behavior: 'auto' }) }}>Cancel</button>
 										</div>
 										<div className='mt-4'>
 											<CtaTextButton
