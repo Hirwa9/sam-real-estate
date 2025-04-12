@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import "./awards.css"
 import { PropertiesContext } from "../../../App";
 import { awards } from "../../data/Data";
@@ -92,11 +92,38 @@ const Awards = () => {
         }
     }, [propertiesContext, errorLoadingProperties, propertiesLikes]);
 
+    // Dynamic countup
+
+    const [startCount, setStartCount] = useState(false); // State to start CountUp
+    const contentRef = useRef(null); // Ref for the "properties" section
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setStartCount(true); // Start counting when the element is in view
+                }
+            },
+            { threshold: 0.55 } // Trigger when 50% of the element is visible
+        );
+
+        const observable = contentRef.current;
+        if (observable) {
+            observer.observe(observable);
+        }
+
+        return () => {
+            if (observable) {
+                observer.unobserve(observable);
+            }
+        };
+    }, []);
+
     if (!loadingProperties && !errorLoadingProperties && totalProperties === 0) return null
 
     return (
         <>
-            <section className="p-3 awards">
+            <section className="p-3 striped-bg awards">
                 <div className="container">
                     <Heading
                         title={<>Over Happy Users Being With Us<br />Still They Love Our Services</>}
@@ -117,40 +144,50 @@ const Awards = () => {
                     {/* Available content */}
                     {!loadingProperties && !errorLoadingProperties && totalProperties > 0 &&
                         <>
-                            <div className="d-md-flex flex-wrap justify-content-around">
+                            <div className="d-md-flex flex-wrap justify-content-around" ref={contentRef}>
                                 {awards.map((val, index) => {
                                     return (
-                                        <div key={index} className="d-flex flex-column p-3 p-md-5 box">
+                                        <div
+                                            key={index}
+                                            className="d-flex flex-column p-3 p-md-5 box"
+                                        >
                                             <div className="d-inline-block mx-auto icon">
                                                 {val.icon}
                                             </div>
-                                            {val.name === "properties" &&
-                                                <div className="h1 fw-bold text-center my-4"><CountUp start={propertiesCount - 10} end={propertiesCount} /></div>
-                                            }
+                                            {val.name === "properties" && (
+                                                <div className="h1 fw-bold text-center my-4">
+                                                    {startCount && (
+                                                        <CountUp start={propertiesCount - 10} end={propertiesCount} duration={5} />
+                                                    )}
+                                                </div>
+                                            )}
                                             {val.name === "reviews" && (
                                                 <>
-                                                    {
-                                                        loadingReviews ?
-                                                            (
-                                                                <LoadingBubbles />
-                                                            )
-                                                            : errorLoadingReviews ? (
-                                                                <button className="btn btn-sm btn-outline-secondary d-block mx-auto border border-secondary border-opacity-25" onClick={() => fetchReviews()}>
-                                                                    <ArrowClockwise weight="bold" size={18} className="me-1" />
-                                                                </button>
-                                                            )
-                                                                : (
-                                                                    <div className="h1 fw-bold text-center my-4"><CountUp end={reviews.length} /></div>
-                                                                )
-                                                    }
+                                                    {loadingReviews ? (
+                                                        <LoadingBubbles />
+                                                    ) : errorLoadingReviews ? (
+                                                        <button
+                                                            className="btn btn-sm btn-outline-secondary d-block mx-auto border border-secondary border-opacity-25"
+                                                            onClick={() => fetchReviews()}
+                                                        >
+                                                            Retry
+                                                        </button>
+                                                    ) : (
+                                                        <div className="h1 fw-bold text-center my-4">
+                                                            {startCount && (
+                                                                <CountUp end={reviews.length} duration={5} />
+                                                            )}
+                                                        </div>
+                                                    )}
                                                 </>
                                             )}
-                                            {val.name === "insights" &&
-                                                <div className="h1 fw-bold text-center my-4"><CountUp start={propertiesLikes - 10} end={propertiesLikes} /></div>
-                                            }
-                                            {val.name === "users" &&
-                                                <div className="h1 fw-bold text-center my-4"><CountUp start={propertiesLikes - 10} end={propertiesLikes} /></div>
-                                            }
+                                            {val.name === "insights" && (
+                                                <div className="h1 fw-bold text-center my-4">
+                                                    {startCount && (
+                                                        <CountUp start={propertiesLikes - 10} end={propertiesLikes} duration={5} />
+                                                    )}
+                                                </div>
+                                            )}
                                             <p className="text-center small text-capitalize">{val.name}</p>
                                         </div>
                                     );
