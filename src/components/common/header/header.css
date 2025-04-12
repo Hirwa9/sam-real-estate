@@ -85,6 +85,7 @@ header a:hover {
 
 #smNavbar a {
     color: var(--primaryColorDark);
+    font-weight: 450;
 }
 
 #smNavbar a:hover {
