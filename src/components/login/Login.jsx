@@ -41,7 +41,7 @@ const Login = () => {
 			toast({ message: 'You are logged in' });
 			navigate('/');
 		}
-	}, [isAuthenticated, dashboardRoutes, currentLocation]);
+	}, []);
 
 	const [isWaitingFetchAction, setIsWaitingFetchAction] = useState(false);
 
