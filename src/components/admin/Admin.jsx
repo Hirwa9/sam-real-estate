@@ -956,7 +956,6 @@ const Admin = () => {
         // Clear states after upload
         setImageFiles([]);
         setImageFileNames([]);
-        // setSelectedProperty(propertiesToShow.filter(p => p.id === propertyId));
         setShowSelectedPropertyInfo(false);
     };
 
@@ -1599,7 +1598,7 @@ const Admin = () => {
                                         {(media === null || (media !== null || JSON.parse(media).images.length < 25)) &&
                                             <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
                                                 onClick={() => {
-                                                    if (propImages.length >= 25) {
+                                                    if (propImages && propImages.length >= 25) {
                                                         return alert("Property images limit (25) reached. Delete a few images from this property to make space for new ones");
                                                     }
                                                     setShowAddImageForm(true); setShowAddVideoForm(false)
@@ -1660,7 +1659,6 @@ const Admin = () => {
                                                             <p className='mb-0 px-2'>No file chosen</p>
                                                         )
                                                     }
-                                                    {/* <p className={`${imageFileName ? 'text-success' : ''} mb-0 px-2`}>{imageFileName || "No file chosen"}</p> */}
                                                 </div>
                                                 <div className="modal-footer justify-content-around">
                                                     <button
@@ -1668,7 +1666,11 @@ const Admin = () => {
                                                         className={`col-5 btn btn-sm text-secondary border-0 ${isWaitingAdminEditAction ? 'opacity-25' : 'opacity-75'
                                                             } clickDown`}
                                                         disabled={isWaitingAdminEditAction}
-                                                        onClick={() => { setShowAddImageForm(false); }}
+                                                        onClick={() => {
+                                                            setImageFiles([]);
+                                                            setImageFileNames([]);
+                                                            setShowAddImageForm(false);
+                                                        }}
                                                     >
                                                         Cancel
                                                     </button>
