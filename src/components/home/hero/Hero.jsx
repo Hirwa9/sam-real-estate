@@ -115,9 +115,9 @@ const Hero = () => {
                         hType="h1"
                         className="mb-5 mb-md-0 mt-0 px-2 px-sm-0 pb-md-5"
                         titleClassName="mb-4"
-                        subtitleClassName="w-fit mx-auto px-4 px-md-5 py-3 bg-bodi"
+                        subtitleClassName="w-fit mx-auto px-4 px-md-5 py-3 text-light fs-4 fw-semibold"
                     />
-                    <div className="position-relative mb-3 mb-md-5 mb-xl-3 px-2 py-3 px-md-3 p-lg-4 bg-bodi blur-bg-2px text-gray-700 property-filter">
+                    <div className="position-relative mx-2 mx-md-0 mb-3 mb-md-5 px-2 py-3 px-md-3 p-lg-4 bg-bodi blur-bg-2px text-gray-700 property-filter">
                         <div className="d-flex flex-column flex-xl-row">
                             <div className="col-xl-10 d-md-flex flex-wrap align-items-center justify-content-between">
                                 <div className="d-grid p-2 pe-lg-3 col-md-6 box">

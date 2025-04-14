@@ -18,7 +18,7 @@
 }
 
 .hero p {
-    clip-path: polygon(1rem 0, 100% 0, 100% calc(100% - 1rem), calc(100% - 1rem) 100%, 0 100%, 0 1rem);
+    filter: drop-shadow(0 0 .25rem var(--black2));
     animation: flyInBottom .6s 1;
 }
 
@@ -92,9 +92,6 @@
 }
 
 @media screen and (min-width: 768px) {
-    .property-filter {
-        border-radius: 0;
-    }
 
     .property-filter::before {
         opacity: .25;
@@ -106,6 +103,7 @@
         bottom: -1.25rem;
         z-index: -1;
         background-image: repeating-linear-gradient(45deg, var(--white2), var(--white2) .25rem, transparent .25rem, transparent .5rem);
+        border-radius: inherit;
         transition: .3s ease-in-out;
         z-index: -1;
     }
@@ -117,6 +115,10 @@
 }
 
 @media screen and (min-width: 1200px) {
+    .property-filter {
+        border-radius: 2.5rem;
+    }
+
     .property-filter::before {
         top: -1.875rem;
         left: -1.875rem;
