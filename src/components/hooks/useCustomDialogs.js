@@ -1,3 +1,4 @@
+import { Cursor } from "@phosphor-icons/react";
 import { useState, useRef } from "react";
 
 const useCustomDialogs = () => {
@@ -17,6 +18,41 @@ const useCustomDialogs = () => {
         setToastMessage('');
         setToastType('gray-300');
     };
+
+
+    // Context menu
+    const [showContextMenu, setShowContextMenu] = useState(false);
+    const [contextMenuOptions, setContextMenuOptions] = useState(
+        [
+            {
+                title: 'Action 1',
+                action: () => alert('Action 1'),
+                icon: <Cursor size={20} className='opacity-50' />,
+                textColor: 'success',
+            },
+            {
+                title: 'Action 2',
+                action: () => alert('Action 2'),
+            },
+        ]
+    );
+    const [contextMenuPosition, setContextMenuPosition] = useState({ left: 15, top: 15 });
+
+    const customContextMenu = ({ options, position }) => {
+        setShowContextMenu(true);
+        setContextMenuOptions(
+            options || [
+                {
+                    action: () => alert('Action triggered'),
+                    title: 'Trigger an action',
+                }
+            ]
+        );
+        setContextMenuPosition(position || { left: 15, top: 15 });
+    }
+    const hideContextMenu = () => {
+        setShowContextMenu(false);
+    }
 
     // Confirm Dialog
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -90,6 +126,16 @@ const useCustomDialogs = () => {
         toastType,
         toast,
         resetToast,
+
+        // Context menu
+        showContextMenu,
+        setShowContextMenu,
+        contextMenuOptions,
+        setContextMenuOptions,
+        contextMenuPosition,
+        setContextMenuPosition,
+        customContextMenu,
+        hideContextMenu,
 
         // Confirm Dialog
         showConfirmDialog,
