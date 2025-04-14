@@ -122,7 +122,7 @@ const Property = () => {
 
                 // Related properties
                 setOtherRelatedProperties(data.filter(property =>
-                    property.type === type && property.category === category
+                    property.type === type && property.category === category && property.listed
                 ));
             }
             setError(null); // Reset any previous errors
