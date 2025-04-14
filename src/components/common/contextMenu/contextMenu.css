@@ -1,0 +1,56 @@
+.cont-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: fit-content;
+    min-width: 11.25rem;
+    padding: 4px;
+    overflow: hidden;
+    list-style-type: none;
+    transition: .05s;
+    z-index: 1032;
+}
+
+.cont-menu > ul {
+    margin: 0;
+    padding: .5rem 0;
+    border-radius: inherit;
+    background-color: var(--appColor);
+    color: var(--black1);
+    outline: 2px solid var(--black4);
+    outline-offset: 2px;
+    translate: 0 -110%;
+}
+
+.cont-menu.working {
+    display: block;
+}
+
+.cont-menu.working > ul {
+    animation: showOptions var(--trans) 1 forwards;
+}
+
+.cont-menu > ul > li {
+    padding: .5rem 1rem;
+    cursor: pointer;
+    transition: border var(--trans);
+}
+
+.cont-menu > ul > li:hover {
+    background-color: var(--white4_cons);
+    border-bottom-color: var(--white3);
+}
+
+.cont-menu > ul > li:active {
+    animation: clickDown .2s 1;
+}
+
+
+@keyframes showOptions {
+
+    /* from { translate: 0 -110%;} to { translate: 0 0;} */
+    to {
+        translate: 0 0;
+    }
+}
