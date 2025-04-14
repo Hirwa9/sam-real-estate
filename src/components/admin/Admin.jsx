@@ -20,6 +20,7 @@ import { BASE_URL } from '../../api/api';
 import '@szhsin/react-menu/dist/index.css';
 import '@szhsin/react-menu/dist/transitions/zoom.css';
 import { Menu, MenuItem, MenuButton, MenuDivider } from '@szhsin/react-menu';
+import ContextMenu from '../common/contextMenu/ContextMenu';
 
 const Admin = () => {
 
@@ -31,6 +32,13 @@ const Admin = () => {
         toastMessage,
         toastType,
         toast,
+
+        // Context menu
+        showContextMenu,
+        contextMenuOptions,
+        contextMenuPosition,
+        customContextMenu,
+        hideContextMenu,
 
         // Confirm Dialog
         showConfirmDialog,
@@ -821,9 +829,6 @@ const Admin = () => {
                 throw new Error(errorData.message || "Failed to upload media.");
             }
 
-            const responseData = await response.json();
-            cLog("Upload successful:", responseData);
-
             toast({
                 message: `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded successfully.`,
                 type: "success",
@@ -834,6 +839,43 @@ const Admin = () => {
             cError("Error uploading file:", error.message);
             toast({
                 message: `Failed to upload ${type}. Please try again.`,
+                type: "danger",
+            });
+        } finally {
+            setIsWaitingAdminEditAction(false);
+        }
+    };
+
+    // Multiple media uploader (Images)
+    const uploadMultiplePropertyImages = async (propertyId, files) => {
+        const formData = new FormData();
+        files.forEach((file) => {
+            formData.append("images", file); // Append files one by one with the key "images"
+        });
+
+        try {
+            setIsWaitingAdminEditAction(true);
+            const response = await fetch(`${BASE_URL}/property/${propertyId}/add-images`, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to upload images.");
+            }
+
+            const responseData = await response.json();
+            toast({
+                message: (responseData.message || "Images uploaded successfully."),
+                type: "success",
+            });
+
+            fetchProperties();
+        } catch (error) {
+            cError("Error uploading images:", error.message);
+            toast({
+                message: `Failed to upload the images. Please try again.`,
                 type: "danger",
             });
         } finally {
@@ -861,6 +903,34 @@ const Admin = () => {
         setImageFileName(file?.name || ""); // Set the file name
     };
 
+
+    const [imageFiles, setImageFiles] = useState([]); // Array to hold selected files
+    const [imageFileNames, setImageFileNames] = useState([]); // Array to hold file names
+
+    const handleImageFilesChange = (e) => {
+        const maxFiles = 5; // Set maximum limit file
+        const files = Array.from(e.target.files); // Convert FileList to an array
+
+        if (files.length > maxFiles) {
+            e.target.value = '';
+            return toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> You can only upload up to {maxFiles} files at once.</>,
+                type: 'info'
+            });
+        }
+
+        const invalidFiles = files.filter(file => !file.type.startsWith("image/"));
+        if (invalidFiles.length > 0) {
+            return toast({
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Please upload valid image files only.</>,
+                type: 'danger'
+            });
+        }
+
+        setImageFiles(files); // Update state with valid files
+        setImageFileNames(files.map(file => file.name)); // Store file names
+    };
+
     const handleVideoFileChange = (e) => {
         const file = e.target.files[0];
         if (file && !file.type.startsWith("video/")) {
@@ -873,17 +943,19 @@ const Admin = () => {
         setVideoFileName(file?.name || ""); // Set the file name
     };
 
-    const addPropertyImage = async () => {
-        if (!imageFile) {
+    const addPropertyImages = async () => {
+        if (!imageFiles || imageFiles.length === 0) {
             return toast({
-                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Please select an image file before submitting.</>,
+                message: <><WarningCircle size={22} weight='fill' className='me-1 opacity-50' /> Please select image files before submitting.</>,
                 type: 'gray-700'
             });
         }
 
         const propertyId = selectedProperty.id;
-        await uploadMedia(propertyId, imageFile, "image");
-        setImageFile(null); // Clear the input after upload
+        await uploadMultiplePropertyImages(propertyId, imageFiles);
+        // Clear states after upload
+        setImageFiles([]);
+        setImageFileNames([]);
         // setSelectedProperty(propertiesToShow.filter(p => p.id === propertyId));
         setShowSelectedPropertyInfo(false);
     };
@@ -912,7 +984,7 @@ const Admin = () => {
         try {
             setIsWaitingAdminEditAction(true);
             const response = await fetch(`${BASE_URL}/property/${selectedProperty.id}/removeImage`, {
-                method: 'DELETE',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ imageUrl: selectedImageUrl })
             });
@@ -925,7 +997,7 @@ const Admin = () => {
             fetchProperties();
             toast({ message: data.message, type: 'dark' });
         } catch (error) {
-            cError('Error:', error.message);
+            cError('Error:', error);
             toast({ message: (error.message || 'Something went wrong. Please try again.'), type: 'warning' });
         } finally {
             setIsWaitingAdminEditAction(false);
@@ -1526,9 +1598,14 @@ const Admin = () => {
 
                                         {(media === null || (media !== null || JSON.parse(media).images.length < 25)) &&
                                             <button type="button" className="btn btn-sm btn-outline-secondary border-secondary border-opacity-50 flex-center px-3 rounded-pill fs-75 clickDown"
-                                                onClick={() => { setShowAddImageForm(true); setShowAddVideoForm(false) }}
+                                                onClick={() => {
+                                                    if (propImages.length >= 25) {
+                                                        return alert("Property images limit (25) reached. Delete a few images from this property to make space for new ones");
+                                                    }
+                                                    setShowAddImageForm(true); setShowAddVideoForm(false)
+                                                }}
                                             >
-                                                <Image size={16} weight='fill' className='me-2 opacity-75' /> ADD IMAGE
+                                                <Image size={16} weight='fill' className='me-2 opacity-75' /> ADD IMAGES
                                             </button>
                                         }
 
@@ -1571,9 +1648,19 @@ const Admin = () => {
                                                         name="propImage"
                                                         id="propImage"
                                                         className="form-control rounded-0 file-input"
-                                                        onChange={handleImageFileChange}
+                                                        multiple // Enables selection of multiple files
+                                                        onChange={handleImageFilesChange}
                                                     />
-                                                    <p className={`${imageFileName ? 'text-success' : ''} mb-0 px-2`}>{imageFileName || "No file chosen"}</p>
+                                                    {imageFileNames.length ?
+                                                        imageFileNames.length === 1 ? (
+                                                            <p className={`text-success mb-0 px-2`}>{imageFileNames[0]}</p>
+                                                        ) : (
+                                                            <p className={`text-success mb-0 px-2`}>{imageFileNames.join(', ')}</p>
+                                                        ) : (
+                                                            <p className='mb-0 px-2'>No file chosen</p>
+                                                        )
+                                                    }
+                                                    {/* <p className={`${imageFileName ? 'text-success' : ''} mb-0 px-2`}>{imageFileName || "No file chosen"}</p> */}
                                                 </div>
                                                 <div className="modal-footer justify-content-around">
                                                     <button
@@ -1581,7 +1668,7 @@ const Admin = () => {
                                                         className={`col-5 btn btn-sm text-secondary border-0 ${isWaitingAdminEditAction ? 'opacity-25' : 'opacity-75'
                                                             } clickDown`}
                                                         disabled={isWaitingAdminEditAction}
-                                                        onClick={() => { setImageFileName(null); setShowAddImageForm(false) }}
+                                                        onClick={() => { setShowAddImageForm(false); }}
                                                     >
                                                         Cancel
                                                     </button>
@@ -1589,12 +1676,12 @@ const Admin = () => {
                                                         type="submit"
                                                         className="col-5 btn btn-sm btn-secondary flex-center px-3 rounded-pill clickDown"
                                                         id="uploadImage"
-                                                        onClick={addPropertyImage}
-                                                        disabled={imageFileName === null || isWaitingAdminEditAction}
+                                                        onClick={addPropertyImages}
+                                                        disabled={!imageFiles || imageFiles.length === 0 || isWaitingAdminEditAction}
                                                     >
                                                         {!isWaitingAdminEditAction ? (
                                                             <>
-                                                                Submit <CaretRight size={18} className="ms-1" />
+                                                                Upload <CaretRight size={18} className="ms-1" />
                                                             </>
                                                         ) : (
                                                             <>
@@ -1635,11 +1722,11 @@ const Admin = () => {
                                                         className="col-5 btn btn-sm btn-secondary flex-center px-3 rounded-pill clickDown"
                                                         id="uploadVideo"
                                                         onClick={addPropertyVideo}
-                                                        disabled={videoFileName === null || isWaitingAdminEditAction}
+                                                        disabled={!videoFileName || isWaitingAdminEditAction}
                                                     >
                                                         {!isWaitingAdminEditAction ? (
                                                             <>
-                                                                Submit <CaretRight size={18} className="ms-1" />
+                                                                Upload <CaretRight size={18} className="ms-1" />
                                                             </>
                                                         ) : (
                                                             <>
@@ -2973,7 +3060,20 @@ const Admin = () => {
                                         onClick={() => { setShowContactUsMessage(true); setReplyTo(item) }}
                                     >
                                         <ChatDots size={30} className='me-2 text-gray-500 flex-shrink-0' />
-                                        <div className='flex-grow-1 d-flex align-items-center justify-content-between'>
+                                        <div className='flex-grow-1 d-flex align-items-center justify-content-between'
+                                            onContextMenu={(e) => {
+                                                e.preventDefault();
+                                                // customContextMenu({
+                                                //     position: { left: e.clientX, top: e.clientY },
+                                                //     options: [
+                                                //         {
+                                                //             title: 'Mark as read',
+                                                //             action: () => toast({ message: 'Action fired' })
+                                                //         },
+                                                //     ]
+                                                // })
+                                            }}
+                                        >
                                             <div className='d-grid fs-80 person-info'>
                                                 <span className={`fw-bold ${!item.replied ? 'text-gray-900' : 'text-gray-600'} text-truncate person-info__name`}>
                                                     {item.name}
@@ -2986,7 +3086,7 @@ const Admin = () => {
                                                 {!item.replied ?
                                                     <span className='text-end'>Reply</span>
                                                     :
-                                                    <CheckCircle className='mx-auto' />
+                                                    <CheckCircle weight='fill' className='ms-auto me-2 text-gray-600' />
                                                 }
                                                 <span className={`mt-1 fw-bold ${!item.replied ? 'text-gray-900' : 'text-gray-600'} text-nowrap small`}>
                                                     {formatDate(item.createdAt)}
@@ -3924,6 +4024,9 @@ const Admin = () => {
                                     onClose={resetConfirmDialog}
                                     onCloseCallback={confirmDialogCloseCallback}
                                 />
+
+                                {/* Custom context menu */}
+                                <ContextMenu show={showContextMenu} options={contextMenuOptions} position={contextMenuPosition} />
 
                                 {/* Reply to messages */}
                                 {showContactUsMessage &&
