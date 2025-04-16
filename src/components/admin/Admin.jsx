@@ -3,7 +3,7 @@ import useCustomDialogs from '../hooks/useCustomDialogs';
 import './admin.css';
 import { useNavigate } from 'react-router-dom';
 import { PropertiesContext } from '../../App';
-import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, CurrencyDollarSimple, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, House, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
+import { ArrowClockwise, ArrowLeft, Bed, BellRinging, BellSimpleSlash, Bookmark, Building, BuildingApartment, BuildingOffice, Calendar, CalendarCheck, Car, CaretDoubleRight, CaretDown, CaretRight, ChartBar, ChartPieSlice, ChatDots, Check, CheckCircle, CheckSquare, CircleWavyCheck, CreditCard, CurrencyDollarSimple, Dot, Envelope, EnvelopeSimple, Eraser, Eye, EyeSlash, FloppyDisk, Gear, HandCoins, Heart, House, HouseLine, IdentificationBadge, Image, Info, List, ListDashes, LockKey, MagnifyingGlass, MapPinArea, MapTrifold, Money, MoneyWavy, Mountains, PaperPlaneRight, Pen, Phone, Plus, PushPinSimple, PushPinSimpleSlash, RowsPlusBottom, SealCheck, ShareFat, ShoppingCart, Shower, SignOut, SortAscending, SortDescending, Storefront, Swap, Table, TextAlignLeft, TextAUnderline, Trash, User, UserCheck, Video, Warning, WarningCircle, WhatsappLogo, X } from '@phosphor-icons/react';
 import { cError, cLog, deepEqual, formatDate, getDateHoursMinutes, isValidEmail, shareProperty } from '../../scripts/myScripts';
 import MyToast from '../common/Toast';
 import BottomFixedCard from '../common/bottomFixedCard/BottomFixedCard';
@@ -419,6 +419,7 @@ const Admin = () => {
     const [selectedProperty, setSelectedProperty] = useState([]);
     const [editSelectedProperty, setEditSelectedProperty] = useState(false);
     const [showSelectedPropertyDangerZone, setShowSelectedPropertyDangerZone] = useState(false);
+    const [showSelectedPropertyPrivate, setShowSelectedPropertyPrivate] = useState(false);
     const [sortPropertyAscending, setSortPropertyAscending] = useState(false);
 
     /**
@@ -1137,7 +1138,7 @@ const Admin = () => {
     const PropertyPreview = ({ setDontCloseCard, setRefreshProperties }) => {
         const { id, listed, cover, category, type, name, location, about, price, currency, payment,
             bedrooms, bathrooms, garages, videoUrl, booked, bookedBy, closed,
-            media, likes, featured } = selectedProperty;
+            media, likes, featured, privateInfo } = selectedProperty;
 
         const mainColor = category === "For Sale" ? "#25b579" : "#ff9800";
         const mainLightColor = category === "For Sale" ? "#25b5791a" : "#ff98001a"
@@ -1173,16 +1174,16 @@ const Admin = () => {
                                     <Bookmark size={15} weight="fill" /> {bookedByLen}
                                 </div>
                             }
-                            <img src={cover ? cover : '/images/image_placeholder.png'} alt="Property" className={`dim-100 object-fit-cover ${!cover ? 'bg-gray-500' : ''}`} />
+                            <img src={cover ? cover : '/images/image_placeholder.png'} alt="" className={`dim-100 object-fit-cover ${!cover ? 'bg-gray-500' : ''}`} />
                             {/* CAT buttons */}
                             {listed &&
-                                <div className="position-absolute top-0 mt-3 me-3 property-actions">
-                                    <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 small rounded-pill clickDown"
+                                <div className="position-absolute top-0 bottom-0 mt-2 mb-2 me-2 property-actions">
+                                    <button className="btn d-flex align-items-center mb-2 border-0 blur-bg-2px text-gray-200 small rounded-2 clickDown"
                                         onClick={() => goToProperty(id)} title="View property">
                                         View property <CaretDoubleRight size={16} className="ms-1" />
                                     </button>
                                     {!closed &&
-                                        <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 small rounded-pill clickDown" title="Share property"
+                                        <button className="btn d-flex align-items-center mb-2 border-0 blur-bg-2px text-gray-200 small rounded-2 clickDown" title="Share property"
                                             onClick={() => shareProperty(id, name, category)} >
                                             Share <ShareFat size={16} className="ms-1" />
                                         </button>
@@ -1190,26 +1191,28 @@ const Admin = () => {
                                 </div>
                             }
                             {/* Iconic details */}
-                            <div className="position-absolute bottom-0 gap-3 mb-2 mx-0 px-2 property-iconic-details">
-                                {bedrooms !== null && bedrooms > 0 && (
-                                    <div className='flex-align-center fw-light text-muted'>
-                                        <Bed size={20} weight='fill' className='me-1 text-light' />
-                                        <span className="text-light fs-70">{bedrooms}</span>
-                                    </div>
-                                )}
-                                {bathrooms !== null && bathrooms > 0 && (
-                                    <div className='flex-align-center fw-light text-muted'>
-                                        <Shower size={20} weight='fill' className='me-1 text-light' />
-                                        <span className="text-light fs-70">{bathrooms}</span>
-                                    </div>
-                                )}
-                                {garages !== null && garages > 0 && (
-                                    <div className='flex-align-center fw-light text-muted'>
-                                        <Car size={20} weight='fill' className='me-1 text-light' />
-                                        <span className="text-light fs-70">{garages}</span>
-                                    </div>
-                                )}
-                            </div>
+                            {(bedrooms || bathrooms || garages) && (
+                                <div className="position-absolute bottom-0 w-fit gap-2 mx-0 mb-2 ms-2 px-2 py-1 rounded-2 blur-bg-2px text-gray-200 property-iconic-details">
+                                    {bedrooms && bedrooms > 0 && (
+                                        <div className='flex-align-center fw-light'>
+                                            <Bed size={15} weight='fill' className='me-1' />
+                                            <span className="fs-70">{bedrooms}</span>
+                                        </div>
+                                    )}
+                                    {bathrooms && bathrooms > 0 && (
+                                        <div className='flex-align-center fw-light'>
+                                            <Shower size={15} weight='fill' className='me-1' />
+                                            <span className="fs-70">{bathrooms}</span>
+                                        </div>
+                                    )}
+                                    {garages && garages > 0 && (
+                                        <div className='flex-align-center fw-light'>
+                                            <Car size={15} weight='fill' className='me-1' />
+                                            <span className="fs-70">{garages}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                         <div className='col-xl-7 d-lg-flex flex-column px-2 pb-3 pb-xl-2 info'>
                             <div className="text px-0 px-md-2 small">
@@ -1847,6 +1850,24 @@ const Admin = () => {
                                             </div>
                                         )}
                                     </div>
+                                </div>
+                            </div>
+
+                            <DividerText text={!showSelectedPropertyPrivate ? <><LockKey className='me-1' /> PRIVATE INFO</> : <><X className='me-1' /> HIDE PRIVATE INFO</>} type="gray-700" className="my-4 ptr" clickable onClick={() => setShowSelectedPropertyPrivate(!showSelectedPropertyPrivate)} />
+                            <div className={`collapsible-grid-y ${showSelectedPropertyPrivate ? 'working' : ''}`}>
+                                <div className="collapsing-content dim-100">
+                                    {privateInfo ? (
+                                        <div className='overflow-auto p-3 bg-dark-subtle small' style={{ whiteSpace: 'nowrap' }}>
+                                            {privateInfo}
+                                        </div>
+                                    ) : (
+                                        <div className="col-sm-8 col-md-6 mx-auto mb-5 px-3 info-message">
+                                            <LockKey size={80} className="text-center w-100 mb-3 opacity-50" />
+                                            <p className="text-muted text-center small">
+                                                This properties has no private info at the moment.
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </>

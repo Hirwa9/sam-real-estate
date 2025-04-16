@@ -84,6 +84,16 @@
     }
 }
 
+#propertyCard .img .property-actions,
+#propertyCard .img .property-iconic-details {
+    animation: zoomInBack .1s 1;
+}
+
+#propertyCard .img .property-actions > *,
+#propertyCard .img .property-iconic-details {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
 #propertyCard .img .property-actions {
     display: none;
     pointer-events: none;
@@ -91,7 +101,6 @@
     flex-direction: column;
     transition: var(--trans);
     align-items: flex-end;
-    animation: slideInRight .2s 1;
 }
 
 #propertyCard .img:hover .property-actions {
@@ -109,12 +118,11 @@
     left: 0;
     right: 0;
     transition: var(--trans);
-    animation: flyInBottom .2s 1;
 }
 
-#propertyCard .img .property-iconic-details > div * {
+/* #propertyCard .img .property-iconic-details > div * {
     filter: drop-shadow(0 0 .25rem var(--black1));
-}
+} */
 
 #propertyCard .img:hover .property-iconic-details {
     display: flex;

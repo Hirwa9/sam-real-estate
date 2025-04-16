@@ -504,44 +504,46 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                                                         <Bookmark size={15} weight="fill" /> {JSON.parse(bookedBy).length}
                                                     </div>
                                                 }
-                                                <img src={cover} alt="Property" className="dim-100 object-fit-cover" />
+                                                <img src={cover} alt="" className="dim-100 object-fit-cover" />
                                                 {/* CAT buttons */}
-                                                <div className="position-absolute top-0 bottom-0 mt-3 mb-2 me-3 property-actions">
-                                                    <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 small rounded-pill clickDown" onClick={() => goToProperty(id)}>
+                                                <div className="position-absolute top-0 bottom-0 mt-2 mb-2 me-2 property-actions">
+                                                    <button className="btn d-flex align-items-center mb-2 border-0 blur-bg-2px text-gray-200 small rounded-2 clickDown" onClick={() => goToProperty(id)}>
                                                         View property <CaretDoubleRight size={16} className="ms-1" />
                                                     </button>
                                                     {!closed && (
                                                         <>
-                                                            <button className="btn d-flex align-items-center mb-2 border-0 bg-light text-black2 small rounded-pill clickDown" onClick={() => shareProperty(id, name, category)} >
+                                                            <button className="btn d-flex align-items-center mb-2 border-0 blur-bg-2px text-gray-200 small rounded-2 clickDown" onClick={() => shareProperty(id, name, category)} >
                                                                 Share <ShareFat size={16} className="ms-1" />
                                                             </button>
-                                                            <button className="btn d-flex align-items-center mt-auto border-0 bg-light text-black2 small rounded-pill clickDown" title="Compare" onClick={() => compareProperty(id)} >
-                                                                <Plus size={7} weight="bold" className="text-dark" /> <ArrowsLeftRight size={16} />
+                                                            <button className="btn d-flex align-items-center mt-auto border-0 blur-bg-2px text-gray-200 small rounded-2 clickDown" title="Compare" onClick={() => compareProperty(id)} >
+                                                                <Plus size={7} weight="bold" fill="var(--bs-gray-100)" /> <ArrowsLeftRight size={16} />
                                                             </button>
                                                         </>
                                                     )}
                                                 </div>
                                                 {/* Iconic details */}
-                                                <div className="position-absolute bottom-0 gap-3 mb-2 mx-0 px-2 property-iconic-details">
-                                                    {bedrooms !== null && bedrooms > 0 && (
-                                                        <div className='flex-align-center fw-light text-muted'>
-                                                            <Bed size={20} weight='fill' className='me-1 text-light' />
-                                                            <span className="text-light fs-70">{bedrooms}</span>
-                                                        </div>
-                                                    )}
-                                                    {bathrooms !== null && bathrooms > 0 && (
-                                                        <div className='flex-align-center fw-light text-muted'>
-                                                            <Shower size={20} weight='fill' className='me-1 text-light' />
-                                                            <span className="text-light fs-70">{bathrooms}</span>
-                                                        </div>
-                                                    )}
-                                                    {garages !== null && garages > 0 && (
-                                                        <div className='flex-align-center fw-light text-muted'>
-                                                            <Car size={20} weight='fill' className='me-1 text-light' />
-                                                            <span className="text-light fs-70">{garages}</span>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                {(bedrooms || bathrooms || garages) && (
+                                                    <div className="position-absolute bottom-0 w-fit gap-2 mx-0 mb-2 ms-2 px-2 py-1 rounded-2 blur-bg-2px text-gray-200 property-iconic-details">
+                                                        {bedrooms && bedrooms > 0 && (
+                                                            <div className='flex-align-center fw-light'>
+                                                                <Bed size={15} weight='fill' className='me-1' />
+                                                                <span className="fs-70">{bedrooms}</span>
+                                                            </div>
+                                                        )}
+                                                        {bathrooms && bathrooms > 0 && (
+                                                            <div className='flex-align-center fw-light'>
+                                                                <Shower size={15} weight='fill' className='me-1' />
+                                                                <span className="fs-70">{bathrooms}</span>
+                                                            </div>
+                                                        )}
+                                                        {garages && garages > 0 && (
+                                                            <div className='flex-align-center fw-light'>
+                                                                <Car size={15} weight='fill' className='me-1' />
+                                                                <span className="fs-70">{garages}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className='h-100 col-xl-7 d-flex flex-column px-2 pb-3 pb-xl-2'>
                                                 <div className="text px-0 px-md-2 small">
