@@ -13,7 +13,7 @@ import 'react-responsive-modal/styles.css';
 import { Modal } from 'react-responsive-modal';
 
 // Icons
-import { ArrowsClockwise, Binoculars, CaretDoubleUp, CaretDown, MagnifyingGlass, XCircle, Sliders, X, ArrowClockwise } from '@phosphor-icons/react';
+import { ArrowsClockwise, Binoculars, CaretDoubleUp, CaretDown, MagnifyingGlass, XCircle, Sliders, X, ArrowClockwise, Backspace } from '@phosphor-icons/react';
 import FixedActionButtons from '../common/fixedActionButtons/FixedActionButtons';
 import MyToast from '../common/Toast';
 import useCustomDialogs from '../hooks/useCustomDialogs';
@@ -77,14 +77,14 @@ const Properties = () => {
                     <div className="d-flex align-content-center gap-3 mb-3">
                         <button
                             type='button'
-                            className={`small ${currency === currencyValuesRef.current[0] ? 'text-primary bg-primary-subtle' : 'text-gray-500'} flex-grow-1 py-2 px-4 rounded-2 border-0 ptr`}
+                            className={`small ${currency === currencyValuesRef.current[0] ? 'bg-dark bg-opacity-75 text-gray-200' : 'text-gray-500'} flex-grow-1 py-2 px-4 rounded-2 border-0 ptr`}
                             onClick={() => setCurrency(currencyValuesRef.current[0])}
                         >
                             {currencyValuesRef.current[0].toUpperCase()}
                         </button>
                         <button
                             type='button'
-                            className={`small ${currency === currencyValuesRef.current[1] ? 'text-primary bg-primary-subtle' : 'text-gray-500'} flex-grow-1 py-2 px-4 rounded-2 border-0 ptr`}
+                            className={`small ${currency === currencyValuesRef.current[1] ? 'bg-dark bg-opacity-75 text-gray-200' : 'text-gray-500'} flex-grow-1 py-2 px-4 rounded-2 border-0 ptr`}
                             onClick={() => setCurrency(currencyValuesRef.current[1])}
                         >
                             {currencyValuesRef.current[1].toUpperCase()}
@@ -464,26 +464,28 @@ const Properties = () => {
                             </div>
 
                             <Modal open={priceModalOpen} onClose={closePriceModal} center>
+                                <h5 className="mb-3 text-black2 text-center">Enter price range</h5>
                                 <div className="col-12 col-sm-auto me-1 me-sm-0 p-3 filter-options" aria-labelledby="filterByPrice">
-                                    <DividerText
-                                        text="Enter price range"
-                                        clickable
-                                        className="mx-3 mb-2 no-line text-gray-600 fw-bold"
-                                    />
                                     <form onSubmit={(e) => { e.preventDefault(); handlePriceRangeInput() }} className='mb-4 py-3'>
                                         <CurrencyComponent />
 
                                         <div className="d-md-flex px-md-3">
-                                            <div className='col-12 col-md-auto d-flex flex-column flex-sm-row align-items-center justify-content-sm-center flex-wrap mb-2 mb-md-0 px-0'>
-                                                <input type="number"
+                                            <div className="col-12 col-md-auto d-flex flex-column flex-sm-row align-items-center flex-wrap mb-2 mb-md-0 px-0">
+                                                <input
+                                                    type="number"
                                                     value={minPriceInputValue}
                                                     onChange={(e) => setMinPriceInputValue(e.target.value)}
-                                                    placeholder="Enter Min. Price" className='col-12 col-sm-auto h-2_5rem rounded px-2 border border-secondary border-opacity-50' />
-                                                <span className='mx-2 fw-bold text-primaryColor'>-</span>
-                                                <input type="number"
+                                                    placeholder="Enter Min. Price"
+                                                    className="col-12 col-sm-auto h-2_5rem rounded px-2 border border-secondary border-opacity-50"
+                                                />
+                                                <span className='mx-2 fw-bold text-muted opacity-50'>-</span>
+                                                <input
+                                                    type="number"
                                                     value={maxPriceInputValue}
                                                     onChange={(e) => setMaxPriceInputValue(e.target.value)}
-                                                    placeholder="Enter Max. Price" className='col-12 col-sm-auto h-2_5rem rounded px-2 border border-secondary border-opacity-50' />
+                                                    placeholder="Enter Max. Price"
+                                                    className="col-12 col-sm-auto h-2_5rem rounded px-2 border border-secondary border-opacity-50"
+                                                />
                                             </div>
                                             <div className='flex-align-center justify-content-between mx-auto me-sm-0 w-fit my-3'>
                                                 <button type="reset" className='btn btn-sm flex-align-center ms-auto px-3 text-muted rounded-pill clickDown'
@@ -500,8 +502,8 @@ const Properties = () => {
                                         </div>
                                     </form>
                                     <DividerText noBorder className="mx-3 my-2 shadow-none" />
-                                    <div className='py-1 px-2 text-muted'>Pick a range (RWF)</div>
-                                    <div className='mb-3 fw-light price-filter-options'>
+                                    <div className='mb-2 py-1 px-2 text-muted'>Pick a range (RWF)</div>
+                                    <div className='mb-3 py-2 fw-light price-filter-options rounded-4'>
                                         {priceRangeSelection
                                             .map((val, index) => (
                                                 <div key={index} className='p-2 small ptr mb-1 clickDown filter-option-value'
@@ -664,7 +666,7 @@ const Properties = () => {
 
                 <Modal open={combinedFilterModalOpen} onClose={closeCombinedFilterModal} center>
                     <div className="border-0 rounded-0">
-                        <h5 className="mb-3 text-black2" id="filterByAllLabel"> Advanced Search</h5>
+                        <h5 className="mb-3 text-black2 text-center"> Advanced Search</h5>
                         <div className="pt-0">
                             {/* Description */}
                             <div className="alert alert-secondary border-0 rounded-0 text-justify text-gray-600 smaller">
@@ -677,15 +679,22 @@ const Properties = () => {
                                 {/* Price */}
                                 <form onSubmit={(e) => e.preventDefault()} className=''>
                                     <CurrencyComponent />
-
-                                    <div className='d-flex flex-column flex-sm-row flex-wrap align-items-center justify-content-between mb-2 mt-md-3'>
-                                        <input type="number"
+                                    <div className="col-12 col-md-auto d-flex flex-column flex-sm-row align-items-center justify-content-sm-between flex-wrap mb-2 mt-sm-3 mb-md-0 px-0">
+                                        <input
+                                            type="number"
                                             value={minPriceInputValue}
-                                            onChange={(e) => setMinPriceInputValue(e.target.value)} placeholder="Enter Min. Price" className='col-12 col-sm-5 h-2_5rem rounded px-2 border border-secondary border-opacity-50' />
+                                            onChange={(e) => setMinPriceInputValue(e.target.value)}
+                                            placeholder="Enter Min. Price"
+                                            className="col-12 col-sm-5 h-2_5rem rounded px-2 border border-secondary border-opacity-50"
+                                        />
                                         <span className='mx-2 fw-bold text-muted opacity-50'>-</span>
-                                        <input type="number"
+                                        <input
+                                            type="number"
                                             value={maxPriceInputValue}
-                                            onChange={(e) => setMaxPriceInputValue(e.target.value)} placeholder="Enter Max. Price" className='col-12 col-sm-5 h-2_5rem rounded px-2 border border-secondary border-opacity-50' />
+                                            onChange={(e) => setMaxPriceInputValue(e.target.value)}
+                                            placeholder="Enter Max. Price"
+                                            className="col-12 col-sm-5 h-2_5rem rounded px-2 border border-secondary border-opacity-50"
+                                        />
                                     </div>
                                     <div className='flex-align-center justify-content-between'>
                                         <button type="reset" className='btn btn-sm flex-align-center mx-auto px-3 text-muted rounded-pill clickDown'
@@ -702,7 +711,7 @@ const Properties = () => {
                                             a.localeCompare(b)
                                         )
                                         .map((val, index) => (
-                                            <li key={index} className={`dropdown-item px-3 py-1 flex-center rounded-pill ptr clickDown ${propTypeSubFilter === val ? 'border border-primaryColor border-2' : ''} filter-option-value`}
+                                            <li key={index} className={`dropdown-item px-3 py-1 flex-center rounded-3 ptr ${propTypeSubFilter === val ? 'bg-dark bg-opacity-75 text-gray-200' : ''} filter-option-value`}
                                                 onClick={() => setPropTypeSubFilter(val)}
                                             >
                                                 {val}
@@ -710,10 +719,11 @@ const Properties = () => {
                                         ))
                                     }
                                     {propTypeSubFilter !== '' &&
-                                        <li className={"dropdown-item ms-2 py-0 px-2 ptr clickDown bg-danger border border-danger opacity-50 rounded-3 align-self-center filter-option-value"}
+                                        <li className={"dropdown-item flex-center ms-2 py-0 px-2 bg-none ptr rounded-0 align-self-center clickDown filter-option-value"}
                                             onClick={() => setPropTypeSubFilter('')}
+                                            title='Clear'
                                         >
-                                            <X size={20} fill='var(--bs-light)' className='p-1' />
+                                            <Backspace size={28} fill='var(--bs-danger)' weight='fill' className='p-1' />
                                         </li>
                                     }
                                 </ul>
@@ -722,7 +732,7 @@ const Properties = () => {
                                 <ul className='mb-0 px-0 small row-gap-3 list-flexible'>
                                     {aboutProperties.allCategories
                                         .map((val, index) => (
-                                            <li key={index} className={`dropdown-item px-3 py-1 flex-center rounded-pill ptr clickDown ${propCategorySubFilter === val ? 'border border-primaryColor border-2' : ''} filter-option-value`}
+                                            <li key={index} className={`dropdown-item px-3 py-1 flex-center rounded-3 ptr ${propCategorySubFilter === val ? 'bg-dark bg-opacity-75 text-gray-200' : ''} filter-option-value`}
                                                 onClick={() => setPropCategorySubFilter(val)}
                                             >
                                                 {val}
@@ -730,10 +740,11 @@ const Properties = () => {
                                         ))
                                     }
                                     {propCategorySubFilter !== '' &&
-                                        <li className={"dropdown-item ms-2 py-0 px-2 ptr clickDown bg-danger border border-danger opacity-50 rounded-3 align-self-center filter-option-value"}
+                                        <li className={"dropdown-item flex-center ms-2 py-0 px-2 bg-none ptr rounded-0 align-self-center clickDown filter-option-value"}
                                             onClick={() => setPropCategorySubFilter('')}
+                                            title='Clear'
                                         >
-                                            <X size={20} fill='var(--bs-light)' className='p-1' />
+                                            <Backspace size={28} fill='var(--bs-danger)' weight='fill' className='p-1' />
                                         </li>
                                     }
                                 </ul>
