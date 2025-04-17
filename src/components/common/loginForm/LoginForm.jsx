@@ -295,17 +295,17 @@ const LoginForm = ({ setShowLogin, redirect = false }) => {
             <MyToast show={showToast} message={toastMessage} type={toastType} onClose={() => setShowToast(false)} />
             <div className="position-fixed fixed-top inset-0 py-5 bg-black2 blur-bg-1px login-modal">
                 {/* Login form */}
-                <div className='position-relative col-sm-8 col-md-6 col-lg-4 inx-inherit mx-2 mx-sm-auto mt-3 rounded'
+                <div className='position-relative col-sm-8 col-md-6 col-lg-4 inx-inherit mx-2 mx-sm-auto mt-3'
                     style={{ animation: "flyInBottom .2s 1" }}
                 >
-                    <XCircle size={40} fill='var(--bs-light)' className='position-absolute top-0 ms-auto me-md-auto opacity-75 clickDown ptr'
+                    <XCircle size={50} weight='light' fill='var(--bs-light)' className='position-absolute top-0 ms-auto me-md-auto opacity-75 clickDown ptr'
                         style={{ left: 0, right: 0, translate: "0 -120%" }}
                         onClick={() => { resetForm(); setShowLogin(false); }}
                     />
-                    <div className={`rad-inherit login-otp-container ${flipLoginCard ? 'flipped' : ''} flip-card`}>
+                    <div className={`login-otp-container ${flipLoginCard ? 'flipped' : ''} flip-card`}>
                         {/* Front side */}
-                        <div className='p-3 rad-inherit flip-card_front front-side'>
-                            <div className='h5 mb-4 text-center font-variant-small-caps'>Sign in</div>
+                        <div className='px-3 py-4 rounded-4 flip-card_front front-side'>
+                            <div className='h4 mb-4 text-center fw-semibold font-variant-small-caps'>Sign in</div>
                             <form onSubmit={handleLogin}>
                                 <div className={`form-input-element`}>
                                     <input
@@ -361,8 +361,8 @@ const LoginForm = ({ setShowLogin, redirect = false }) => {
                         </div>
 
                         {/* Back side */}
-                        <div className='p-3 rad-inherit flip-card_back back-side'>
-                            <div className='h5 mb-4 text-center font-variant-small-caps'>Reset Password</div>
+                        <div className='px-3 py-4 rounded-4 flip-card_back back-side'>
+                            <div className='h4 mb-4 text-center fw-semibold font-variant-small-caps'>Reset Password</div>
                             <form onSubmit={handlePWResetRequest}>
                                 {!canEnterOtp &&
                                     <div>
