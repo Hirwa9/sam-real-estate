@@ -476,7 +476,7 @@ const PropertyCard = ({ filterOption, filterValue, resetFilters, setFilterCount,
                         onClose={resetConfirmDialog}
                     />
 
-                    <div className="d-flex justify-content-center flex-wrap px-2 overflow-hidden" id="propertyCard">
+                    <div className="d-flex justify-content-center flex-wrap px-sm-2 overflow-hidden" id="propertyCard">
                         {propertiesToShow
                             .slice(0, limit)
                             .map((val, index) => {
