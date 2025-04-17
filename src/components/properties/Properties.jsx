@@ -397,7 +397,7 @@ const Properties = () => {
     return (
         <>
             <MyToast show={showToast} message={toastMessage} type={toastType} selfClose onClose={resetToast} />
-            <section className='properties'>
+            <section className='px-2 properties'>
                 <PageInfo name="Property listing" title="Listing - Discover a Wide Range of Listed Properties" cover={img} className="mb-0" />
                 {/* Filter tools */}
                 <div className={`px-1 ${floatFilterTools ? 'mb-3 py-3 floated' : 'py-1'} filter-bar`}>
